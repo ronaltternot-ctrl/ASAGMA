@@ -1,7 +1,4 @@
-/* ASAGMBA - ARCHIVO GENERADO por build.py el 2026-10-26 18:00.
-   NO lo edites a mano: cambia los archivos de src/ y vuelve a construir (Ctrl+Shift+B). */
 (function () {
-/* ---------- 01-datos-y-carga.js ---------- */
 const CF = [132, 89, 50],
   OF = [119, 140, 50];
 const ET = {
@@ -147,7 +144,6 @@ function sdmg(a) {
   return Math.round(20 * ATK[a.c].dm * (buf.vig > 0 ? 1.6 : 1));
 }
 
-/* ---------- 02-controles.js ---------- */
 const keys = {};
 let area = 1,
   platforms = [],
@@ -183,7 +179,7 @@ let area = 1,
 addEventListener('keydown', e => {
   audioStart();
   if (INV.open) {
-    // con el inventario abierto, las teclas son del inventario (21c-inventario.js)
+
     e.preventDefault();
     invKey(e);
     return;
@@ -376,7 +372,6 @@ addEventListener('blur', () => {
   for (const k in keys) keys[k] = false;
 });
 
-/* ---------- 03-jugador-y-bucle.js ---------- */
 function init() {
   area = 1;
   LEVEL = W * 3;
@@ -701,7 +696,7 @@ function update(dt, now) {
       p.sta -= stc(8);
       p.staWait = 0.6;
       p.atkCd = 0.12;
-      // combo de 5 en el suelo (en forma espíritu sigue el de 3) y ataques en el aire (22b-ataques-smara.js)
+
       const c = ataqueElegir();
       p.comboT = 1.0;
       p.atk = { t: 0, f: p.face, c, hit: false };
@@ -717,7 +712,7 @@ function update(dt, now) {
     if (!a.hit && a.t >= ATK[a.c].h) {
       a.hit = true;
       const dm = sdmg(a);
-      // cada ataque tiene su propia zona de golpe (atkCaja en 22b-ataques-smara.js)
+
       if (live && golpeToca(a, B.x - bb.w / 2, B.y - bb.h / 2, B.x + bb.w / 2, B.y + bb.h / 2)) hitBoss(dm);
       for (const e of enemies) {
         const s = esz(e);
@@ -819,7 +814,7 @@ function update(dt, now) {
     enemies = enemies.filter(e => !e.dead);
   }
   if (area == 1) npcSurprise(performance.now() / 1000);
-  faseTick(dt); // nueva fase: espiritus y reliquias (27-nueva-fase.js)
+  faseTick(dt);
   if (area == 1 || area == 5)
     for (const c of CPS)
       if (!c.on && Math.abs(p.x - c.x) < 40) {
@@ -940,7 +935,6 @@ function hitBoss(d) {
   }
 }
 
-/* ---------- 04-jefe-arlos.js ---------- */
 function orb(x, y, a, s) {
   orbs.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 7 });
 }
@@ -1181,7 +1175,6 @@ function drawBeam(t) {
   ctx.restore();
 }
 
-/* ---------- 05-plataformas-y-monstruo.js ---------- */
 function drawPlat() {
   if (area == 1 || area == 5) {
     drawGrass();
@@ -1236,23 +1229,13 @@ function drawMon() {
   ctx.fill();
 }
 
-/* ---------- 06-audio-base.js ---------- */
-/* ===== AUDIO (todo sintetizado, sin archivos) ===== */
 let AC,
   MG,
   NB,
   muted = false,
   ambN = [],
   tickT = 0;
-/* MUSB (la opera de Arlos) esta en assets/musica-arlos.js */
 
-/* ---------- 07-musica-arlos.js ---------- */
-/* ===== MUSICA DEL JEFE ARLOS (opera) =====
-   90 BPM: compas = 2.667 s, primer tiempo fuerte en 2.005 s.
-   intro (sube la tension) -> el golpe fuerte en 28.67 s coincide con el inicio de la pelea
-   bucle de 24 compases 31.338 s -> 95.338 s con fundido corto (sin clic)
-   fase 2: barrido de filtro y salto al inicio del bucle en el siguiente compas
-   muerte de ARLOS: cierre suave (111.34 s -> final). Muerte de Smara: se apaga. */
 const MUS = {
   buf: null,
   loading: false,
@@ -1468,11 +1451,6 @@ function musResume() {
   musPlay(p, 0.4);
 }
 
-/* ---------- 08-musica-por-zona.js ---------- */
-/* ===== MUSICA POR ZONA (compuesta en codigo con Web Audio) =====
-   menu: tema de Mulukuku · cabaña: canción de cuna · puerta: flauta en la niebla
-   ribera (dia): son en 6/8 con marimba · noche: los Duhindu silban · blanco: piano del Errante
-   cielo de Prahaku: campanas y marimba en lidio.  La pelea con Arlos usa su opera (MUS). */
 const ZM = { cur: null, want: null, next: 0, step: 0, bus: null, dly: null, vol: 0.8, duck: 1, inten: 0 };
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
 function zmInit() {
@@ -1551,7 +1529,7 @@ function znoise(dst, t, f, q, dec, g, type) {
   s.start(t, Math.random() * 1.5);
   s.stop(t + dec + 0.02);
 }
-// instrumentos
+
 const I_ = {
   marimba: (d, t, m, g, s) => {
     const f = mtof(m);
@@ -1604,7 +1582,7 @@ const I_ = {
     zv(d, t + 0.42, b * 1.3, 'sine', 0.03, 0.38, g * 0.85, { glide: b * 0.92, gt: 0.3, pan: p, send: 1 });
   },
 };
-// pistas: cada una define pasos por compas, segundos por paso y que suena en cada paso
+
 const TRK = {
   menu: {
     spb: 16,
@@ -1849,7 +1827,7 @@ function zmTick() {
       ZM.cur = { k: w, g, bar: 0, step: 0, next: AC.currentTime + 0.08 };
     }
   }
-  // intensidad segun la situacion
+
   ZM.inten = 0;
   if (area == 1 && typeof CAMPS != 'undefined' && CAMPS.some(c => Math.abs(p.x - c.x) < 240)) ZM.inten = -1;
   if (area == 5 && enemies.some(e => e.t == 'wboss' && !e.dying && !(e.sp > 0) && Math.abs(e.x - p.x) < 700))
@@ -1872,8 +1850,6 @@ function zmTick() {
   }
 }
 
-/* ---------- 09-duskclaw.js ---------- */
-/* ===== DUSKCLAW: monstruos de la noche (sprite articulado por piezas del .aseprite) ===== */
 const DKM = {
   'back-arm': { sx: 0, w: 10, h: 19, x: 24, y: 17, piv: [27.5, 18.0] },
   legL: { sx: 11, w: 9, h: 12, x: 15, y: 27, piv: null },
@@ -1949,7 +1925,7 @@ const dkEye = t => {
   const p = DUSK[t].pal;
   return p ? p.eye : [126, 198, 134];
 };
-// dibuja una pieza en coordenadas del sprite (origen = pies)
+
 function dkPart(sh, n, dx, dy, rot) {
   const m = DKM[n],
     ax = DKM.anchor[0],
@@ -1987,7 +1963,7 @@ function dkClawTip(e, P) {
     y: e.y + S * (py - ay + (P.bob || 0) + Math.cos(a) * L),
   };
 }
-/* ---------- IA ---------- */
+
 function duskAI(e, dt, dx, ad, sg) {
   const D = DUSK[e.t],
     T = e.t;
@@ -2197,7 +2173,7 @@ function duskAI(e, dt, dx, ad, sg) {
   if (e.mode == 'atk' || e.mode == 'charge' || e.mode == 'jump') return false;
   return false;
 }
-/* ---------- dibujo ---------- */
+
 function duskPose(e, t) {
   const T = e.t,
     P = {};
@@ -2250,7 +2226,7 @@ function drawDusk(e, t) {
     sh = dkSheets(e.t),
     x = Math.round(e.x - cam);
   if (x < -80 || x > W + 80) return;
-  // charco de sombra al aparecer
+
   if (e.sp > 0) {
     const k = 1 - e.sp / 0.8;
     ctx.fillStyle = 'rgba(8,6,14,' + 0.7 * Math.min(1, k * 2) + ')';
@@ -2297,7 +2273,7 @@ function drawDusk(e, t) {
   const fl = e.hit > 0 && Math.floor(t * 30) % 2,
     P = duskPose(e, t),
     src = fl ? { parts: fimg(sh.parts, 'brightness(2.4)'), idle: fimg(sh.idle, 'brightness(2.4)') } : sh;
-  // estela fantasma (sombra y carga)
+
   if (e.mode == 'appear' || (e.mode == 'charge' && e.at > 0.55) || (e.mode == 'rec' && e.t == 'duskS')) {
     ctx.save();
     ctx.globalAlpha = al * 0.3;
@@ -2313,7 +2289,7 @@ function drawDusk(e, t) {
     const f = e.brk ? 8 + Math.min(15, Math.floor((e.ft - e.brk) / 0.1)) : Math.floor(e.ft * 8 + e.id) % 8;
     ctx.drawImage(src.idle, f * 25, 0, 25, 39, -12.5, -39, 25, 39);
   } else dkRig(src.parts, P);
-  // ojos que brillan
+
   const ec = dkEye(e.t),
     eb =
       e.mode == 'wind' || (e.mode == 'charge' && e.at < 0.55) || (e.mode == 'jump' && !e.air)
@@ -2326,7 +2302,7 @@ function drawDusk(e, t) {
   ctx.fill();
   ctx.globalCompositeOperation = 'source-over';
   ctx.restore();
-  // estela del zarpazo
+
   if (e.mode == 'atk' && e.at < 0.2 && e.t != 'duskL') {
     const k = e.at / 0.2;
     ctx.save();
@@ -2343,7 +2319,7 @@ function drawDusk(e, t) {
     ctx.stroke();
     ctx.restore();
   }
-  // humo de sombra que sube del abrigo
+
   if (Math.random() < 0.08)
     pfx(
       e.x + rnd(-8, 8) * S,
@@ -2430,8 +2406,6 @@ function rnd(a, b) {
   return a + Math.random() * (b - a);
 }
 
-/* ---------- 10-pulido-smara.js ---------- */
-/* ===== PULIDO DE SMARA: pausa de impacto, temblor, estelas de corte, sombra, polvo, vaho, estiramiento ===== */
 let HS = 0,
   SHK = 0;
 const PFX = [],
@@ -2563,7 +2537,7 @@ function drawPShadow() {
 }
 function polishTick(dt, was0, vy0) {
   const A = p.an || {};
-  // aterrizaje: polvo en anillo y temblor si cae de alto
+
   if (p.on && !was0 && vy0 > 180) {
     const q = Math.min(1, vy0 / 950);
     for (let i = 0; i < 6 + q * 10; i++) {
@@ -2574,24 +2548,24 @@ function polishTick(dt, was0, vy0) {
       SHK = Math.max(SHK, 3);
     }
   }
-  // derrape al cambiar de direccion corriendo
+
   if (p.on && p.lastFace !== undefined && p.lastFace !== p.face && Math.abs(p.vx) > 140) {
     for (let i = 0; i < 6; i++)
       pfx(p.x + p.face * 4, p.y - 1, -p.face * rnd(30, 120), -rnd(10, 40), 0.35, '#cbbfa8', 2, 200);
     sfx('swing');
   }
   p.lastFace = p.face;
-  // estela al correr rapido
+
   p.trT = (p.trT || 0) - dt;
   if (p.run && p.on && Math.abs(p.vx) > 250 && p.trT <= 0) {
     p.trT = 0.07;
     p.ghosts.push({ x: p.x, y: p.y, f: p.face, a: 0.22, s: curAnim() });
   }
-  // tiempo quieta -> estirarse
+
   if (p.on && Math.abs(p.vx) < 12 && !p.atk && p.dash <= 0 && !p.crouch && p.parry <= 0 && state == 'play')
     p.idl = (p.idl || 0) + dt;
   else p.idl = 0;
-  // vaho en la noche
+
   if (area == 5 && p.idl > 1 && Math.floor(p.idl / 2.6) != Math.floor((p.idl - dt) / 2.6))
     for (let i = 0; i < 5; i++)
       pfx(
@@ -2604,10 +2578,10 @@ function polishTick(dt, was0, vy0) {
         2,
         -10,
       );
-  // chispas al caer rapido y lineas de velocidad
+
   if (!p.on && p.vy > 620 && Math.random() < dt * 30)
     pfx(p.x + rnd(-10, 10), p.y - rnd(0, 50), 0, -p.vy * 0.4, 0.12, 'rgba(255,255,255,.6)', 1, 0);
-  // pasos
+
   if (p.on && Math.abs(p.vx) > 60) {
     const fr = Math.floor(p.t * (p.run ? 16 : 7 + Math.abs(p.vx) / 45)) % 8;
     if (fr !== p.lstep && (fr == 1 || fr == 5)) {
@@ -2822,8 +2796,6 @@ function sfx(k) {
   }
 }
 
-/* ---------- 11-intro.js ---------- */
-/* ===== INTRO: NEW DATA -> negro con frase ===== */
 const PHRASE = 'Los dioses no son dioses sin humanos y los humanos no son humanos si no creen en ellos.';
 let ND = { t: 0 },
   RW = { t: 0 },
@@ -2886,9 +2858,6 @@ function drawIntro() {
   }
 }
 
-/* ---------- 12-cuarto.js ---------- */
-/* ===== CUARTO ===== */
-/* ===== CUARTO (cabaña acogedora, dibujada a mano en pixel art) ===== */
 const LETTER = { x: 382, y: 290 };
 let roomS,
   crkT = 0;
@@ -3114,7 +3083,7 @@ function drawRoom(t) {
   ctx.moveTo(524, 120);
   ctx.lineTo(524 + Math.sin(ho * 0.01745) * 12, 120 - Math.cos(ho * 0.01745) * 12);
   ctx.stroke();
-  // fuego
+
   ctx.fillStyle = '#3a2417';
   ctx.fillRect(194, 330, 64, 10);
   ctx.fillRect(200, 322, 50, 9);
@@ -3170,7 +3139,7 @@ function drawRoom(t) {
     ctx.fillRect(Math.round(x), Math.round(y), 2, 2);
   }
   ctx.globalCompositeOperation = 'source-over';
-  // vela
+
   ctx.fillStyle = '#e8e0c8';
   ctx.fillRect(416, 278, 3, 16);
   ctx.fillStyle = '#ffb02e';
@@ -3181,7 +3150,7 @@ function drawRoom(t) {
   ctx.fill();
   ctx.fillStyle = '#fff3b0';
   ctx.fillRect(416, 272, 3, 6);
-  // gato dormido en la alfombra
+
   const cx = 300,
     cy = 384,
     br = 1 + 0.045 * Math.sin(t * 1.7);
@@ -3216,7 +3185,7 @@ function drawRoom(t) {
   ctx.font = '9px monospace';
   ctx.textAlign = 'left';
   ctx.fillText('z', cx - 30, cy - 26 - ((t * 8) % 12));
-  // carta
+
   ctx.save();
   ctx.translate(LETTER.x, LETTER.y + Math.sin(t * 2) * 1.5);
   ctx.rotate(-0.12);
@@ -3315,8 +3284,6 @@ function drawLetter() {
   }
 }
 
-/* ---------- 13-rebobinar.js ---------- */
-/* ===== REBOBINAR EL TIEMPO ===== */
 const DJ = [
   'Buena noticia: ya no te duele nada.',
   'Los dioses lo vieron. Se rieron, pero con cariño.',
@@ -3404,9 +3371,6 @@ function drawRewind() {
   }
 }
 
-/* ---------- 14-gran-puerta.js ---------- */
-/* ===== NIVEL 1: bosque turquesa luminoso ===== */
-/* ===== ESCENA INICIAL: LA GRAN PUERTA, VISTA DESDE ARRIBA ===== */
 let gateS,
   doorS,
   GS = { ph: 0, t: 0 },
@@ -3579,7 +3543,7 @@ function bubble(x, y, text, typed) {
     k -= ln.length + 1;
   });
 }
-/* ===== ESCENA INICIAL: LA GRAN PUERTA (pixel art, vista desde arriba) ===== */
+
 let glc, glx;
 function pdisc(x, y, r) {
   for (let dy = -r; dy <= r; dy++) {
@@ -3717,10 +3681,10 @@ function drawGate4() {
     ctx.fillRect(Math.round(d.x), Math.round(d.y), 3, 3);
   }
   ctx.globalAlpha = 1;
-  // almohada
+
   if (g.ph <= 1 || g.ph >= 2)
     ctx.drawImage(img.pil, 0, 0, 26, 12, Math.round(350 - 52), Math.round(340 - 18), 39, 18);
-  // nota
+
   if (g.ph >= 3 && g.note > 0) {
     ctx.save();
     ctx.translate(NOTE.x, NOTE.y - 6);
@@ -3742,7 +3706,7 @@ function drawGate4() {
     ctx.fillRect(-2, 2, 4, 4);
     ctx.restore();
   }
-  // personaje: Samara
+
   const al = g.ph == 7 ? Math.max(0, 1 - g.t / 1.7) : 1,
     s = g.ph == 7 ? g.sc / 0.62 : 1;
   ctx.globalAlpha = al;
@@ -3803,8 +3767,6 @@ function drawGate4() {
   }
 }
 
-/* ---------- 15-nivel-generacion.js ---------- */
-/* ===== NIVEL 1 LARGO: generacion, checkpoints, mirada de enemigos ===== */
 function genL1(mode) {
   let sd = mode == 5 ? 29 : 11;
   const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
@@ -4260,8 +4222,6 @@ function gaze(e, w, h, fly, flip) {
   }
 }
 
-/* ---------- 16-nivel-escenario.js ---------- */
-/* ===== NIVEL 1 (estilo Kingdom Two Crowns): colinas y pinos, tierra en corte y rio con reflejo ===== */
 const SCW = 600,
   SCH = 337.5;
 function drawBG1(t) {
@@ -4463,7 +4423,7 @@ function drawGrass() {
   drawGroundNat(t, G);
   for (const pl of platforms) drawPlat9(pl);
 }
-/* ===== optimizacion: copia unica de la franja a reflejar (antes se copiaba el canvas sobre si mismo ~40 veces por cuadro) ===== */
+
 let RFC = null,
   RFX = null;
 function grabBand(y0, y1) {
@@ -4519,8 +4479,6 @@ function drawWater1(t) {
   ctx.fillRect(0, wt, W, 2);
 }
 
-/* ---------- 17-campamentos-npc.js ---------- */
-/* ===== CAMPAMENTOS Y NPC DEL ANTIGUO MULUKUKU ===== */
 let NPCS = [],
   talk = null;
 const CAMPS = [
@@ -4768,8 +4726,6 @@ function drawCamps(t) {
   for (const n of NPCS) drawNPC(n, t);
 }
 
-/* ---------- 18-portal.js ---------- */
-/* ===== PORTAL DE PIEDRA ===== */
 let PORTAL = { x: 4800 };
 let PF = { t: 0 };
 function gateAlpha() {
@@ -4887,8 +4843,6 @@ function pfxOverlay() {
   }
 }
 
-/* ---------- 19-arena-jefe.js ---------- */
-/* ===== ARENA DEL JEFE: vacio negro con arboles blancos y suelo espejo ===== */
 let voidS;
 function buildVoid() {
   voidS = document.createElement('canvas');
@@ -5024,8 +4978,6 @@ function startBoss() {
   say('Algo se mueve en el Puente Roto...');
 }
 
-/* ---------- 20-animaciones.js ---------- */
-/* ===== ANIMACIONES DEL PERSONAJE ===== */
 let fx = [];
 function pcy() {
   return p.y - (p.crouch ? 20 : 32);
@@ -5115,19 +5067,17 @@ const ATK = [
   { f: HI.Regular_Slash_01, n: 7, d: 0.05, h: 0.1, e: 0.36, dm: 1 },
   { f: HI.Downward_Slash_01, n: 8, d: 0.045, h: 0.18, e: 0.38, dm: 1.15 },
   { f: HI.Downward_Stab_01, n: 5, d: 0.065, h: 0.2, e: 0.34, dm: 1.7 },
-  // ataques nuevos (22b-ataques-smara.js arma sus cuadros, giros y medias lunas)
-  { f: HI.Regular_Slash_03, n: 1, d: 0.05, h: 0.08, e: 0.42, dm: 1.1, nom: 'giro' }, // 3: giro completo (pega adelante y atrás)
-  { f: HI.Regular_Slash_05, n: 1, d: 0.05, h: 0.14, e: 0.42, dm: 1.5, nom: 'estocada' }, // 4: estocada baja con embestida
-  { f: HI.Regular_Slash_04, n: 1, d: 0.05, h: 0.1, e: 0.5, dm: 1.8, nom: 'ascendente' }, // 5: tajo ascendente que la levanta
-  { f: HI.Regular_Slash_03, n: 1, d: 0.05, h: 0.06, e: 0.46, dm: 0.9, nom: 'remolino' }, // 6: remolino en el aire (3 golpes)
-  { f: HI.Downward_Stab_04, n: 1, d: 0.05, h: 0.3, e: 0.66, dm: 1.4, nom: 'picada' }, // 7: picada (S en el aire) con onda al caer
+
+  { f: HI.Regular_Slash_03, n: 1, d: 0.05, h: 0.08, e: 0.42, dm: 1.1, nom: 'giro' },
+  { f: HI.Regular_Slash_05, n: 1, d: 0.05, h: 0.14, e: 0.42, dm: 1.5, nom: 'estocada' },
+  { f: HI.Regular_Slash_04, n: 1, d: 0.05, h: 0.1, e: 0.5, dm: 1.8, nom: 'ascendente' },
+  { f: HI.Regular_Slash_03, n: 1, d: 0.05, h: 0.06, e: 0.46, dm: 0.9, nom: 'remolino' },
+  { f: HI.Downward_Stab_04, n: 1, d: 0.05, h: 0.3, e: 0.66, dm: 1.4, nom: 'picada' },
 ];
 function wf(f) {
   return { fi: f };
 }
 
-/* ---------- 21-personalizacion.js ---------- */
-/* ===== PERSONALIZACION DEL PERSONAJE: recoloreo del sprite + peinados + accesorios ===== */
 const LOOK_DEF = {
   hair: 0,
   cloth: 0,
@@ -5261,7 +5211,7 @@ function lookPrep() {
     const X0 = (fi % cols) * CW,
       Y0 = Math.floor(fi / cols) * CH,
       inF = (x, y) => x >= X0 && x < X0 + CW && y >= Y0 && y < Y0 + CH;
-    // pelo = masa oscura gruesa (no las lineas finas del contorno ni los ojos)
+
     for (let y = Y0 + 1; y < Y0 + CH - 1; y++)
       for (let x = X0 + 1; x < X0 + CW - 1; x++) {
         const i = y * w + x;
@@ -5635,7 +5585,6 @@ function lookSave() {
   } catch (e) {}
 }
 
-/* ---- pantalla PERSONALIZAR (desde el menu de inicio) ---- */
 let CU = { t: 0, tgt: 'hair', face: 1, mx: -1, my: -1, hit: [] };
 function enterCust() {
   if (!HCLS) lookApply();
@@ -5819,10 +5768,10 @@ function drawCust() {
   CU.hit = [];
   CU.t += 1 / 60;
   const t = CU.t;
-  ctx.drawImage(img.mb, 0, 0, W, H);
+  fondoMenu();
   ctx.fillStyle = 'rgba(8,14,16,.55)';
   ctx.fillRect(0, 0, W, H);
-  // vista previa
+
   cuPanel(22, 22, 214, 362);
   ctx.fillStyle = '#6fa9a2';
   ctx.fillRect(28, 28, 202, 350);
@@ -5863,14 +5812,14 @@ function drawCust() {
   ctx.fillText('clic para girar', 129, 350);
   ctx.fillText(HAIRS[LOOK.hair] + ' · ' + CLOTHS[LOOK.cloth], 129, 364);
   ctx.textAlign = 'left';
-  // titulo
+
   cuPanel(246, 22, 432, 22);
   ctx.fillStyle = '#f4f1e6';
   ctx.font = '10px ' + PS;
   ctx.textAlign = 'center';
   ctx.fillText('PERSONALIZAR', 462, 38);
   ctx.textAlign = 'left';
-  // cabello
+
   cuPanel(246, 52, 212, 128, 'CABELLO');
   HAIRS.forEach((n, i) => {
     const x = 258 + (i % 4) * 48,
@@ -5881,7 +5830,7 @@ function drawCust() {
   ctx.fillStyle = '#2d3a3b';
   ctx.font = '6px ' + PS;
   ctx.fillText(HAIRS[LOOK.hair].toUpperCase(), 306 + 52, 150);
-  // ropa
+
   cuPanel(466, 52, 212, 128, 'ROPA');
   CLOTHS.forEach((n, i) => {
     const x = 478 + (i % 4) * 48,
@@ -5892,7 +5841,7 @@ function drawCust() {
   ctx.fillStyle = '#2d3a3b';
   ctx.font = '6px ' + PS;
   ctx.fillText(CLOTHS[LOOK.cloth].toUpperCase(), 526 + 52, 150);
-  // accesorios
+
   cuPanel(246, 188, 212, 146, 'ACCESORIOS');
   HEADS.forEach((a, i) => {
     const x = 256 + (i % 5) * 40,
@@ -5930,7 +5879,7 @@ function drawCust() {
   ctx.font = '6px ' + PS;
   ctx.fillText('CABEZA: ' + HEADS[LOOK.head].n.toUpperCase(), 258, 306);
   ctx.fillText('CARA: ' + FACES[LOOK.face].n.toUpperCase(), 258, 320);
-  // colores
+
   cuPanel(466, 188, 212, 146, 'COLORES');
   LPAL.forEach((c, i) => {
     const x = 474 + (i % 6) * 15,
@@ -5984,7 +5933,7 @@ function drawCust() {
   ctx.font = '6px ' + PS;
   ctx.fillText('Elige qué pintar', 476, 288);
   ctx.fillText('y luego un color', 476, 300);
-  // botones
+
   cuBtn(246, 346, 136, 30, 'ACEPTAR', '#3e9a4c', '#4fb85e', custOk);
   cuBtn(394, 346, 136, 30, 'ALEATORIO', '#d29a1e', '#eab434', custRand);
   cuBtn(542, 346, 136, 30, 'VOLVER', '#c23c34', '#de5148', custBack);
@@ -5993,29 +5942,15 @@ function drawCust() {
   ctx.fillText('ENTER aceptar · R aleatorio · ESC volver', 246, 396);
 }
 
-/* ---------- 21c-inventario.js ---------- */
-/* ===== INVENTARIO INTERACTIVO (sistema del juego completo, no solo de la fase) =====
-   Se abre con I o Tab. Mientras está abierto el juego queda en pausa.
-   Dos pestañas (Q / E, o clic en la pestaña):
-   1) OBJETOS: la bolsa de comida (nacatamal, gallo pinto, vigorón...) de 10 filas x 5 columnas.
-      Desde aquí se arman las 5 casillas de la BARRA RÁPIDA (teclas 1 a 5).
-   2) EQUIPO: los objetos que Smara puede llevar puestos (máximo 3), en una bolsa de 4 filas x 5 columnas.
-      Solo funcionan los que están puestos.
-   Controles con el inventario abierto:
-   - mouse: clic = seleccionar · arrastrar = mover / cambiar de lugar · doble clic = usar / poner o quitar
-   - teclado: flechas o WASD = moverse · Enter o Espacio = usar / poner o quitar · 1-5 = mandar a la barra
-     · Q / E = cambiar de pestaña · Esc / I / Tab = cerrar
-   Cada casilla guarda hasta 9 unidades de lo mismo. */
-
 const INV = {
   open: false,
-  tab: 0, // 0 objetos, 1 equipo
-  bolsa: new Array(50).fill(null), // [{id, n}] 10 filas x 5 columnas
-  barra: new Array(5).fill(null), // barra rápida (teclas 1 a 5)
-  eqBolsa: new Array(20).fill(null), // equipables: 4 filas x 5 columnas (guarda la clave)
-  eqPuesto: new Array(3).fill(null), // lo que Smara lleva puesto (máximo 3)
+  tab: 0,
+  bolsa: new Array(50).fill(null),
+  barra: new Array(5).fill(null),
+  eqBolsa: new Array(20).fill(null),
+  eqPuesto: new Array(3).fill(null),
   sel: { zona: 'bolsa', i: 0 },
-  arr: null, // arrastre en curso
+  arr: null,
   clicT: 0,
   aviso: '',
   avisoT: 0,
@@ -6025,7 +5960,7 @@ const INV_COLS = 5,
   INV_FILAS = 10,
   EQ_FILAS = 4,
   PILA = 9;
-// objetos equipables registrados por otras partes del juego (por ejemplo los tesoros de la nueva fase)
+
 const EQUIPABLES = [];
 function registrarEquipables(lista) {
   for (const q of lista) if (!EQUIPABLES.find(e => e.k == q.k)) EQUIPABLES.push(q);
@@ -6040,8 +5975,6 @@ function comida(id) {
   return FOODS.find(f => f.id == id);
 }
 
-/* ---- datos ---- */
-// el resto del juego sigue usando "inv" (conteo por tipo); se recalcula desde las casillas
 function invSync() {
   const c = {};
   for (const s of [...INV.bolsa, ...INV.barra]) if (s) c[s.id] = (c[s.id] || 0) + s.n;
@@ -6056,7 +5989,7 @@ function invVaciar() {
   INV.open = false;
   invSync();
 }
-// meter un objeto: primero junto a los iguales, luego en la barra si hay hueco, luego en la bolsa
+
 function invAgregar(id, n) {
   id = ALIAS[id] || id;
   if (!comida(id)) return false;
@@ -6080,13 +6013,13 @@ function invAgregar(id, n) {
 function invAgregarEquipable(k) {
   if (!equipable(k) || INV.eqBolsa.includes(k) || INV.eqPuesto.includes(k)) return;
   const libre = INV.eqPuesto.indexOf(null);
-  if (libre >= 0) INV.eqPuesto[libre] = k; // si hay un espacio libre, se lo pone sola
+  if (libre >= 0) INV.eqPuesto[libre] = k;
   else {
     const j = INV.eqBolsa.indexOf(null);
     if (j >= 0) INV.eqBolsa[j] = k;
   }
 }
-// usar comida (mismos efectos que antes)
+
 function usarComida(id) {
   const f = comida(id);
   if (!f) return false;
@@ -6110,7 +6043,7 @@ function usarCasilla(L, i) {
   if (s.n <= 0) L[i] = null;
   invSync();
 }
-// teclas 1 a 5 durante el juego
+
 useItem = function (i) {
   if (state != 'play' || i < 0 || i > 4) return;
   usarCasilla(INV.barra, i);
@@ -6120,7 +6053,7 @@ addItem = function (id) {
 };
 function invPoner(k) {
   if (INV.eqPuesto.includes(k)) {
-    // quitar
+
     const j = INV.eqBolsa.indexOf(null);
     if (j < 0) return invAvisar('La bolsa de equipo está llena');
     INV.eqPuesto[INV.eqPuesto.indexOf(k)] = null;
@@ -6140,7 +6073,7 @@ function invAvisar(s) {
   INV.avisoT = 1.8;
   sfx('parry');
 }
-// guardar / cargar (lo usa la partida firmada)
+
 function invGuardar() {
   return {
     b: INV.bolsa.map(s => (s ? [s.id, s.n] : 0)),
@@ -6157,10 +6090,10 @@ function invCargar(d, viejo) {
     (d.h || []).slice(0, 5).forEach((v, i) => (INV.barra[i] = pila(v)));
     (d.eb || []).slice(0, 20).forEach((k, i) => (INV.eqBolsa[i] = typeof k == 'string' ? k : null));
     (d.ep || []).slice(0, 3).forEach((k, i) => (INV.eqPuesto[i] = typeof k == 'string' ? k : null));
-  } else if (viejo) for (const id in viejo) invAgregar(id, viejo[id] | 0); // partidas viejas: conteos sueltos
+  } else if (viejo) for (const id in viejo) invAgregar(id, viejo[id] | 0);
   invSync();
 }
-// revisión de seguridad (la llama el vigilante de stats en 34-proteccion.js)
+
 function invValidar() {
   const ok = s => s && comida(s.id) && Number.isInteger(s.n) && s.n >= 1 && s.n <= PILA;
   for (const L of [INV.bolsa, INV.barra]) for (let i = 0; i < L.length; i++) if (L[i] && !ok(L[i])) L[i] = null;
@@ -6177,7 +6110,6 @@ function invValidar() {
   invSync();
 }
 
-/* ---- abrir / cerrar ---- */
 function invToggle() {
   if (!INV.open && state != 'play' && state != 'room') return;
   INV.open = !INV.open;
@@ -6186,10 +6118,9 @@ function invToggle() {
   sfx('swing');
 }
 
-/* ---- geometría de la pantalla (en coordenadas del mundo 700x406) ---- */
 const IG = { x: 64, y: 50, w: 572, h: 322, c: 21 };
 function invCasillas() {
-  // devuelve [{zona, i, x, y, s}] de todo lo que se puede tocar en la pestaña actual
+
   const L = [],
     X = IG.x,
     Y = IG.y;
@@ -6221,7 +6152,7 @@ function invMover(a, b) {
   const sa = A[a.i],
     sb = B[b.i];
   if (!sa) return;
-  // juntar pilas iguales
+
   if (sb && sa.id && sb.id == sa.id) {
     const k = Math.min(PILA - sb.n, sa.n);
     sb.n += k;
@@ -6241,7 +6172,6 @@ function invAccion(c) {
   else if (L[c.i]) invPoner(L[c.i]);
 }
 
-/* ---- entrada ---- */
 function invKey(e) {
   const k = e.code;
   if (k == 'Escape' || k == 'KeyI' || k == 'Tab') return invToggle();
@@ -6263,7 +6193,7 @@ function invKey(e) {
   if (k == 'ArrowDown' || k == 'KeyS') dy = 1;
   if (dx || dy) {
     let i = S.i + dx + dy * cols;
-    // saltar entre zonas: de la bolsa a la barra y del equipo puesto a la bolsa de equipo
+
     if (S.zona == 'bolsa' && i >= tam) INV.sel = { zona: 'barra', i: Math.min(4, S.i % 5) };
     else if (S.zona == 'barra' && dy < 0) INV.sel = { zona: 'bolsa', i: 45 + Math.min(4, S.i) };
     else if (S.zona == 'eq' && i >= tam) INV.sel = { zona: 'puesto', i: Math.min(2, S.i % 5) };
@@ -6289,13 +6219,13 @@ function invMouse(tipo, e) {
         }
         return;
       }
-    // botón de cerrar
+
     if (x > IG.x + IG.w - 26 && x < IG.x + IG.w - 8 && y > IG.y + 8 && y < IG.y + 26) return invToggle();
     const c = invCasillaEn(x, y);
     if (!c) return;
     const now = performance.now();
     if (INV.sel.zona == c.zona && INV.sel.i == c.i && now - INV.clicT < 330) {
-      invAccion(c); // doble clic
+      invAccion(c);
       INV.clicT = 0;
       return;
     }
@@ -6314,7 +6244,7 @@ function invMouse(tipo, e) {
     if (!c) return;
     const eqZ = z => z == 'eq' || z == 'puesto';
     if (eqZ(A.de.zona) && eqZ(c.zona)) {
-      // equipo: arrastrar a un espacio de "puesto" lo pone, a la bolsa lo quita
+
       const LA = invLista(A.de.zona),
         LB = invLista(c.zona),
         a = LA[A.de.i],
@@ -6329,7 +6259,6 @@ function invMouse(tipo, e) {
 cv.addEventListener('mousemove', e => INV.open && invMouse('move', e));
 addEventListener('mouseup', e => INV.open && invMouse('up', e));
 
-/* ---- dibujo ---- */
 const IC = {
   fondo: '#14151f',
   panel: '#1c1e2b',
@@ -6391,7 +6320,7 @@ function drawInventario() {
   ctx.fillStyle = '#05060c';
   ctx.fillRect(0, 0, W, H);
   ctx.globalAlpha = ap;
-  // marco principal estilo pergamino oscuro con esquinas
+
   marco(X, Y, IG.w, IG.h, IC.fondo, IC.borde);
   ctx.fillStyle = IC.sepia;
   ctx.fillRect(X + 4, Y + 32, IG.w - 8, 2);
@@ -6401,7 +6330,7 @@ function drawInventario() {
     ctx.fillRect(cx, cy, 2, 6);
     ctx.fillRect(cx + 4, cy + 4, 2, 2);
   }
-  // pestañas
+
   for (const t of invPestanas()) {
     const on = INV.tab == t.t;
     marco(t.x, Y + 8, t.w, t.h, on ? '#2e3247' : IC.hueco, on ? IC.sel : '#3a3d52');
@@ -6414,7 +6343,7 @@ function drawInventario() {
   ctx.fillStyle = IC.suave;
   ctx.textAlign = 'left';
   ctx.fillText('Q/E', X + 268, Y + 22);
-  // cerrar
+
   marco(X + IG.w - 26, Y + 8, 18, 18, IC.hueco, '#3a3d52');
   ctx.fillStyle = IC.texto;
   ctx.font = '8px ' + PS;
@@ -6426,7 +6355,7 @@ function drawInventario() {
   const esSel = c => S.zona == c.zona && S.i == c.i;
   if (INV.tab == 0) dibujarObjetos(cas, esSel, X, Y, now);
   else dibujarEquipo(cas, esSel, X, Y, now);
-  // lo que se está arrastrando sigue al mouse
+
   if (INV.arr && INV.arr.mov) {
     const v = invLista(INV.arr.de.zona)[INV.arr.de.i];
     ctx.globalAlpha = 0.85;
@@ -6434,7 +6363,7 @@ function drawInventario() {
     else if (v) dibujarEquipable(v, INV.mx - 12, INV.my - 12, 24);
     ctx.globalAlpha = ap;
   }
-  // aviso
+
   if (INV.avisoT > 0) {
     INV.avisoT -= 1 / 60;
     ctx.font = '8px ' + PS;
@@ -6442,7 +6371,7 @@ function drawInventario() {
     ctx.fillStyle = '#ff9a8a';
     ctx.fillText(INV.aviso, X + IG.w / 2, Y + IG.h - 10);
   }
-  // ayuda
+
   ctx.font = '8px ' + PS;
   ctx.textAlign = 'right';
   ctx.fillStyle = IC.suave;
@@ -6451,8 +6380,7 @@ function drawInventario() {
   ctx.restore();
   pixelar(0, 0, W, H);
 }
-// "pixelar": copia la zona a un lienzo del tamaño del mundo (1 pixel = 1 pixel del juego) sin suavizado
-// y la vuelve a pegar, así líneas, brillos y letras quedan en bloques de pixel exactos
+
 let PXC = null;
 function pixelar(x, y, w, h) {
   if (!PXC) {
@@ -6496,7 +6424,7 @@ function dibujarObjetos(cas, esSel, X, Y, now) {
   ctx.font = '8px ' + PS;
   ctx.fillStyle = IC.oro;
   ctx.fillText('BARRA RÁPIDA 1-5', X + 222, Y + 256);
-  // panel de detalle
+
   const dx = X + 140,
     dy = Y + 44;
   marco(dx, dy, 412, 190, IC.panel, '#3a3d52');
@@ -6536,7 +6464,7 @@ function dibujarObjetos(cas, esSel, X, Y, now) {
     ctx.font = '8px ' + PS;
     textoPartido('Las comidas que recogés caen aquí. Arrastrá las que más usás a la barra rápida.', dx + 18, dy + 48, 380, 11);
   }
-  // arma (siempre visible)
+
   ctx.font = '8px ' + PS;
   ctx.fillStyle = IC.oro;
   ctx.fillText('ARMA', dx + 18, dy + 168);
@@ -6552,7 +6480,7 @@ function dibujarObjetos(cas, esSel, X, Y, now) {
   }
 }
 function dibujarEquipo(cas, esSel, X, Y, now) {
-  // retrato de Smara con su forma actual
+
   marco(X + 18, Y + 44, 132, 180, IC.hueco, '#3a3d52');
   ctx.save();
   ctx.translate(X + 84, Y + 206);
@@ -6568,7 +6496,7 @@ function dibujarEquipo(cas, esSel, X, Y, now) {
       k = L[c.i],
       pues = c.zona == 'puesto';
     if (pues) {
-      // engaste con brillo cuando tiene algo
+
       if (k) {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
@@ -6582,7 +6510,7 @@ function dibujarEquipo(cas, esSel, X, Y, now) {
     } else casilla(c, esSel(c));
     if (k) dibujarEquipable(k, c.x + 3, c.y + 3, c.s - 6);
   }
-  // detalle
+
   const dx = X + 316,
     dy = Y + 44,
     k = invLista(INV.sel.zona)[INV.sel.i],
@@ -6614,7 +6542,7 @@ function dibujarEquipo(cas, esSel, X, Y, now) {
     ctx.font = '8px ' + PS;
     textoPartido('Los tesoros que encontrás en los cofres se guardan aquí. Solo funcionan los que Smara lleva puestos.', dx + 12, dy + 46, 214, 11);
   }
-  // reliquias de los espíritus: siempre activas
+
   if (typeof RELIQ != 'undefined' && RELIQ.size) {
     ctx.font = '8px ' + PS;
     ctx.fillStyle = IC.oro;
@@ -6637,7 +6565,7 @@ function dibujarEquipo(cas, esSel, X, Y, now) {
     }
   }
 }
-// barra rápida en el HUD (5 casillas)
+
 function drawHotbar() {
   const n = 5,
     x0 = Math.round(W / 2 - n * 13);
@@ -6674,7 +6602,7 @@ function drawHotbar() {
     ctx.fillText('ESCUDO x' + p.shield, 8, 40);
   }
 }
-// partida nueva: inventario vacío · reintentar tras morir: se conserva
+
 const initInv = init;
 init = function () {
   initInv();
@@ -6687,8 +6615,6 @@ restart = function () {
   invCargar(g);
 };
 
-/* ---------- 22-animacion-resorte.js ---------- */
-/* ---- animacion: estirar/aplastar con resorte, inclinacion suave, polvo al caminar ---- */
 function animSt() {
   return p.an || (p.an = { sx: 1, sy: 1, vx: 0, vy: 0, lean: 0, lf: p.face, st: -1 });
 }
@@ -6789,30 +6715,8 @@ function curAnim() {
   return wf(HI['idle_' + (Math.floor(p.t * 3) % 4)]);
 }
 
-/* ---------- 22b-ataques-smara.js ---------- */
-/* =====================================================================
-   ATAQUES NUEVOS DE SMARA (inspirados en una hoja de combos de espada)
-   En el suelo, J/K encadena un COMBO DE 5:
-     1 corte normal → 2 corte hacia abajo → 3 GIRO (vuelta completa, pega
-     adelante y atrás) → 4 ESTOCADA BAJA (se agacha y se lanza hacia adelante)
-     → 5 TAJO ASCENDENTE (media luna vertical que la levanta del suelo)
-   En el aire:
-     J      → REMOLINO: da una vuelta en el aire, 3 golpes, flota un poquito
-     S + J  → PICADA: baja de golpe con la espada; al caer suelta una onda
-              en el piso que pega a los dos lados
-   Todos los cortes dejan MEDIAS LUNAS blancas gruesas en el centro y finas
-   en las puntas (como en la hoja de referencia). Los tres cortes de antes
-   también las usan ahora, y dan un pasito adelante para que pesen más.
-   En forma espíritu se mantiene su combo de 3 (28b-forma-espiritu.js).
-   ===================================================================== */
 const COMBO5 = [0, 1, 3, 4, 5];
 
-/* ---------------- ZONA DE GOLPE de cada ataque ----------------
-   Antes todos los ataques usaban la misma caja (un punto 42 px adelante).
-   Ahora cada uno tiene su propia zona, igual a lo que se ve en pantalla:
-   el giro y el remolino pegan a los dos lados, la estocada llega lejos y
-   bajito, el ascendente pega alto, y la picada pega alrededor al caer.
-   golpeToca(a, x0, y0, x1, y1): ¿la zona del ataque toca ese rectángulo? */
 function atkCaja(a) {
   const f = a.f0 || a.f, x = p.x, y = p.y;
   const fr = (d0, d1, y0, y1) => (f > 0 ? { x0: x + d0, x1: x + d1, y0: y + y0, y1: y + y1 } : { x0: x - d1, x1: x - d0, y0: y + y0, y1: y + y1 });
@@ -6820,11 +6724,11 @@ function atkCaja(a) {
     case 0: return fr(-12, 96, -80, 6);
     case 1: return fr(-16, 100, -96, 8);
     case 2: return fr(-6, 104, -62, 6);
-    case 3: return { x0: x - 84, x1: x + 84, y0: y - 78, y1: y + 6 }; // giro
-    case 4: return fr(-6, 124, -54, 6); // estocada baja
-    case 5: return fr(-12, 88, -150, 6); // ascendente
-    case 6: return { x0: x - 80, x1: x + 80, y0: y - 104, y1: y + 34 }; // remolino
-    case 7: return { x0: x - 94, x1: x + 94, y0: y - 64, y1: y + 6 }; // picada al caer
+    case 3: return { x0: x - 84, x1: x + 84, y0: y - 78, y1: y + 6 };
+    case 4: return fr(-6, 124, -54, 6);
+    case 5: return fr(-12, 88, -150, 6);
+    case 6: return { x0: x - 80, x1: x + 80, y0: y - 104, y1: y + 34 };
+    case 7: return { x0: x - 94, x1: x + 94, y0: y - 64, y1: y + 6 };
   }
   return fr(-12, 96, -80, 6);
 }
@@ -6838,17 +6742,15 @@ function ataqueElegir() {
     p.combo = p.comboT > 0 ? (p.combo + 1) % 3 : 0;
     return p.combo;
   }
-  if (!p.on && !(p.kb > 0)) return keys.KeyS ? 7 : 6; // (no cuenta el saltito de un empujón)
+  if (!p.on && !(p.kb > 0)) return keys.KeyS ? 7 : 6;
   p.combo = p.comboT > 0 ? (p.combo + 1) % COMBO5.length : 0;
   return COMBO5[p.combo];
 }
-// golpes extra de cada ataque: [tiempo, lado (1 adelante, -1 atrás)]
+
 const GOLPES_EXTRA = { 3: [[0.21, -1]], 6: [[0.18, -1], [0.3, 1]], 7: [[0.36, -1]] };
 
-/* ---------------- medias lunas ---------------- */
 const CORTES = [];
-// x, y: centro · r radio · a0→a1 ángulos (en el sentido en que se dibuja) · g grosor
-// barre: segundos que tarda en dibujarse · vida: segundos en total · pega: sigue a Smara
+
 function corte(o) {
   CORTES.push(Object.assign({ t: 0, barre: 0.07, vida: 0.26, g: 12, f: p.face, pega: true, ox: p.x, oy: p.y }, o));
 }
@@ -6858,7 +6760,7 @@ function corteDibujar(c) {
   const bx = c.pega ? p.x : c.ox, by = c.pega ? p.y : c.oy;
   const sweep = Math.min(1, c.t / c.barre);
   const a0 = c.a0, a1 = c.a0 + (c.a1 - c.a0) * sweep;
-  // al desvanecerse, la cola se come la media luna y se adelgaza
+
   const cola = Math.max(0, (k - 0.35) / 0.65), as = a0 + (a1 - a0) * cola;
   const g = c.g * (1 - k * 0.6), N = 22;
   ctx.save();
@@ -6872,7 +6774,7 @@ function corteDibujar(c) {
       ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr * (c.ry || 1));
     }
     for (let i = N; i >= 0; i--) {
-      const u = i / N, a = as + (a1 - as) * u, w = gr * Math.sin(Math.PI * Math.min(1, u * 1.15)); // fina en las puntas
+      const u = i / N, a = as + (a1 - as) * u, w = gr * Math.sin(Math.PI * Math.min(1, u * 1.15));
       ctx.lineTo(Math.cos(a) * (rr - w), Math.sin(a) * (rr - w) * (c.ry || 1));
     }
     ctx.closePath();
@@ -6884,7 +6786,7 @@ function corteDibujar(c) {
   ctx.fillStyle = '#f6f9ff';
   pathCres(g * 0.55, c.r);
   ctx.fill();
-  // filo brillante
+
   if (k < 0.5) {
     ctx.globalCompositeOperation = 'lighter';
     ctx.fillStyle = 'rgba(190,240,255,.5)';
@@ -6893,7 +6795,7 @@ function corteDibujar(c) {
   }
   ctx.restore();
 }
-// estela recta de las estocadas
+
 function estela(o) {
   CORTES.push(Object.assign({ t: 0, vida: 0.22, recta: true, f: p.face, pega: true, ox: p.x, oy: p.y }, o));
 }
@@ -6913,7 +6815,6 @@ function estelaDibujar(c) {
   ctx.restore();
 }
 
-/* ---------------- qué pasa al empezar cada ataque ---------------- */
 function ataqueEmpieza(a) {
   const c = a.c, on = p.on;
   if (on) puff(p.x - p.face * 6, p.y, 3, p.face);
@@ -6921,20 +6822,20 @@ function ataqueEmpieza(a) {
   else if (c == 1) corte({ x: 2, y: -40, r: 46, a0: -2.4, a1: 0.7, g: 15, barre: 0.08 });
   else if (c == 2) estela({ x: 10, y: -30, largo: 80, alto: 5 });
   else if (c == 3) {
-    // giro: una vuelta entera alrededor de Smara + un anillo fino
+
     corte({ x: 0, y: -32, r: 46, a0: -1.7, a1: -1.7 + Math.PI * 2, g: 13, barre: 0.24, vida: 0.38, ry: 0.72 });
     corte({ x: 0, y: -30, r: 54, a0: -1.2, a1: -1.2 + Math.PI * 2, g: 4, barre: 0.26, vida: 0.36, ry: 0.6 });
     sfx('dash');
   } else if (c == 4) {
-    // estocada baja: se agacha, se lanza y deja una estela larga a ras del piso
+
     estela({ x: 16, y: -16, largo: 120, alto: 6, vida: 0.26 });
     corte({ x: 70, y: -16, r: 26, a0: -1.2, a1: 1.2, g: 8, barre: 0.05, vida: 0.2, ry: 0.7 });
   } else if (c == 5) {
-    // tajo ascendente: media luna vertical alta que queda en el lugar
+
     corte({ x: 14, y: -40, r: 56, a0: 1.6, a1: -1.75, g: 18, barre: 0.1, vida: 0.38, pega: false });
     corte({ x: 22, y: -40, r: 44, a0: 1.4, a1: -1.5, g: 5, barre: 0.12, vida: 0.32, pega: false });
   } else if (c == 6) {
-    // remolino en el aire: dos vueltas finas que siguen a Smara
+
     corte({ x: 0, y: -32, r: 40, a0: -1.6, a1: -1.6 + Math.PI * 2, g: 11, barre: 0.2, vida: 0.34 });
     corte({ x: 0, y: -32, r: 48, a0: 1.5, a1: 1.5 + Math.PI * 2, g: 5, barre: 0.3, vida: 0.44 });
   } else if (c == 7) {
@@ -6942,7 +6843,7 @@ function ataqueEmpieza(a) {
     sfx('dash');
   }
 }
-// la onda de la picada al tocar el suelo (medias lunas bajitas a los dos lados)
+
 function picadaCae() {
   SHK = Math.max(SHK, 5);
   sfx('boom');
@@ -6954,14 +6855,13 @@ function picadaCae() {
   puff(p.x, p.y, 8, 0);
 }
 
-/* ---------------- cada cuadro del ataque ---------------- */
 let ultAtaque = null;
 function ataquesSmaraTick(dt) {
   for (let i = CORTES.length - 1; i >= 0; i--) { CORTES[i].t += dt; if (CORTES[i].t > CORTES[i].vida) CORTES.splice(i, 1); }
   const a = p.atk;
   if (!a) { ultAtaque = null; return; }
   if (a.raiz !== undefined ? a.raiz !== ultAtaque : a !== ultAtaque) {
-    // ataque nuevo
+
     a.raiz = a.raiz || a;
     a.f0 = a.f;
     a.extra = 0;
@@ -6971,19 +6871,19 @@ function ataquesSmaraTick(dt) {
   }
   const t = a.t, c = a.c, esp = typeof FORMA != 'undefined' && FORMA.on;
   if (esp) return;
-  // pasito adelante en los cortes de suelo
+
   if ((c == 0 || c == 1) && p.on && t < 0.08) p.x += p.face * 110 * dt;
   if (c == 3 && p.on && t < 0.2) p.x += p.face * 60 * dt;
-  // estocada: embestida
+
   if (c == 4 && t > 0.05 && t < 0.2) {
     p.x += p.face * 560 * dt;
     if (Math.random() < 0.7) pfx(p.x - p.face * 10, p.y - 2, -p.face * rnd(40, 120), rnd(-50, -10), 0.3, '#cbbfa8', 2, 200);
   }
-  // ascendente: salta con el corte
+
   if (c == 5 && t > 0.05 && !a.salto) { a.salto = 1; if (p.on) { p.vy = -470; p.on = false; } else p.vy = Math.min(p.vy, -260); }
-  // remolino: flota mientras gira
+
   if (c == 6 && t < 0.32 && !p.on) p.vy = Math.min(p.vy, 30);
-  // picada: cae en línea recta y aguanta la pose hasta tocar el suelo
+
   if (c == 7) {
     if (!p.on && !a.cayo) {
       p.vy = Math.max(p.vy, 760);
@@ -6991,11 +6891,11 @@ function ataquesSmaraTick(dt) {
       if (Math.random() < 0.8) pfx(p.x + rnd(-4, 4), p.y - rnd(30, 70), 0, -160, 0.2, '#e8f4ff', 2, 0);
     } else if (!a.cayo) {
       a.cayo = true;
-      a.t = ATK[7].h; // pega al tocar el suelo
+      a.t = ATK[7].h;
       picadaCae();
     }
   }
-  // golpes extra (al otro lado, o de nuevo): un ataque "hermano" para que vuelva a pegar
+
   const ex = GOLPES_EXTRA[c];
   if (ex && a.extra < ex.length && a.t >= ex[a.extra][0] && a.hit) {
     const [, lado] = ex[a.extra];
@@ -7005,7 +6905,6 @@ function ataquesSmaraTick(dt) {
   }
 }
 
-/* ---------------- cuerpo de Smara durante los ataques nuevos ---------------- */
 function cuadroAtaque(a) {
   const t = a.t;
   switch (a.c) {
@@ -7033,16 +6932,16 @@ drawPlayer = function () {
   const t = a.t, cx = p.x - cam, cy = p.y - 32;
   ctx.save();
   if (a.c == 3 && t > 0.05 && t < 0.26) {
-    // el giro: se da vuelta dos veces (cambia de lado muy rápido)
+
     if (Math.floor((t - 0.05) / 0.052) % 2) { ctx.translate(cx * 2, 0); ctx.scale(-1, 1); }
   } else if (a.c == 4 && t < 0.3) {
-    // agachada y tirada hacia adelante
+
     ctx.translate(cx, p.y);
     ctx.rotate(p.face * 0.16);
     ctx.scale(1.06, 0.86);
     ctx.translate(-cx, -p.y);
   } else if (a.c == 6 && t < 0.34) {
-    // vuelta completa en el aire
+
     ctx.translate(cx, cy);
     ctx.rotate(p.face * (t / 0.34) * Math.PI * 2);
     ctx.translate(-cx, -cy);
@@ -7055,13 +6954,12 @@ drawPlayer = function () {
   ctx.restore();
 };
 
-/* ---------------- conexión ---------------- */
 const animTickAT = animTick;
 animTick = function (dt) {
   animTickAT(dt);
   ataquesSmaraTick(dt);
 };
-// las medias lunas reemplazan a los arcos finos de antes (las chispas de impacto se quedan)
+
 const drawSlashesAT = drawSlashes;
 drawSlashes = function () {
   const todos = SLS.splice(0);
@@ -7069,7 +6967,7 @@ drawSlashes = function () {
   drawSlashesAT();
   SLS.length = 0;
   for (const s of todos) SLS.push(s);
-  // en forma espíritu siguen sus arcos propios
+
   if (typeof FORMA != 'undefined' && FORMA.on) {
     SLS.splice(0);
     for (const s of todos) if (!s.hit) SLS.push(s);
@@ -7080,8 +6978,6 @@ drawSlashes = function () {
   for (const c of CORTES) (c.recta ? estelaDibujar : corteDibujar)(c);
 };
 
-/* ---------- 23-carteles-zona.js ---------- */
-/* ===== CARTELES DE ZONA ===== */
 const ZN = {
   1: ['RIBERA DE SAHINOS', 'Mulukukú antiguo · orillas del río Tuma'],
   5: ['LA NOCHE DE LOS DUHINDU', 'cuando el monte silba, no contestés'],
@@ -7193,7 +7089,7 @@ function loadArea(n) {
       'Cayó la noche y el monte silba. Vencé a las criaturas de la grieta para romper el sello.',
     );
   }
-  if (n == 6) cieloCargar(); // NUEVA FASE: todo está en 27-nueva-fase.js
+  if (n == 6) cieloCargar();
   if (n == 2) {
     platforms = P2.map(([x, y, w]) => ({ x, y, w }));
     pick = [
@@ -7236,8 +7132,6 @@ function loadArea(n) {
   save();
 }
 
-/* ---------- 24-enemigos.js ---------- */
-/* ===== ENEMIGOS: cada uno con animacion y ataque propio ===== */
 function mkE(t, x, y) {
   const e = {
     t,
@@ -7772,7 +7666,6 @@ function drawEnemies(t) {
   }
 }
 
-/* ---------- 25-cinematica.js ---------- */
 function restart() {
   const a = area,
     cx = CPX,
@@ -7803,7 +7696,7 @@ const TPF = [
   [9, 8],
   [1, 15],
   [9, 15],
-]; // marcos del pack: tierra, acero, musgo, pizarra, hielo, arena
+];
 function tdraw(fr, c, r, x, y) {
   const f = TPF[fr];
   ctx.drawImage(img.tp, (f[0] + c) * 8, (f[1] + r) * 8, 8, 8, x, y, 16, 16);
@@ -8094,8 +7987,6 @@ const PR = {
     ],
   };
 
-/* ---------- 26-mundo-cofres-obeliscos.js ---------- */
-/* optimizacion: los filtros (brillo/saturacion) se aplican una sola vez a una copia de la imagen, no en cada dibujo */
 const FIMG = new WeakMap();
 let VPI = null,
   FOK = null;
@@ -8847,7 +8738,7 @@ function genEnc() {
   const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647,
     G = GROUND,
     E = [];
-  // suelo: separados, con alguna pareja
+
   let x = 820;
   while (x < 12100) {
     if (Math.abs(x - MBX[0]) < 380) {
@@ -8859,12 +8750,12 @@ function genEnc() {
       E.push({ x: Math.round(x + 170 + rnd() * 60), t: pickT(x / 13000, rnd), y: G });
     x += 640 + Math.floor(rnd() * 180);
   }
-  // guardianes de cofres (cofre mas valioso = guardia mas fuerte)
+
   for (const c of mkChests(5)) {
     if (Math.abs(c.x - MBX[0]) < 300) continue;
     E.push({ x: c.x + 130, t: ['hallo', 'shade', 'hunt', 'demon'][c.ty], y: G });
   }
-  // plataformas: un enemigo encima de cada 6ta plataforma
+
   platforms.forEach((pl, i) => {
     if (pl.x < 1200 || pl.x > 11800 || pl.w < 96 || i % 4 != 2) return;
     if (Math.abs(pl.x - MBX[0]) < 300) return;
@@ -8872,11 +8763,11 @@ function genEnc() {
     if (t == 'demon') t = 'shade';
     E.push({ x: Math.round(pl.x + pl.w / 2), t, y: pl.y, pl: 1 });
   });
-  // custodios del obelisco
+
   E.push({ x: 12650, t: 'hunt', y: G, k: 1 });
   E.push({ x: 12850, t: 'hunt', y: G, k: 1 });
   E.sort((a, b) => a.x - b.x);
-  // limpia solapes en el suelo (>=150 entre enemigos del suelo)
+
   const out = [];
   let lastG = -1e9;
   for (const e of E) {
@@ -8902,7 +8793,7 @@ function genEnc() {
     ),
     gr = out.filter(e => !e.pl && !e.k);
   const fin = [...cust, ...plats, ...gr.filter(e => !e.pl && !e.k)];
-  // Duskclaw: emboscadas pensadas por tramo (garras solas al inicio, lanzadores en lo alto con apoyo abajo, sombras junto a las tumbas, brutos custodiando)
+
   const DKP = [
     [1500, 'dusk'],
     [2350, 'dusk'],
@@ -9050,45 +8941,33 @@ function knock(sx) {
   p.dash = 0;
 }
 
-/* ---------- 27-cielo-en-blanco.js ---------- */
-/* Archivo vacío: el área 6 ahora es el Bosque de la Niebla (27-nueva-fase.js y siguientes).
-   Puedes borrar este archivo sin problema. */
 
-/* ---------- 27-enemigos-cielo.js ---------- */
-/* Archivo vacío: el área 6 ahora es el Bosque de la Niebla (27-nueva-fase.js y siguientes).
-   Puedes borrar este archivo sin problema. */
 
-/* ---------- 27-nueva-fase.js ---------- */
-/* ===== NUEVA FASE (área 6) =====
-   Fondo: "Dark Forest" de Val_DeMar (itch.io, licencia CC0), 5 capas con PARALLAX:
-   cuando Smara camina, cada capa se mueve a distinta velocidad (las lejanas casi nada,
-   las cercanas más), igual que en las otras zonas. Todas se repiten sin corte.
-   - Las capas se dibujan a su tamaño real (1 pixel = 1 del mundo, como Smara).
-   - El suelo gris del camino se mantiene (sacado del fondo anterior, pixel 2x2) y va pegado a Smara.
-   - Abajo va el agua con el reflejo de todo (fondo, espíritus y Smara). */
+
+
 const NF = {
   capas: [
-    { k: 'df1', f: 0.04 }, // cielo y troncos lejanos
+    { k: 'df1', f: 0.04 },
     { k: 'df2', f: 0.12 },
     { k: 'df3', f: 0.24 },
     { k: 'df4', f: 0.4 },
-    { k: 'df5', f: 0.62 }, // árboles grandes y arbustos con flores
+    { k: 'df5', f: 0.62 },
   ],
   capaW: 512,
   capaH: 360,
-  capaBase: 314, // donde termina abajo cada capa (justo detrás del camino)
-  sueloY: 296, // donde empieza la tira del suelo gris (con sus hierbitas)
-  sueloW: 640, // ancho de la tira (320 pixeles x 2)
-  suelo: 310, // donde pisa Smara
-  agua: 336, // línea del agua: abajo de esto va el reflejo
-  largo: 4400, // largo de la fase (inicio, zona de combate, camino de los espíritus)
+  capaBase: 314,
+  sueloY: 296,
+  sueloW: 640,
+  suelo: 310,
+  agua: 336,
+  largo: 4400,
 };
 function cieloCargar() {
   LEVEL = NF.largo;
   GROUND = NF.suelo;
-  platCargar(); // 27c-plataformas.js
+  platCargar();
   CHESTS = [];
-  tesorosCargar(); // 28c-tesoros.js
+  tesorosCargar();
   enemies = [];
   pick = [];
   CPS = [];
@@ -9106,20 +8985,20 @@ function cieloCargar() {
   SIETE.usada = false;
   ambient('');
 }
-// parallax: cada capa se corre según la cámara multiplicada por su velocidad
+
 function drawCielo(t) {
-  t = tMundo(); // se congela cuando Smara detiene el tiempo
+  t = tMundo();
   const top = NF.capaBase - NF.capaH;
   ctx.fillStyle = '#5d6478';
   ctx.fillRect(0, 0, W, H);
-  brilloPreparar(); // siembra los hongos y esporas que brillan (27b-brillo-del-bosque.js)
+  brilloPreparar();
   NF.capas.forEach((c, li) => {
     const off = Math.round(cam * c.f) % NF.capaW;
-    const im = (BR.capas[li] && BR.capas[li].combo) || img[c.k]; // capa + brillos ya juntos (27b)
+    const im = (BR.capas[li] && BR.capas[li].combo) || img[c.k];
     for (let x = -off; x < W; x += NF.capaW) ctx.drawImage(im, x, top);
   });
   brilloBloom(t);
-  // suelo gris: se repite en espejo para que no se note la unión
+
   const c0 = Math.floor(cam / NF.sueloW);
   for (let i = c0; i <= c0 + 2; i++) {
     const x = i * NF.sueloW - Math.round(cam);
@@ -9132,10 +9011,10 @@ function drawCielo(t) {
     ctx.drawImage(img.nfs, 0, 0, 320, 20, 0, 0, 640, 40);
     ctx.restore();
   }
-  for (const n of ESPIRITUS) drawEspiritu(n, t); // espiritus (28-espiritus.js), detrás de Smara
-  formaVelo(); // oscurece el bosque durante la transformación (28b-forma-espiritu.js)
+  for (const n of ESPIRITUS) drawEspiritu(n, t);
+  formaVelo();
 }
-// agua con reflejo: copia lo que hay arriba de la línea del agua y lo dibuja de cabeza, con ondas
+
 function drawCieloAgua(t) {
   t = tMundo();
   const wt = NF.agua,
@@ -9181,34 +9060,22 @@ function drawCieloAgua(t) {
   }
   tiempoOnda();
   dibujarReloj();
-  formaCine(); // transformación de Smara (28b-forma-espiritu.js)
+  formaCine();
   drawTesorosHUD(t);
-  drawCharla(); // globos de texto encima de todo
+  drawCharla();
   drawReliquias(t);
 }
 
-/* ---------- 27b-brillo-del-bosque.js ---------- */
-/* ===== BRILLO DEL BOSQUE (bioluminiscencia hecha a mano, estilo Mycelium) =====
-   Sobre las capas de Dark Forest se "siembran" cosas que brillan, en pixel art:
-   - hongos repisa pegados a los troncos (capas 4 y 5), con su brillo latiendo
-   - hongos con tallo encima de los arbustos (capa 5)
-   - esporas de luz en las copas de los árboles y puntitos lejanos (capas 2 a 5)
-   - las flores rojas del fondo ahora brillan
-   - luciérnagas flotando
-   El brillo (bloom) se pinta en un lienzo a la mitad y se agranda sin suavizar, así
-   el resplandor también queda "pixelado" y no borroso. Todo se mueve con su capa (parallax).
-   La siembra usa una semilla fija: siempre sale igual. */
-
 const BR = {
   listo: false,
-  capas: [], // por capa: { lienzo (pixeles que brillan), focos: [{x,y,r,c,a,ph,v}] }
-  esc: 2, // cada pixel del bloom = 2x2 del mundo (igual que el suelo)
+  capas: [],
+  esc: 2,
   bloom: null,
   bx: null,
   halos: {},
   luci: [],
 };
-// colores de luz: [centro, borde]
+
 const LUZ = {
   cian: ['#a8fbff', '#3cc8da'],
   menta: ['#b6ffd9', '#36c08c'],
@@ -9269,13 +9136,13 @@ function brilloPreparar() {
       x.fillStyle = col;
       x.fillRect(i, j, 1, 1);
     };
-    // capa 5 (la más cercana)
+
     if (li == 4) {
       const TRONCO = [[60, 24, 12], [38, 16, 10], [80, 33, 18]],
         ARBUSTO = [[12, 17, 29], [10, 14, 20], [11, 15, 21], [16, 22, 39]],
         COPA = [[14, 20, 47], [23, 30, 62], [19, 27, 62], [16, 24, 57]],
         FLOR = [[241, 100, 91]];
-      // hongos repisa en los bordes de los troncos
+
       for (let n = 0, intento = 0; n < 11 && intento < 6000; intento++) {
         const i = Math.floor(R() * W0),
           j = 110 + Math.floor(R() * 200);
@@ -9297,7 +9164,7 @@ function brilloPreparar() {
         ocupado.push([i, j]);
         n++;
       }
-      // hongos con tallo encima de los arbustos
+
       for (let n = 0, intento = 0; n < 16 && intento < 8000; intento++) {
         const i = 2 + Math.floor(R() * (W0 - 4)),
           j = 270 + Math.floor(R() * 88);
@@ -9311,7 +9178,7 @@ function brilloPreparar() {
         for (let a = -ancho; a <= ancho; a++) dot(i + a, y, Math.abs(a) == ancho ? B : C);
         for (let a = -ancho + 1; a <= ancho - 1; a++) dot(i + a, y - 1, C);
         if (R() < 0.5) {
-          // hongo chiquito al lado
+
           const i2 = i + (R() < 0.5 ? -3 : 3);
           dot(i2, j - 1, '#9fb6c4');
           dot(i2, j - 2, C);
@@ -9322,7 +9189,7 @@ function brilloPreparar() {
         ocupado.push([i, j]);
         n++;
       }
-      // esporas en las copas
+
       for (let n = 0, intento = 0; n < 70 && intento < 9000; intento++) {
         const i = Math.floor(R() * W0),
           j = Math.floor(R() * 150);
@@ -9333,7 +9200,7 @@ function brilloPreparar() {
         if (n % 3 == 0) focos.push({ x: i, y: j, r: 6, c: col, a: 0.5, ph: R() * 6.28, v: 1.5 + R() * 2 });
         n++;
       }
-      // flores rojas que brillan
+
       for (let j = 0; j < H0; j++)
         for (let i = 0; i < W0; i++)
           if (es(i, j, FLOR) && !es(i - 1, j, FLOR) && !es(i, j - 1, FLOR)) {
@@ -9341,7 +9208,7 @@ function brilloPreparar() {
             focos.push({ x: i + 1, y: j + 1, r: 11, c: 'coral', a: 0.38, ph: R() * 6.28, v: 1 + R() });
           }
     }
-    // capa 4: hongos repisa más tenues
+
     if (li == 3) {
       const TRONCO = [[48, 38, 36], [39, 33, 32]];
       for (let n = 0, intento = 0; n < 6 && intento < 5000; intento++) {
@@ -9360,7 +9227,7 @@ function brilloPreparar() {
         n++;
       }
     }
-    // capas lejanas: puntitos de luz
+
     if (li == 1 || li == 2) {
       const n = li == 1 ? 14 : 22;
       for (let k = 0; k < n; k++) {
@@ -9371,8 +9238,7 @@ function brilloPreparar() {
         focos.push({ x: i, y: j, r: 5, c: 'cian', a: li == 1 ? 0.18 : 0.28, ph: R() * 6.28, v: 0.6 + R() });
       }
     }
-    // optimización: la capa y sus pixeles que brillan se juntan una sola vez en un lienzo,
-    // así cada cuadro se dibuja 1 imagen por capa en vez de 2
+
     const combo = document.createElement('canvas');
     combo.width = W0;
     combo.height = H0;
@@ -9381,7 +9247,7 @@ function brilloPreparar() {
     cx.drawImage(c, 0, 0);
     BR.capas[li] = { lienzo: c, combo, focos };
   }
-  // luciérnagas
+
   for (let k = 0; k < 18; k++)
     BR.luci.push({ x: R() * 900, y: 130 + R() * 160, ph: R() * 6.28, v: 0.4 + R() * 0.6, c: pick(['menta', 'cian', 'menta']), f: 0.75 + R() * 0.2 });
   BR.bloom = document.createElement('canvas');
@@ -9389,7 +9255,7 @@ function brilloPreparar() {
   BR.bloom.height = Math.ceil(H / BR.esc);
   BR.bx = BR.bloom.getContext('2d');
 }
-// pixeles que brillan de una capa (se dibuja justo encima de la capa)
+
 function brilloCapa(li, x, top, t) {
   const L = BR.capas[li];
   if (!L) return;
@@ -9397,13 +9263,12 @@ function brilloCapa(li, x, top, t) {
   ctx.drawImage(L.lienzo, x, top);
   ctx.globalAlpha = 1;
 }
-// resplandor de todas las capas + luciérnagas, en un lienzo chico agrandado sin suavizar
+
 function brilloBloom(t) {
-  // optimización: con la cámara quieta, el resplandor se recalcula un cuadro sí y uno no
-  // (las luces laten lento); si la cámara se mueve se recalcula siempre para que no tiemble
+
   BR.par = !BR.par;
   const e = BR.esc,
-    alto = Math.ceil(NF.agua / e); // solo hasta la línea del agua (abajo lo cubre el reflejo)
+    alto = Math.ceil(NF.agua / e);
   if (BR.par && BR.camB != null && Math.abs(BR.camB - cam) < 0.5) {
     brilloComponer(0, alto);
     brilloLuciernagas();
@@ -9428,7 +9293,7 @@ function brilloBloom(t) {
         b.drawImage(halo(f.c), X / e - r, Y / e - r, r * 2, r * 2);
       }
   }
-  // luciérnagas: flotan y titilan
+
   for (const l of BR.luci) {
     const X = ((((l.x + Math.sin(t * l.v + l.ph) * 30 - cam * l.f) % 960) + 960) % 960) - 130,
       Y = l.y + Math.sin(t * l.v * 1.7 + l.ph * 2) * 14,
@@ -9456,7 +9321,7 @@ function brilloComponer(dx, alto) {
   ctx.restore();
 }
 function brilloLuciernagas() {
-  // el cuerpo de cada luciérnaga: 2x2 pixeles
+
   for (const l of BR.luci) {
     if (!(l.a > 0.05)) continue;
     ctx.globalAlpha = Math.min(1, l.a * 1.3);
@@ -9466,32 +9331,20 @@ function brilloLuciernagas() {
   ctx.globalAlpha = 1;
 }
 
-/* ---------- 27c-plataformas.js ---------- */
-/* ===== PLATAFORMAS DE LA NUEVA FASE =====
-   Tiles de "Dark Forest Platform Pack" (Atari Boy, CC0), recoloreados a los azules del bosque.
-   Cada tile es de 16x16 y se dibuja a 32x32 (pixel 2x2, igual que el suelo y los espíritus).
-   Son plataformas de un solo sentido: se sube desde abajo, se baja con S + salto.
-   Distribución:
-   - inicio (Venado y Oveja): libre, para hablar tranquila
-   - 1000 a 2450: ZONA DE COMBATE (todavía sin enemigos): escalones de distinta altura para
-     pelear arriba y abajo, un mirador alto con bloques de runas y descansos entre saltos
-   - 2500 en adelante: camino de los demás espíritus, con algunas plataformas para variar
-   Smara salta unos 90 px: cada escalón sube 55-70 px para que siempre se alcance. */
 const PL_TILE = 16,
   PL_ESC = 2;
 const PLAT_FASE = [
-  // [x, y (donde se pisa), tiles de ancho, adornos]
-  // --- zona de combate ---
+
   [1040, 252, 3, 'arbusto'],
   [1210, 192, 4, ''],
   [1410, 252, 2, ''],
   [1540, 186, 5, 'runas'],
-  [1600, 120, 2, 'runas'], // mirador alto
+  [1600, 120, 2, 'runas'],
   [1790, 244, 3, 'arbusto'],
   [1950, 184, 3, ''],
   [2110, 124, 4, 'runas'],
   [2290, 236, 3, ''],
-  // --- camino de los espíritus ---
+
   [2780, 244, 3, 'arbusto'],
   [3080, 200, 3, ''],
   [3400, 240, 2, ''],
@@ -9509,15 +9362,15 @@ function drawPlatFase(t) {
   for (const pl of platforms) {
     const x0 = Math.round(pl.x - cam);
     if (x0 > W + 40 || x0 + pl.w < -40) continue;
-    const y0 = pl.y - 6; // el pasto sobresale un poco por encima de donde se pisa
-    // sombra suave debajo
+    const y0 = pl.y - 6;
+
     ctx.fillStyle = 'rgba(8,10,20,.25)';
     ctx.fillRect(x0 + 6, y0 + T, pl.w - 12, 4);
     for (let i = 0; i < pl.n; i++) {
       const tx = pl.n == 1 ? 7 : i == 0 ? 6 : i == pl.n - 1 ? 10 : 7 + (i % 3);
       tile(tx, 2, x0 + i * T, y0);
     }
-    // raíces y musgo que cuelgan y brillan
+
     for (let k = 6; k < pl.w - 6; k += 10) {
       const s = (pl.x + k) * 7,
         largo = 2 + (s % 5),
@@ -9531,12 +9384,12 @@ function drawPlatFase(t) {
         ctx.globalAlpha = 1;
       }
     }
-    // adornos encima (no estorban al caminar)
+
     if (pl.deco == 'arbusto') ctx.drawImage(img.pltl, 96, 112, 48, 16, x0 + pl.w / 2 - 48, y0 - 26, 96, 32);
     if (pl.deco == 'runas') {
       const bx = x0 + pl.w - T - 4;
       tile(7, 5, bx, y0 - T + 6);
-      // las runas laten como los hongos
+
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       ctx.globalAlpha = 0.25 + 0.2 * Math.sin(t * 2.2 + pl.x);
@@ -9544,9 +9397,9 @@ function drawPlatFase(t) {
       ctx.restore();
     }
   }
-  drawCofres(t); // 28c-tesoros.js
+  drawCofres(t);
 }
-// el mundo se pone gris al detener el tiempo: se aplica después de enemigos, antes de Smara
+
 const drawEnemiesBase = drawEnemies;
 drawEnemies = function (t) {
   drawEnemiesBase(t);
@@ -9558,21 +9411,10 @@ drawPlat = function () {
   return drawPlatBase();
 };
 
-/* ---------- 28-espiritus.js ---------- */
-/* ===== ESPIRITUS ANIMALES (nueva fase) =====
-   Animales que hablan: fueron mentes inocentes que nunca pudieron ver la luz del mundo
-   como la ven los humanos. Al morir se quedaron en la niebla, esperando que alguien los nombre.
-   Cada uno le regala a Smara una RELIQUIA (efecto permanente).
-   - Sprites: tu imagen, bajada a su pixel real (cada pixel = 2x2 en el mundo, igual que el fondo).
-   - Animación por piezas: cabeza, orejas, cola, sombrero, borde del fantasma... cada pieza se
-     mueve por separado (respirar, parpadear, mover la cola, quitarse el sombrero, flotar...).
-   - Hablan con globos de texto sobre la cabeza; Smara también contesta con globos.
-   - E / Espacio / Enter / clic: hablar y pasar el texto. */
-
-const ESC_E = 2; // tamaño de cada pixel del sprite en el mundo
+const ESC_E = 2;
 const C_CLARO = '#d8d2cf',
   C_OSCURO = '#2c2621';
-// partes: [x, y, w, h, tipo] en pixeles del sprite. ojos: [x, y, color que los tapa al parpadear]
+
 const ESPIRITUS = [
   {
     k: 'venado', nm: 'El Venado de Hueso', x: 560, sx: 0, w: 18, h: 32, voz: 330,
@@ -9624,7 +9466,7 @@ const ESPIRITUS = [
   {
     k: 'oveja', nm: 'La Oveja Negra', x: 860, sx: 54, w: 16, h: 28, voz: 400,
     partes: [[0, 0, 16, 9, 'cabeza'], [0, 9, 16, 19, 'cuerpo']], ojos: [],
-    reliq: { n: 'Forma de Niebla', d: 'Clic: detienes el tiempo 1.5 s. 15% menos daño.' },
+    reliq: { n: 'Forma de Niebla', d: 'Q: detienes el tiempo 1.5 s. 15% menos daño.' },
     charla: [
       ['e', 'Shhh... no hablés fuerte. Aquí la niebla escucha.'],
       ['e', 'Yo seguía al rebaño. Nunca supe a dónde íbamos, solo que no quería quedarme sola.'],
@@ -9639,7 +9481,7 @@ const ESPIRITUS = [
       ['e', 'Y la niebla no tiene prisa: si se lo pedís, detiene el tiempo un suspiro. Uno y medio, nada más.'],
       ['e', 'Úsalo cuando el bosque se ponga feo. Más adelante se pone feo, créeme.'],
     ],
-    otra: ['Te queda bien la niebla. Acordate: clic y el tiempo se detiene un suspiro.'],
+    otra: ['Te queda bien la niebla. Acordate: apretá Q y el tiempo se detiene un suspiro.'],
   },
   {
     k: 'sombrero', nm: 'El Viajero del Sombrero', x: 3250, sx: 71, w: 27, h: 31, voz: 210,
@@ -9701,13 +9543,12 @@ const ESPIRITUS = [
 ];
 for (const n of ESPIRITUS) n.cabH = n.partes[0][3];
 
-/* ---- estado ---- */
-const RELIQ = new Set(); // reliquias que tiene Smara
-let CHARLA = null, // conversación actual
-  PENDIENTE = null, // conversación que empieza en un momento
-  REGALO = null, // cartel de "recibiste..."
+const RELIQ = new Set();
+let CHARLA = null,
+  PENDIENTE = null,
+  REGALO = null,
   SIETE = { usada: false };
-const EST = {}; // estado de animación de cada espíritu
+const EST = {};
 function faseReset() {
   RELIQ.clear();
   for (const n of ESPIRITUS) EST[n.k] = null;
@@ -9725,7 +9566,6 @@ function est(n) {
   return EST[n.k] || (EST[n.k] = { dado: false, visto: false, sorpresa: -9, talk: 0, f: 1, parpa: 2 + Math.random() * 3, tic: 3, hat: -9, feliz: -9, ph: Math.random() * 6 });
 }
 
-/* ---- efectos de las reliquias ---- */
 const hurtBase = hurt;
 hurt = function (d) {
   if (RELIQ.has('oveja')) d *= 0.85;
@@ -9759,7 +9599,6 @@ function reliqTick(dt) {
   p.wasOn = p.on;
 }
 
-/* ---- cada cuadro (llamado desde update) ---- */
 function faseTick(dt) {
   reliqTick(dt);
   formaTick(dt);
@@ -9769,13 +9608,13 @@ function faseTick(dt) {
   for (const n of ESPIRITUS) {
     const s = est(n),
       dx = p.x - n.x;
-    if (Math.abs(dx) < 240) s.f = dx < 0 ? -1 : 1; // mira a Smara
-    // el venado se sorprende al verla y la saluda solo
+    if (Math.abs(dx) < 240) s.f = dx < 0 ? -1 : 1;
+
     if (n.k == 'venado' && !s.visto && dx > -190) {
       s.visto = true;
       s.sorpresa = t;
       sfx('parry');
-      // Smara se detiene y el venado empieza a hablar después del susto
+
       state = 'globo';
       p.vx = 0;
       p.atk = null;
@@ -9787,9 +9626,9 @@ function faseTick(dt) {
     }
     if (n.k == 'sombrero' && !s.visto && Math.abs(dx) < 150) {
       s.visto = true;
-      s.hat = t; // se quita el sombrero al verla
+      s.hat = t;
     }
-    // chispas de espíritu
+
     if (Math.abs(n.x - cam - W / 2) < W && Math.random() < dt * 2.2)
       pfx(n.x + rnd(-14, 14), GROUND - rnd(4, n.h * ESC_E), rnd(-5, 5), -rnd(8, 18), rnd(1, 1.8), 'rgba(232,250,240,.75)', 2, -3);
   }
@@ -9801,7 +9640,6 @@ function cercano() {
   return b;
 }
 
-/* ---- conversación con globos ---- */
 function empezarCharla(n) {
   const s = est(n),
     L = s.dado ? n.otra.map(t => ['e', t]) : n.charla;
@@ -9837,7 +9675,7 @@ function terminarCharla() {
   state = 'play';
   jumpReq = dashReq = atk1 = parryReq = false;
   if (!s.dado && n.k == 'oveja' && !C0.desp) {
-    // la Oveja Negra no da un objeto: transforma a Smara (28b-forma-espiritu.js)
+
     s.dado = true;
     s.feliz = performance.now() / 1000;
     RELIQ.add(n.k);
@@ -9889,7 +9727,7 @@ cv.addEventListener('mousedown', () => {
     atk1 = false;
   }
 });
-// el texto se escribe letra por letra (también cuando el juego está "pausado" en la charla)
+
 function charlaTick(dt) {
   const C = CHARLA;
   if (!C) return;
@@ -9900,7 +9738,6 @@ function charlaTick(dt) {
   if (c1 > c0 && c1 % 2 == 0 && L[c1 - 1] != ' ') blip(C.L[C.i][0] == 's' ? 560 : C.n.voz);
 }
 
-/* ---- dibujo de un espíritu, por piezas ---- */
 function drawEspiritu(n, t) {
   const s = est(n),
     X = Math.round(n.x - cam);
@@ -9908,25 +9745,25 @@ function drawEspiritu(n, t) {
   const hablando = CHARLA && CHARLA.n === n && CHARLA.L[CHARLA.i][0] == 'e' && CHARLA.c < CHARLA.L[CHARLA.i][1].length;
   let Y = GROUND,
     sy = 1;
-  // sorpresa: salto con estirón
-  const tr = performance.now() / 1000, // tiempo real para los gestos (no depende del tiempo detenido)
+
+  const tr = performance.now() / 1000,
     ts = tr - s.sorpresa;
   if (ts < 0.55) {
     const k = ts / 0.55;
     Y -= Math.round(Math.sin(k * Math.PI) * 14);
     sy = k < 0.15 ? 0.85 : k < 0.5 ? 1.1 : 0.92;
   }
-  // feliz al regalar: dos saltitos
+
   const tf = tr - s.feliz;
   if (tf < 0.9) Y -= Math.round(Math.abs(Math.sin(tf * Math.PI * 2.2)) * 6);
   if (n.flota) Y -= 18 + Math.round(Math.sin(t * 1.8 + s.ph) * 3) * 2;
-  // sombra
+
   ctx.fillStyle = 'rgba(20,30,30,' + (n.flota ? 0.18 : 0.3) + ')';
   ctx.beginPath();
   ctx.ellipse(X, GROUND + 1, n.w * 0.9, 3, 0, 0, 7);
   ctx.fill();
-  // tiempos de cada gesto
-  const resp = Math.sin(t * 2.4 + s.ph) > 0.55 ? 1 : 0; // respiración: la cabeza baja 1 pixel
+
+  const resp = Math.sin(t * 2.4 + s.ph) > 0.55 ? 1 : 0;
   const habla = hablando ? (Math.floor(t * 7) % 2) : 0;
   if (!TIEMPO.parado) s.parpa -= 1 / 60;
   const ojosCerrados = s.parpa < 0.12 && s.parpa > 0;
@@ -9959,7 +9796,7 @@ function drawEspiritu(n, t) {
     }
   ctx.restore();
   ctx.globalAlpha = 1;
-  // emotes y aviso de "E"
+
   const top = Y - n.h * ESC_E - 8;
   if (ts < 1.4) emote('!', X, top - 6);
   else if (n.k == 'fantasma' && !s.dado && Math.abs(p.x - n.x) < 150 && !CHARLA) emote('?', X, top - 4);
@@ -9977,7 +9814,7 @@ function drawEspiritu(n, t) {
     ctx.textAlign = 'left';
   }
 }
-// emotes en pixel: ! ? y corazón
+
 const EMO = {
   '!': ['.##.', '.##.', '.##.', '.##.', '....', '.##.'],
   '?': ['.###.', '#...#', '...#.', '..#..', '.....', '..#..'],
@@ -9997,7 +9834,6 @@ function emote(k, x, y) {
   for (let j = 0; j < m.length; j++) for (let i = 0; i < w; i++) if (m[j][i] == '#') ctx.fillRect(Math.round(x - w) + i * 2, Y + j * 2, 2, 2);
 }
 
-/* ---- globos de texto ---- */
 function partir(txt, max) {
   const out = [];
   let l = '';
@@ -10022,7 +9858,7 @@ function globo(x, yTop, quien, txt, visible, esSmara) {
   let bx = Math.round(x - bw / 2);
   bx = Math.max(6, Math.min(W - 6 - bw, bx));
   const by = Math.max(46, Math.round(yTop - bh - 10));
-  // sombra, borde y relleno en pasos de pixel
+
   ctx.fillStyle = 'rgba(10,20,20,.35)';
   ctx.fillRect(bx + 3, by + 3, bw, bh);
   ctx.fillStyle = C_OSCURO;
@@ -10030,7 +9866,7 @@ function globo(x, yTop, quien, txt, visible, esSmara) {
   ctx.fillRect(bx, by + 2, bw, bh - 4);
   ctx.fillStyle = esSmara ? '#fdf8f2' : '#efe9de';
   ctx.fillRect(bx + 2, by + 2, bw - 4, bh - 4);
-  // colita hacia quien habla
+
   const tx = Math.max(bx + 8, Math.min(bx + bw - 14, Math.round(x - 3)));
   ctx.fillStyle = C_OSCURO;
   ctx.fillRect(tx - 2, by + bh - 2, 10, 2);
@@ -10039,7 +9875,7 @@ function globo(x, yTop, quien, txt, visible, esSmara) {
   ctx.fillStyle = esSmara ? '#fdf8f2' : '#efe9de';
   ctx.fillRect(tx, by + bh - 2, 6, 2);
   ctx.fillRect(tx + 2, by + bh, 2, 2);
-  // nombre y texto
+
   ctx.textAlign = 'left';
   ctx.font = '7px ' + PS;
   ctx.fillStyle = esSmara ? '#9a5a6a' : '#5b7a6c';
@@ -10079,7 +9915,6 @@ function drawCharla() {
   }
 }
 
-/* ---- reliquias en el HUD y cartel de regalo ---- */
 function drawReliquias(t) {
   let x = 8;
   for (const n of ESPIRITUS) {
@@ -10118,7 +9953,6 @@ function drawReliquias(t) {
   ctx.globalAlpha = 1;
 }
 
-/* ---- guardar el avance de la fase en la partida (reliquias, espíritus, tesoros, transformación) ---- */
 function faseGuardar() {
   return {
     r: [...RELIQ],
@@ -10144,42 +9978,27 @@ function faseCargar(d) {
   if (d.f) formaActivar();
   if (area == 6) tesorosCargar();
 }
-// partida nueva: la fase empieza de cero
+
 const initFase = init;
 init = function () {
   initFase();
   faseReset();
 };
 
-/* ---------- 28-zona-nubes.js ---------- */
-/* Archivo vacío: el área 6 ahora es el Bosque de la Niebla (27-nueva-fase.js y siguientes).
-   Puedes borrar este archivo sin problema. */
 
-/* ---------- 28b-forma-espiritu.js ---------- */
-/* ===== SMARA ESPÍRITU (la transformación que da la Oveja Negra) =====
-   Diseño propio, hecho sobre el mismo sprite de Smara (mide igual y usa sus mismas
-   animaciones de caminar, correr, saltar y atacar, recicladas):
-   - cabello blanco con bordes negros, ojos normales (los mismos de Smara)
-   - vestido al estilo clásico de los espíritus animales: sepia oscuro con cuello, botones,
-     cinta y ruedo color crema
-   - katana guardada en la espalda (se ve la funda y el mango); la hoja brilla al atacar
-   - PODER: clic izquierdo = detiene el tiempo 2.5 s (recarga 10 s) (todo se congela menos Smara).
-     Un relojito arriba a la derecha muestra el tiempo detenido y la recarga.
-   - transformación: anillo de esporas, silueta blanca, destello, y saca la katana de la espalda */
 
 const FORMA = {
   on: false,
-  c: null, // hoja de sprites recoloreada
-  g: null, // capa de brillo (marcas del kimono, ojos, hoja)
-  base: null, // HRC original para volver a Smara
-  tr: null, // transformación en curso
-  fuerza: null, // cuadro forzado durante la cinemática
-  blanco: 0, // silueta blanca (0..1)
-  desenv: 0, // sacando la katana (0..1)
+  c: null,
+  g: null,
+  base: null,
+  tr: null,
+  fuerza: null,
+  blanco: 0,
+  desenv: 0,
   ultAtk: null,
 };
 
-/* ---- 1) recoloreo del sprite (una sola vez) ---- */
 function formaPreparar() {
   if (FORMA.c) return;
   if (!HCLS) lookPrep();
@@ -10235,7 +10054,7 @@ function formaPreparar() {
       ht = a.ok ? a.ht : 40,
       ct = a.ok ? a.ct : 60,
       foot = a.ok ? a.foot : 95;
-    // separar el vestido (cerca del cuerpo) de la hoja de la katana y los efectos (lejos del cuerpo)
+
     const comp = new Int32Array(CW * CH).fill(-1),
       esHoja = [];
     let nc = 0;
@@ -10262,7 +10081,7 @@ function formaPreparar() {
         }
         esHoja[nc++] = dentro / n < 0.5;
       }
-    // zona de la cara (piel entre el pelo y el pecho): ahí los pixeles negros son los ojos
+
     let fx0 = CW,
       fx1 = -1,
       fy0 = CH,
@@ -10293,15 +10112,14 @@ function formaPreparar() {
           k = HCLS[i];
         if (!k) continue;
         const l = (d[i * 4] + d[i * 4 + 1] + d[i * 4 + 2]) / 3;
-        if ((k == 1 || k == 5) && esOjo(xx, y)) continue; // ojos: se quedan como los dibujó Smara
+        if ((k == 1 || k == 5) && esOjo(xx, y)) continue;
         if (k == 1) {
           const borde = HCLS[i - 1] != 1 || HCLS[i + 1] != 1 || HCLS[i - w] != 1 || HCLS[i + w] != 1,
             dy = y - ht;
           put(i, borde ? PELO_B : PELO, borde ? 1 : (1.02 - Math.min(0.2, dy / 120)) * ((xx + (dy >> 2)) % 3 == 0 ? 0.9 : 1));
-        } // la piel se queda con su color normal, para que la cara se distinga del pelo blanco
+        }
         else if ((k == 3 || k == 4 || k == 6) && a.ok && y >= ht && y < ct - 2 && Math.abs(xx - hx) <= 24) {
-          // dentro de la cabeza: cerca de la cara son los ojos (se dejan como los dibujó Smara: normales);
-          // más afuera son mechones de pelo (blancos)
+
           if (Math.abs(xx - hx) > 10) put(i, PELO, 1);
         }
         else if (k == 3) {
@@ -10309,7 +10127,7 @@ function formaPreparar() {
             put(i, HOJA, Math.min(1.05, l / 235));
             brilla(i, CIAN, 120);
           } else {
-            // vestido al estilo clásico de los espíritus animales: sepia oscuro con detalles crema
+
             const dxc = xx - hx,
               cinta = a.ok && (y == ct + 8 || y == ct + 9),
               cuello = a.ok && y < ct - 1 && Math.abs(dxc) <= 4,
@@ -10341,7 +10159,6 @@ function formaQuitar() {
   tiempoReanudar();
 }
 
-/* ---- 2) dibujo extra encima y debajo del sprite (en el espacio del cuadro) ---- */
 const ES_ATAQUE = fi => fi >= HI.Downward_Slash_01 && fi <= HI.Regular_Slash_07;
 function linea(x0, y0, x1, y1, g, col) {
   const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 1.5));
@@ -10361,8 +10178,7 @@ function anclas(fi) {
     foot: (ok ? a.foot : 95) - SM.ay,
   };
 }
-// funda y mango en la espalda (el sprite mira a la derecha: la espalda es la izquierda).
-// La funda va detrás del cuerpo; el mango asoma por encima del hombro, delante del pelo.
+
 function vainaGeo(fi) {
   const A = anclas(fi),
     boca = [A.hx - 8, A.ht + 17],
@@ -10380,21 +10196,21 @@ function vainaDelante(fi) {
     s = FORMA.desenv * 30,
     m0 = [boca[0] + d[0] * s, boca[1] + d[1] * s];
   if (s > 0) {
-    // la hoja que va saliendo de la funda
+
     linea(boca[0], boca[1], m0[0], m0[1], 1, '#d6f2ff');
     linea(boca[0] + 1, boca[1], m0[0] + 1, m0[1], 1, '#7ff0ff');
   }
   ctx.fillStyle = '#8ff6ff';
-  ctx.fillRect(Math.round(m0[0]) - 1, Math.round(m0[1]), 3, 2); // tsuba
+  ctx.fillRect(Math.round(m0[0]) - 1, Math.round(m0[1]), 3, 2);
   linea(m0[0] + d[0] * 2, m0[1] + d[1] * 2, m0[0] + d[0] * 11, m0[1] + d[1] * 11, 2, '#262838');
   for (let k = 3; k <= 10; k += 3) {
     ctx.fillStyle = '#5fd3e0';
     ctx.fillRect(Math.round(m0[0] + d[0] * k), Math.round(m0[1] + d[1] * k), 1, 1);
   }
   ctx.fillStyle = '#9fb6c4';
-  ctx.fillRect(Math.round(m0[0] + d[0] * 12), Math.round(m0[1] + d[1] * 12), 2, 2); // remate del mango
+  ctx.fillRect(Math.round(m0[0] + d[0] * 12), Math.round(m0[1] + d[1] * 12), 2, 2);
 }
-// envolver hdraw: aura y funda detrás, brillos delante
+
 const hdrawBase = hdraw;
 hdraw = function (fi) {
   if (!FORMA.on && !FORMA.blanco) return hdrawBase(fi);
@@ -10426,24 +10242,23 @@ hdraw = function (fi) {
     ctx.globalAlpha = 1;
   }
 };
-// cuadro forzado en la cinemática
+
 const curAnimBase = curAnim;
 curAnim = function () {
   return FORMA.fuerza != null ? wf(FORMA.fuerza) : curAnimBase();
 };
 
-/* ---- 3) PODER: detener el tiempo (clic izquierdo) ---- */
 const TIEMPO = {
-  base: 2.5, // segundos con el tiempo detenido (la Corona de Sacuanjoche suma 0.5)
+  base: 2.5,
   dura: 2.5,
-  recarga: 10, // segundos para volver a usarlo
+  recarga: 10,
   parado: false,
-  t0: 0, // cuándo empezó
-  listo: 0, // cuándo se puede volver a usar
-  pausa: 0, // tiempo total congelado (el mundo "se atrasa" esto)
+  t0: 0,
+  listo: 0,
+  pausa: 0,
   onda: -9,
 };
-// reloj del mundo: no avanza mientras el tiempo está detenido
+
 function tMundo() {
   const now = performance.now() / 1000;
   return now - TIEMPO.pausa - (TIEMPO.parado ? now - TIEMPO.t0 : 0);
@@ -10481,12 +10296,11 @@ function sonidoTiempo(para) {
   o.start(t);
   o.stop(t + 0.55);
 }
-cv.addEventListener('mousedown', e => {
-  if (!FORMA.on || state != 'play' || INV.open || e.button !== 0) return;
-  atk1 = false; // en esta forma el clic no ataca: detiene el tiempo
+addEventListener('keydown', e => {
+  if (e.code != 'KeyQ' || e.repeat || !FORMA.on || area == 7 || state != 'play' || INV.open) return;
   tiempoDetener();
 });
-// partículas congeladas (los cortes de Smara sí siguen)
+
 const updPFXBase = updPFX;
 updPFX = function (dt) {
   if (!TIEMPO.parado) return updPFXBase(dt);
@@ -10496,7 +10310,7 @@ updPFX = function (dt) {
   }
   SHK = Math.max(0, SHK - dt * 18);
 };
-// mientras el tiempo está detenido, los enemigos y sus disparos no se mueven
+
 const updEnemiesBase = updEnemies;
 updEnemies = function (dt) {
   if (TIEMPO.parado) return;
@@ -10505,17 +10319,13 @@ updEnemies = function (dt) {
 function formaTick(dt) {
   if (TIEMPO.parado) {
     const now = performance.now() / 1000;
-    if (Math.floor((now - TIEMPO.t0) * 4) != Math.floor((now - TIEMPO.t0 - dt) * 4)) blip(1400); // tic tac
+    if (Math.floor((now - TIEMPO.t0) * 4) != Math.floor((now - TIEMPO.t0 - dt) * 4)) blip(1400);
     if (now - TIEMPO.t0 >= TIEMPO.dura) tiempoReanudar();
   }
   if (!FORMA.on) return;
   ataquesTick(dt);
 }
-/* ---- 3b) más variedad en los ataques de Smara Espíritu ----
-   - cayendo: PICADA (baja en picada con la estocada y al caer suelta una onda que hace daño)
-   - saltando (mientras sube): CORTE ASCENDENTE (corta hacia arriba y sube un poco más)
-   - corriendo: ESTOCADA (se lanza hacia adelante dejando imágenes de sí misma)
-   - en el suelo: el combo de 3 golpes, cada golpe con su propio efecto (luna, pétalos, chispa) */
+
 const ATQ = { tipo: null, t: 0, cayo: false };
 function esporas(n, x, y, vx, vy, cols, g) {
   for (let i = 0; i < n; i++)
@@ -10524,15 +10334,15 @@ function esporas(n, x, y, vx, vy, cols, g) {
 function ataquesTick(dt) {
   const a = p.atk;
   if (a && a !== FORMA.ultAtk) {
-    // ataque nuevo: decidir qué variante es
+
     ATQ.t = 0;
     ATQ.cayo = false;
     if (!p.on && p.vy < -60) {
-      ATQ.tipo = 'ascendente'; // atacar mientras sube: corte hacia arriba que la impulsa un poco más
+      ATQ.tipo = 'ascendente';
       a.c = 1;
       p.vy = Math.min(p.vy, -340);
     } else if (!p.on) {
-      ATQ.tipo = 'picada'; // atacar mientras cae: baja en picada
+      ATQ.tipo = 'picada';
       a.c = 2;
       p.vy = 680;
       blip(180);
@@ -10542,10 +10352,10 @@ function ataquesTick(dt) {
     } else ATQ.tipo = 'combo' + a.c;
     const fx = p.x + p.face * 30,
       fy = p.y - 34;
-    if (ATQ.tipo == 'combo0') esporas(10, fx, fy, p.face * 120, -40, ['#8ff6ff', '#d6f2ff'], 40); // luna creciente
-    if (ATQ.tipo == 'combo1') esporas(14, fx, fy - 10, p.face * 60, 40, ['#fff4d6', '#f2c230', '#ffffff'], 120); // pétalos de sacuanjoche
+    if (ATQ.tipo == 'combo0') esporas(10, fx, fy, p.face * 120, -40, ['#8ff6ff', '#d6f2ff'], 40);
+    if (ATQ.tipo == 'combo1') esporas(14, fx, fy - 10, p.face * 60, 40, ['#fff4d6', '#f2c230', '#ffffff'], 120);
     if (ATQ.tipo == 'combo2') {
-      esporas(18, fx + p.face * 14, fy, p.face * 220, 0, ['#ffffff', '#8ff6ff'], 0); // chispa de la estocada
+      esporas(18, fx + p.face * 14, fy, p.face * 220, 0, ['#ffffff', '#8ff6ff'], 0);
       SHK = Math.max(SHK, 2);
     }
     if (ATQ.tipo == 'ascendente') esporas(16, p.x + p.face * 18, p.y - 20, p.face * 40, -180, ['#8ff6ff', '#ecc2ff'], 0);
@@ -10559,11 +10369,11 @@ function ataquesTick(dt) {
   if (ATQ.tipo == 'picada') {
     if (!p.on) {
       p.vy = Math.max(p.vy, 680);
-      a.t = Math.min(a.t, ATK[2].h + 0.02); // mantiene la pose de estocada mientras cae
+      a.t = Math.min(a.t, ATK[2].h + 0.02);
       if (Math.random() < 0.6) pfx(p.x + rnd(-6, 6), p.y - rnd(20, 50), 0, -120, 0.25, '#8ff6ff', 2, 0);
     } else if (!ATQ.cayo) {
       ATQ.cayo = true;
-      // onda al caer: daña a lo que esté cerca
+
       SHK = Math.max(SHK, 4);
       sfx('boom');
       for (let i = 0; i < 26; i++) {
@@ -10579,7 +10389,7 @@ function ataquesTick(dt) {
   } else if (ATQ.tipo == 'ascendente' && ATQ.t < 0.25 && Math.random() < 0.7)
     pfx(p.x + p.face * rnd(10, 30), p.y - rnd(30, 70), p.face * 30, -rnd(60, 140), 0.3, '#ecc2ff', 2, 0);
 }
-// mundo en gris mientras el tiempo está detenido (Smara se dibuja después y queda a color)
+
 function tiempoVelo() {
   if (!TIEMPO.parado) return;
   const k = Math.min(1, (performance.now() / 1000 - TIEMPO.t0) / 0.15);
@@ -10594,7 +10404,7 @@ function tiempoVelo() {
   ctx.fillRect(0, 0, W, H);
   ctx.restore();
 }
-// onda que se expande desde Smara al detener el tiempo
+
 function tiempoOnda() {
   const k = (performance.now() / 1000 - TIEMPO.onda) / 0.45;
   if (k < 0 || k > 1) return;
@@ -10607,7 +10417,7 @@ function tiempoOnda() {
   ctx.stroke();
   ctx.restore();
 }
-// relojito en pixel (arriba a la derecha)
+
 function dibujarReloj() {
   if (!FORMA.on) return;
   const now = performance.now() / 1000,
@@ -10616,10 +10426,10 @@ function dibujarReloj() {
     R = 11;
   let frac, col;
   if (TIEMPO.parado) {
-    frac = 1 - (now - TIEMPO.t0) / TIEMPO.dura; // lo que queda de tiempo detenido
+    frac = 1 - (now - TIEMPO.t0) / TIEMPO.dura;
     col = '#8ff6ff';
   } else if (now < TIEMPO.listo) {
-    frac = 1 - (TIEMPO.listo - now) / TIEMPO.recarga; // recargando
+    frac = 1 - (TIEMPO.listo - now) / TIEMPO.recarga;
     col = '#5b6684';
   } else {
     frac = 1;
@@ -10634,7 +10444,7 @@ function dibujarReloj() {
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1;
   }
-  // caja y esfera
+
   ctx.fillStyle = '#10121c';
   for (let y = -R - 1; y <= R + 1; y++) {
     const r = Math.round(Math.sqrt(Math.max(0, (R + 1) ** 2 - y * y)));
@@ -10645,7 +10455,7 @@ function dibujarReloj() {
     const r = Math.round(Math.sqrt(Math.max(0, (R - 1) ** 2 - y * y)));
     ctx.fillRect(cx - r, cy + y, r * 2 + 1, 1);
   }
-  // porción: tiempo restante o recarga (pixel a pixel)
+
   ctx.fillStyle = col;
   for (let y = -R + 2; y <= R - 2; y++)
     for (let x = -R + 2; x <= R - 2; x++) {
@@ -10653,7 +10463,7 @@ function dibujarReloj() {
       const a = (Math.atan2(x, -y) / (Math.PI * 2) + 1) % 1;
       if (a <= frac) ctx.fillRect(cx + x, cy + y, 1, 1);
     }
-  // marcas de las horas y manecilla
+
   ctx.fillStyle = '#10121c';
   for (let h = 0; h < 12; h += 3) {
     const a = (h / 12) * Math.PI * 2;
@@ -10661,16 +10471,15 @@ function dibujarReloj() {
   }
   const ang = TIEMPO.parado ? (TIEMPO.t0 % 1) * 6.28 : now * 2;
   for (let k = 0; k < R - 3; k++) ctx.fillRect(Math.round(cx + Math.sin(ang) * k), Math.round(cy - Math.cos(ang) * k), 1, 1);
-  ctx.fillRect(cx - 1, cy - R - 3, 3, 2); // botón de arriba
+  ctx.fillRect(cx - 1, cy - R - 3, 3, 2);
   ctx.font = '6px ' + PS;
   ctx.textAlign = 'center';
   ctx.fillStyle = listo ? '#d6f2ff' : '#8a93ad';
-  ctx.fillText(TIEMPO.parado ? (TIEMPO.dura - (now - TIEMPO.t0)).toFixed(1) : listo ? 'CLIC' : Math.ceil(TIEMPO.listo - now) + 's', cx, cy + R + 10);
+  ctx.fillText(TIEMPO.parado ? (TIEMPO.dura - (now - TIEMPO.t0)).toFixed(1) : listo ? 'Q' : Math.ceil(TIEMPO.listo - now) + 's', cx, cy + R + 10);
   ctx.textAlign = 'left';
   ctx.restore();
 }
 
-/* ---- 4) la transformación ---- */
 function formaEmpezar(n) {
   formaPreparar();
   FORMA.tr = { n, t0: performance.now() / 1000, fase: 0 };
@@ -10683,7 +10492,7 @@ function formaCine() {
   if (!T) return;
   const t = performance.now() / 1000,
     k = t - T.t0;
-  // anillo de esporas que sube
+
   if (k < 1.7)
     for (let i = 0; i < 3; i++) {
       const a = Math.random() * 6.283;
@@ -10707,7 +10516,7 @@ function formaCine() {
     FORMA.fuerza = HI.kneel;
     FORMA.blanco = Math.max(0, 1 - (k - 1.6) / 0.6);
   } else if (k >= 2.4 && k < 3.2) {
-    // saca la katana de la espalda
+
     FORMA.blanco = 0;
     FORMA.fuerza = HI.idle_0;
     FORMA.desenv = Math.min(1, (k - 2.4) / 0.7);
@@ -10716,7 +10525,7 @@ function formaCine() {
       sfx('swing');
     }
   } else if (k >= 3.2 && k < 3.75) {
-    // corte de presentación con la hoja que brilla
+
     FORMA.desenv = 0;
     const A = ATK[0];
     FORMA.fuerza = A.f + Math.min(A.n - 1, Math.floor((k - 3.2) / 0.075));
@@ -10735,11 +10544,11 @@ function formaCine() {
     REGALO = { n: T.n, t };
     save();
     sfx('pick');
-    say('Clic: detener el tiempo 2.5 s · J/K: katana (subiendo: corte ascendente · cayendo: picada · corriendo: estocada)');
+    say('Q: detener el tiempo 2.5 s · J/K: katana (subiendo: corte ascendente · cayendo: picada · corriendo: estocada)');
     if (T.n.despues) charlaCon(T.n, T.n.despues);
   }
 }
-// oscurece un poco la pantalla durante la transformación
+
 function formaVelo() {
   const T = FORMA.tr;
   if (!T) return;
@@ -10748,21 +10557,13 @@ function formaVelo() {
   ctx.fillStyle = 'rgba(6,8,18,' + a + ')';
   ctx.fillRect(0, 0, W, H);
 }
-// al salir de la fase vuelve a ser Smara
+
 const loadAreaBase = loadArea;
 loadArea = function (n) {
   if (n != 6) formaQuitar();
   return loadAreaBase(n);
 };
 
-/* ---------- 28c-tesoros.js ---------- */
-/* ===== COFRES Y TESOROS DE LA NUEVA FASE =====
-   - Cofres: los mismos del juego original, recoloreados a los azules del bosque (los herrajes
-     dorados ahora brillan en cian). Se abren con E.
-   - Tesoros: objetos EQUIPABLES (pestaña EQUIPO del inventario; solo funcionan los puestos, máximo 3).
-     Íconos del "16x16 RPG Asset Pack" de ssugmi (uso comercial permitido), rediseñados
-     y renombrados con cosas de Mulukukú y Nicaragua. No se gastan.
-   Ubicación: casi todos arriba de las plataformas, para premiar a quien explora. */
 const TESOROS = [
   { k: 'brujula', n: 'Brújula del Tuma', d: 'Una flecha te señala el próximo cofre o espíritu.', i: 4,
     h: 'El río Tuma nunca se pierde: siempre llega a Mulukukú.' },
@@ -10779,14 +10580,14 @@ const TESOROS = [
   { k: 'guapote', n: 'Guapote del Tuma', d: 'Si tu vida baja de 30, te cura 35 (cada 45 s).', i: 5,
     h: 'El pez más bravo del río. Pica fuerte y no se rinde.' },
 ];
-const TES = new Set(); // los que ya se encontraron
-// se registran como objetos equipables del inventario (pestaña EQUIPO)
+const TES = new Set();
+
 registrarEquipables(TESOROS.map(q => ({ ...q, dibujar: (x, y, s) => ctx.drawImage(img.tes, q.i * 16, 0, 16, 16, x, y, s, s) })));
-// [x, y del suelo donde va el cofre, tipo (1 hierro, 3 especial), tesoro]
+
 const COFRES_FASE = [
   [300, null, 1, 'brujula'],
   [1270, 192, 1, 'guarumo'],
-  [1632, 120, 3, 'sacuanjoche'], // el mirador más alto
+  [1632, 120, 3, 'sacuanjoche'],
   [2150, 124, 1, 'minero'],
   [3120, 200, 1, 'guardabarranco'],
   [3730, 196, 1, 'jicaro'],
@@ -10832,12 +10633,12 @@ addEventListener('keydown', e => {
     abrirCofre(c);
   }
 });
-/* ---- efectos ---- */
+
 const sdmgTes = sdmg;
 sdmg = a => Math.round(sdmgTes(a) * (equipado('minero') ? 1.1 : 1));
 const stcBase = stc;
 stc = n => stcBase(n) * (equipado('guarumo') ? 0.75 : 1);
-// doble salto con la pluma (en el aire, W o Espacio otra vez)
+
 addEventListener('keydown', e => {
   if (e.repeat || state != 'play' || INV.open || !equipado('guardabarranco')) return;
   if ((e.code == 'KeyW' || e.code == 'Space') && !p.on && p.dj && p.sta >= 8 && p.dash <= 0) {
@@ -10863,7 +10664,7 @@ function tesorosTick(dt) {
   }
   if (TES_AVISO && now - TES_AVISO.t > 4) TES_AVISO = null;
 }
-/* ---- dibujo ---- */
+
 function drawCofres(t) {
   for (const c of COFRES) {
     const x = Math.round(c.x - cam);
@@ -10871,7 +10672,7 @@ function drawCofres(t) {
     const f = c.st == 0 ? 0 : c.st == 2 ? 6 : Math.min(6, Math.floor((performance.now() / 1000 - c.t0) * 9)),
       r = CHR[CHN[c.ty]][f];
     if (c.st == 0) {
-      // brillo que invita a abrirlo
+
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       ctx.globalAlpha = (c.ty == 3 ? 0.35 : 0.2) + 0.1 * Math.sin(t * 3 + c.x);
@@ -10891,7 +10692,7 @@ function drawCofres(t) {
       ctx.fillText('E', x + 0.5, c.y - 44 + b);
       ctx.textAlign = 'left';
     }
-    // el tesoro sube del cofre
+
     const k = performance.now() / 1000 - c.t0;
     if (c.st == 1 && k > 0.4 && k < 2.2) {
       const tes = TESOROS.find(q => q.k == c.k),
@@ -10904,7 +10705,7 @@ function drawCofres(t) {
   }
 }
 function drawTesorosHUD(t) {
-  // fila de tesoros debajo de las reliquias
+
   let x = 8;
   for (const q of TESOROS) {
     if (!equipado(q.k)) continue;
@@ -10913,7 +10714,7 @@ function drawTesorosHUD(t) {
     ctx.drawImage(img.tes, q.i * 16, 0, 16, 16, x + 1, 51, 16, 16);
     x += 21;
   }
-  // brújula: flecha hacia lo próximo
+
   if (equipado('brujula') && state == 'play') {
     const metas = [...COFRES.filter(c => c.st == 0).map(c => c.x), ...ESPIRITUS.filter(n => !est(n).dado).map(n => n.x)].filter(
       mx => mx > p.x + 40,
@@ -10933,10 +10734,10 @@ function drawTesorosHUD(t) {
       ctx.textAlign = 'left';
     }
   }
-  // cartel del tesoro encontrado
+
   const A = TES_AVISO;
   if (!A) return;
-  const k = performance.now() / 1000 - A.t, // tiempo real (el cartel no se congela)
+  const k = performance.now() / 1000 - A.t,
     a = Math.max(0, Math.min(1, k * 4, (4 - k) * 2));
   ctx.globalAlpha = a;
   ctx.font = '8px ' + PS;
@@ -10961,23 +10762,10 @@ function drawTesorosHUD(t) {
   ctx.globalAlpha = 1;
 }
 
-/* ---------- 28d-pilar-y-cadejo.js ---------- */
-/* =====================================================================
-   EL PILAR Y EL CADEJO
-   · Al final del Bosque de la Niebla hay un pilar de piedra con runas.
-     El Gato Negro (el último espíritu) le avisa a Smara que los pilares
-     conectan mundos que no son reales.
-   · Si Smara lo toca, la luz se la lleva a EL LLANO DE LOS SUSURROS
-     (área 9): un campo de noche bajo las nubes y la luna, pasto morado
-     y blanco, agua que lo refleja todo (ver 28f-campo-de-noche.js).
-   · Al final llega corriendo el CADEJO (sprites de wolf_sin_fuego.zip):
-     frena frente a Smara y, cuando abre el hocico, habla.
-   ===================================================================== */
 const PILAR = { x: 4372 };
 let CD = { on: false },
   pilarAviso = 0;
 
-/* ---------------- el Gato Negro ahora avisa de los pilares ---------------- */
 (() => {
   const g = ESPIRITUS.find(n => n.k == 'gatonegro');
   if (!g) return;
@@ -10992,7 +10780,6 @@ let CD = { on: false },
   g.otra = ['El pilar te está esperando. Acordate: si escuchás la cadena, no te des la vuelta.'];
 })();
 
-/* ---------------- sonidos ---------------- */
 function cdTono(f0, f1, d, ty, g, dl) {
   if (!AC || muted) return;
   const t = AC.currentTime + (dl || 0), o = AC.createOscillator(), gn = AC.createGain();
@@ -11023,9 +10810,6 @@ const cdSnd = {
   cadena: () => { for (let i = 0; i < 4; i++) cdTono(2200 + Math.random() * 600, 1800, 0.05, 'square', 0.02, i * 0.07); },
 };
 
-/* =====================================================================
-   1) EL PILAR (área 6)
-   ===================================================================== */
 function pilarTick(dt) {
   if (area != 6 || state != 'play') return;
   const g = ESPIRITUS.find(n => n.k == 'gatonegro');
@@ -11034,7 +10818,7 @@ function pilarTick(dt) {
       if (performance.now() / 1000 > pilarAviso) { pilarAviso = performance.now() / 1000 + 4; say('El pilar zumba... Algo te dice que primero hables con el Gato Negro.'); }
       return;
     }
-    // ¡toca el pilar!
+
     CD = { on: false, tp: { t: 0 } };
     state = 'cdtp';
     p.vx = 0;
@@ -11046,7 +10830,7 @@ function dibujarPilar(t) {
   const x = Math.round(PILAR.x - cam), base = GROUND;
   if (x < -60 || x > W + 60) return;
   const k = CD.tp ? Math.min(1, CD.tp.t / 1.2) : 0;
-  // haz de luz que sube
+
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   ctx.globalAlpha = 0.18 + 0.08 * Math.sin(t * 2) + k * 0.6;
@@ -11059,7 +10843,7 @@ function dibujarPilar(t) {
   ctx.globalAlpha = 0.35 + 0.15 * Math.sin(t * 3) + k * 0.5;
   ctx.drawImage(halo('cian'), x - 40, base - 90, 80, 80);
   ctx.restore();
-  // la piedra
+
   ctx.fillStyle = '#10121c';
   ctx.fillRect(x - 11, base - 62, 22, 62);
   ctx.fillStyle = '#3a4258';
@@ -11072,15 +10856,15 @@ function dibujarPilar(t) {
   ctx.fillRect(x - 13, base - 66, 26, 6);
   ctx.fillStyle = '#5a6684';
   ctx.fillRect(x - 12, base - 65, 24, 4);
-  // runas que laten
+
   const br = 0.5 + 0.5 * Math.sin(t * 3);
   ctx.fillStyle = 'rgba(143,246,255,' + (0.5 + br * 0.5) + ')';
   const R = [[-4, -52, 8, 1], [-1, -55, 2, 7], [-5, -40, 3, 3], [2, -40, 3, 3], [-4, -30, 8, 1], [-2, -28, 1, 5], [1, -28, 1, 5], [-3, -16, 6, 2], [-1, -19, 2, 8]];
   for (const [rx, ry, rw, rh] of R) ctx.fillRect(x + rx, base + ry, rw, rh);
-  // chispas
+
   if (Math.random() < 0.3) pfx(PILAR.x + rnd(-10, 10), base - rnd(0, 60), rnd(-10, 10), rnd(-50, -20), rnd(0.6, 1.2), Math.random() < 0.5 ? '#8ff6ff' : '#e8d6ff', 2, -10);
 }
-// la luz se lleva a Smara
+
 function pilarCineTick(dt) {
   const T = CD.tp;
   T.t += dt;
@@ -11098,12 +10882,6 @@ function pilarCineTick(dt) {
   }
 }
 
-
-/* =====================================================================
-   2) EL LLANO DE LOS SUSURROS (área 9)
-   El escenario (nubes de noche, pasto morado y blanco, agua con reflejo,
-   el Espanto y los sonidos del campo) está en 28f-campo-de-noche.js.
-   ===================================================================== */
 const CD_X = { susto: 1500 };
 function cdCargar() {
   LEVEL = W * 3;
@@ -11115,12 +10893,6 @@ function cdCargar() {
   CD = { on: true, t: 0, perro: null };
 }
 
-/* =====================================================================
-   3) EL CADEJO (sprites de wolf_sin_fuego.zip)
-   Llega corriendo desde la derecha, frena de golpe frente a Smara,
-   habla abriendo el hocico y al final se le tira encima.
-   ===================================================================== */
-// es el mismo Cadejo de la Noche de los Duhindu (29c-cadejo-noche.js): se acuerda de Smara
 const CD_FRASES = [
   'Te dije que te acordaras de este perro, niña.',
   'Y aun así tocaste el pilar. Este mundo no es real: está hecho de lo que te contaron.',
@@ -11131,9 +10903,9 @@ const CDJ = { w: 48, h: 43, esc: 3, llega: 0.75 };
 function cdTick(dt) {
   if (!CD.on) return;
   CD.t += dt;
-  if (Math.random() < dt * 0.12) cdSnd.cadena(); // a lo lejos, una cadena...
+  if (Math.random() < dt * 0.12) cdSnd.cadena();
   if (!CD.perro && state == 'play' && p.x > CD_X.susto && !(LL.esp || []).some(e => e.st != 'muere') && !(CD.mons || []).some(m => m.st != 'muere' && m.st != 'montado')) {
-    // se oye algo que corre por el pasto...
+
     const meta = Math.min(LEVEL - 40, p.x + 170);
     CD.perro = { x: cam + W + 70, x0: cam + W + 70, meta, t: 0, i: -1, s: 0, n: 0, boca: 0, fin: 0 };
     state = 'cdcine';
@@ -11145,7 +10917,7 @@ function cdTick(dt) {
 function cdCineTick(dt) {
   const D = CD.perro;
   D.t += dt;
-  // 1) corre hacia Smara
+
   if (D.t < CDJ.llega) {
     const k = D.t / CDJ.llega;
     D.x = D.x0 + (D.meta - D.x0) * (1 - (1 - k) * (1 - k));
@@ -11153,7 +10925,7 @@ function cdCineTick(dt) {
     return;
   }
   D.x = D.meta;
-  // 2) ¡PUM! frena de golpe
+
   if (!D.pum) {
     D.pum = 1;
     cdSnd.susto();
@@ -11162,7 +10934,7 @@ function cdCineTick(dt) {
     for (let i = 0; i < 26; i++) pfx(D.x + rnd(-30, 40), GROUND - rnd(0, 20), rnd(-60, 220), rnd(-160, -20), rnd(0.3, 0.8), Math.random() < 0.35 ? '#ff8a3a' : Math.random() < 0.5 ? '#f4eeff' : '#2a1830', 2, 300);
   }
   const u = D.t - CDJ.llega;
-  if (u < 0.4) p.x -= dt * 70; // Smara retrocede del susto
+  if (u < 0.4) p.x -= dt * 70;
   if (u > 0.5 && !D.g) { D.g = 1; cdSnd.grunido(); }
   if (u > 1.3 && D.i < 0) { D.i = 0; D.s = 0; D.n = 0; }
   if (D.i >= 0 && D.i < CD_FRASES.length) {
@@ -11170,23 +10942,23 @@ function cdCineTick(dt) {
     D.s += dt;
     const n = Math.min(L.length, Math.floor(D.s * 16));
     if (n > D.n) { if (L[n - 1] != ' ' && n % 2 == 0) cdSnd.voz(); D.n = n; }
-    // el hocico se abre y se cierra mientras habla
+
     D.boca = n < L.length ? 0.4 + 0.6 * Math.abs(Math.sin(D.s * 14)) : Math.max(0, D.boca - dt * 3);
     if (D.s > L.length / 16 + 1.6) { D.i++; D.s = 0; D.n = 0; if (D.i < CD_FRASES.length) cdSnd.grunido(); }
   } else if (D.i >= CD_FRASES.length) {
-    // 3) se lanza contra la pantalla
+
     D.fin += dt;
     D.boca = 1;
     if (D.fin > 0.25 && !D.ruge) { D.ruge = 1; cdSnd.susto(); SHK = 14; }
-    // no la mata: la arrastra al blanco, donde la espera el Cuentero (40-jefe-cuentero.js)
+
     if (D.fin > 3.6 && !D.lleva) { D.lleva = 1; loadArea(7); blackIn = 1.2; flashW = 0.6; }
   }
 }
-// qué cuadro de la hoja toca
+
 function cdCuadro(D, t) {
   if (D.t < CDJ.llega) return Math.floor(D.t * 16) % 6;
-  if (D.fin) return D.fin < 0.12 ? 0 : 2; // salta con el hocico abierto
-  if (D.t < CDJ.llega + 0.25) return 5; // frenada
+  if (D.fin) return D.fin < 0.12 ? 0 : 2;
+  if (D.t < CDJ.llega + 0.25) return 5;
   if (D.boca > 0.75) return 8;
   if (D.boca > 0.45) return 7;
   if (D.boca > 0.15) return 6;
@@ -11200,9 +10972,9 @@ function cdPerro(t) {
   const D = CD.perro;
   if (!D || !img.cdj) return;
   const k = cdCuadro(D, t), P = cdPos(D), sc = P.sc;
-  // respira (sube y baja un pixel) cuando está quieto
+
   const resp = D.t > CDJ.llega + 0.25 && !D.fin ? Math.round(Math.sin(t * 3)) : 0;
-  // sombra
+
   ctx.fillStyle = 'rgba(10,4,16,.45)';
   ctx.fillRect(Math.round(P.x - 20 * sc), GROUND - 2, Math.round(40 * sc), 3);
   ctx.save();
@@ -11210,7 +10982,7 @@ function cdPerro(t) {
   ctx.drawImage(img.cdj, k * CDJ.w, 0, CDJ.w, CDJ.h, Math.round(-24 * sc), Math.round(-43 * sc) + resp, CDJ.w * sc, CDJ.h * sc);
   ctx.restore();
 }
-// brillo de brasas detrás (la cola y las costillas son de fuego apagado)
+
 function cdResplandor(t) {
   const D = CD.perro;
   if (!D) return;
@@ -11226,7 +10998,7 @@ function cdResplandor(t) {
   ctx.fillRect(x - r, y - r, r * 2, r * 2);
   ctx.restore();
 }
-// los ojos celestes brillan
+
 function cdOjos(t) {
   const D = CD.perro;
   if (!D || D.t < CDJ.llega + 0.25 || D.fin > 0.12) return;
@@ -11241,14 +11013,14 @@ function cdOjos(t) {
   ctx.fillRect(x - 12, y - 12, 24, 24);
   ctx.restore();
 }
-// globo del Cadejo (solo mientras habla)
+
 function cdGlobo() {
   const D = CD.perro;
   if (!D || D.i < 0 || D.i >= CD_FRASES.length) return;
   const full = CD_FRASES[D.i];
   if (!D.n) return;
   ctx.font = '8px ' + PS;
-  // la frase completa decide el tamaño del globo (en varias líneas si es larga)
+
   const lineas = wrapT(full, 300), w = Math.max(80, Math.max(...lineas.map(l => ctx.measureText(l).width)) + 20), h = 18 + lineas.length * 12;
   const hx = D.x - cam - 50, bx = Math.round(Math.max(8, Math.min(W - w - 8, hx - w / 2))), by = GROUND - 140 - h;
   const tem = D.boca > 0.6 ? (Math.random() - 0.5) * 2 : 0;
@@ -11276,7 +11048,7 @@ function cdFinal() {
   ctx.fillStyle = 'rgba(0,0,0,' + a + ')';
   ctx.fillRect(0, 0, W, H);
   if (D.fin > 1.4) {
-    // solo quedan los ojos... y el texto
+
     const k = Math.min(1, (D.fin - 1.4) / 1);
     ctx.globalAlpha = Math.max(0, 1 - (D.fin - 1.4) / 2.5);
     ctx.fillStyle = '#5ae0ff';
@@ -11292,9 +11064,6 @@ function cdFinal() {
   }
 }
 
-/* =====================================================================
-   CONEXIÓN CON EL JUEGO
-   ===================================================================== */
 const loadAreaCD = loadArea;
 loadArea = function (n) {
   loadAreaCD(n);
@@ -11310,7 +11079,7 @@ updEnemies = function (dt) {
 const drawPlatCD = drawPlat;
 drawPlat = function () {
   const t = performance.now() / 1000;
-  if (area == 9) return cnFondo(t); // 28f-campo-de-noche.js
+  if (area == 9) return cnFondo(t);
   drawPlatCD();
   dibujarPilar(t);
 };
@@ -11335,25 +11104,15 @@ draw = function () {
   cdUlt = now;
   if (state == 'cdtp') pilarCineTick(dt);
   if (state == 'cdcine' && area == 9) cdCineTick(dt);
-  // durante el susto y la luz del pilar la pantalla también tiembla
+
   const s0 = state;
   if (s0 == 'cdcine' || s0 == 'cdtp') state = 'play';
   drawCD();
   state = s0;
 };
 
-/* ---------- 28e-monstruo-del-camino.js ---------- */
-/* =====================================================================
-   EL MONSTRUO DEL CAMINO VIEJO (área 9, antes del Cadejo)
-   Una bestia roja con un cristal verde en la cabeza (sprites del ENEMY.zip).
-   Baja dentro de un rayo de luz, igual que Smara llegó por el pilar,
-   y le cierra el camino: hay que vencerla para seguir.
-   Cuadros de la hoja (10x10, 73x61 cada uno, mirando a la derecha):
-     1-12 aparece · 13-40 camina · 41 golpe recibido · 42-49 mordida
-     50-54 rugido · 55-79 embestida · 80 golpe recibido · 81-99 muere
-   ===================================================================== */
 const MON = {
-  w: 73, h: 61, ax: 24, ay: 61, esc: 2, // ancla en las patas; se dibuja al doble
+  w: 73, h: 61, ax: 24, ay: 61, esc: 2,
   vida: 140,
   anim: {
     nace: { a: 1, b: 12, fps: 12, loop: false },
@@ -11363,7 +11122,7 @@ const MON = {
     embiste: { a: 55, b: 79, fps: 26, loop: true },
     muere: { a: 81, b: 99, fps: 12, loop: false },
   },
-  // dónde aparecen (cuando Smara pasa por "x", el monstruo baja en "en")
+
   oleadas: [{ x: 560, en: 760 }, { x: 830, en: 990 }],
 };
 function monNuevo(x) {
@@ -11386,7 +11145,7 @@ function monTick(dt) {
   if (!CD.on) return;
   CD.mons = CD.mons || [];
   CD.ola = CD.ola || 0;
-  // aparecen cuando Smara avanza (la siguiente solo si ya venció a la anterior)
+
   const O = MON.oleadas[CD.ola];
   if (O && state == 'play' && p.x > O.x && !CD.mons.some(m => m.st != 'muere' && m.st != 'montado')) { CD.ola++; monNuevo(O.en); }
   for (const m of CD.mons) {
@@ -11408,7 +11167,7 @@ function monTick(dt) {
       if (ad < 70 && m.cd <= 0) { m.st = 'muerde'; m.t = 0; m.hit = false; cdTono(220, 90, 0.2, 'sawtooth', 0.08); }
       else if (ad > 140 && ad < 320 && m.cd <= 0 && Math.random() < dt * 0.9) { m.st = 'ruge'; m.t = 0; cdSnd.grunido(); }
     } else if (m.st == 'muerde') {
-      // la mordida pega en los cuadros del medio
+
       const k = monCuadro(m);
       if (!m.hit && k >= 45 && k <= 47) {
         m.hit = true;
@@ -11418,7 +11177,7 @@ function monTick(dt) {
       }
       if (m.t >= monDur('muerde')) { m.st = 'camina'; m.t = 0; m.cd = 0.9; }
     } else if (m.st == 'ruge') {
-      // escupe chispas por la boca antes de embestir
+
       if (Math.random() < 0.6) pfx(m.x + m.face * 52, GROUND - 40, m.face * rnd(40, 140), rnd(-60, 20), rnd(0.2, 0.4), Math.random() < 0.5 ? '#ffffff' : '#5af0b4', 2, 200);
       if (m.t >= monDur('ruge') + 0.15) { m.st = 'embiste'; m.t = 0; m.face = dx < 0 ? -1 : 1; cdRuido(0.6, 500, 0.25); }
     } else if (m.st == 'embiste') {
@@ -11428,16 +11187,16 @@ function monTick(dt) {
       if (m.t > 0.9 || m.x < cam + 20 || m.x > cam + W - 20) { m.st = 'camina'; m.t = 0; m.cd = 1.4; SHK = Math.max(SHK, 3); }
     }
     m.x = Math.max(40, Math.min(LEVEL - 40, m.x));
-    // (el choque con Smara, que la empuja para atrás, está en 28f: cnEmpuje)
+
   }
-  // golpes de Smara
+
   const a = p.atk;
   if (a && a.hit && CD.ultAtk !== a) {
     CD.ultAtk = a;
     const hx = p.x + a.f * 42;
     for (const m of CD.mons) {
       if (m.st == 'nace' || m.st == 'muere' || m.st == 'montado') continue;
-      // cuerpo de la bestia: de la cola a la cabeza (mira hacia m.face)
+
       const cx = m.x + m.face * 18, my = m.y || GROUND;
       if (golpeToca(a, cx - 52, my - 64, cx + 52, my)) { monDanio(m, sdmg(a), a.c == 2 || a.c >= 3); }
     }
@@ -11453,13 +11212,13 @@ function monDibujar(t) {
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(m.face, 1);
-    // al morir parpadea
+
     if (m.st == 'muere' && k >= 90) ctx.globalAlpha = k % 2 ? 0.4 : 0.9;
     ctx.drawImage(img.mon9, sx, sy, MON.w, MON.h, -MON.ax * e, -MON.ay * e, MON.w * e, MON.h * e);
     ctx.restore();
   }
 }
-// el cristal verde brilla en la oscuridad (y la barrita de vida)
+
 function monBrillos(t) {
   if (!CD.on || !CD.mons) return;
   for (const m of CD.mons) {
@@ -11484,24 +11243,12 @@ function monBrillos(t) {
   }
 }
 
-/* =====================================================================
-   NOQUEO Y MONTURA
-   · Cuando a la bestia le queda poca vida (MON.noqueo) cae NOQUEADA:
-     se tambalea, se desploma y le dan vueltas estrellitas en la cabeza.
-   · Si Smara se acerca y aprieta E, se le sube encima y la MONTA por
-     un tiempo limitado (MON.monta segundos):
-       A/D más rápido · Espacio salta con ella · doble Espacio = embestida
-       E = mordida · J/K Smara sigue usando la guadaña desde arriba
-     Lo que la bestia atropella al correr o embestir recibe daño.
-   · Al acabarse el tiempo Smara salta y la bestia cae rendida.
-   · Si nadie la monta en MON.noqDur segundos, se levanta furiosa.
-   ===================================================================== */
 MON.noqueo = 35;
 MON.noqDur = 8;
 MON.monta = 10;
 let MONTA = null;
 function monDanio(m, d, fuerte) {
-  if (m.st == 'noqueado') d *= 2; // golpe de gracia
+  if (m.st == 'noqueado') d *= 2;
   m.hp -= d;
   m.flash = 0.08;
   if (m.st != 'noqueado') m.kb = 0.12;
@@ -11513,9 +11260,9 @@ function monDanio(m, d, fuerte) {
     m.t = 0;
     sfx('boom');
     SHK = Math.max(SHK, 5);
-    pick.push({ x: m.x, id: 'nac', y: GROUND, got: false }); // deja un nacatamal
+    pick.push({ x: m.x, id: 'nac', y: GROUND, got: false });
   } else if (!m.noq && m.hp <= MON.noqueo && m.st != 'noqueado') {
-    // ¡NOQUEADA!
+
     m.st = 'noqueado';
     m.t = 0;
     m.noq = 1;
@@ -11523,7 +11270,7 @@ function monDanio(m, d, fuerte) {
     m.hp = Math.max(1, m.hp);
     sfx('boom');
     SHK = Math.max(SHK, 6);
-    cdTono(900, 200, 0.9, 'triangle', 0.06); // silbido de mareo
+    cdTono(900, 200, 0.9, 'triangle', 0.06);
     cdTono(1300, 300, 0.9, 'sine', 0.04, 0.1);
     for (let i = 0; i < 14; i++) pfx(m.x + m.face * 30, GROUND - 4, rnd(-120, 120), rnd(-120, -20), rnd(0.3, 0.6), '#5a4a3e', 3, 400);
   }
@@ -11531,7 +11278,7 @@ function monDanio(m, d, fuerte) {
 function noqTick(m, dt) {
   if (m.t > 0.66 && m.t < 0.7 && !m.pum) { m.pum = 1; SHK = Math.max(SHK, 4); cdRuido(0.4, 200, 0.3); }
   if (m.t > MON.noqDur) {
-    // nadie la montó: se levanta furiosa
+
     m.st = 'ruge';
     m.t = 0;
     m.noq = 0;
@@ -11543,24 +11290,24 @@ function noqTick(m, dt) {
 function montaCuadro(m) {
   const t = m.t;
   if (m.st == 'noqueado') {
-    if (t < 0.36) return 78 + Math.floor(t / 0.12); // se tambalea
-    if (t < 0.66) return 81 + Math.floor((t - 0.36) / 0.1); // se desploma
-    if (t > MON.noqDur - 1.4) return Math.floor(t * 9) % 2 ? 85 : 81; // ya se quiere levantar
-    return Math.floor(t * 1.4) % 2 ? 85 : 84; // respira tirada en el suelo
+    if (t < 0.36) return 78 + Math.floor(t / 0.12);
+    if (t < 0.66) return 81 + Math.floor((t - 0.36) / 0.1);
+    if (t > MON.noqDur - 1.4) return Math.floor(t * 9) % 2 ? 85 : 81;
+    return Math.floor(t * 1.4) % 2 ? 85 : 84;
   }
-  // montada
-  if (t < 0.4) return [85, 84, 83, 82, 81, 80, 79][Math.min(6, Math.floor(t / 0.058))]; // se levanta
+
+  if (t < 0.4) return [85, 84, 83, 82, 81, 80, 79][Math.min(6, Math.floor(t / 0.058))];
   if (MONTA && MONTA.muerde > 0) return 42 + Math.min(7, Math.floor((1 - MONTA.muerde / 0.5) * 8));
   if (p.dash > 0 || Math.abs(p.vx) > 250) return 55 + (Math.floor(t * 26) % 25);
   if (Math.abs(p.vx) > 25) return 13 + (Math.floor(t * (14 + Math.abs(p.vx) / 18)) % 28);
   return 13;
 }
-// estrellitas, aviso de E y barras de tiempo
+
 function montaBrillos(m, t) {
   const x = Math.round(m.x - cam);
   if (m.st == 'noqueado') {
     if (m.t < 0.66) return;
-    // estrellitas dando vueltas sobre la cabeza (tirada, la cabeza queda adelante)
+
     const hx = x + m.face * 70, hy = GROUND - 34;
     for (let i = 0; i < 3; i++) {
       const a = t * 4 + (i * Math.PI * 2) / 3, sx = Math.round(hx + Math.cos(a) * 14), sy = Math.round(hy + Math.sin(a) * 4);
@@ -11568,14 +11315,14 @@ function montaBrillos(m, t) {
       ctx.fillRect(sx - 1, sy, 3, 1);
       ctx.fillRect(sx, sy - 1, 1, 3);
     }
-    // "KO" que sube y baja
+
     ctx.font = '8px ' + PS;
     ctx.textAlign = 'center';
     ctx.fillStyle = '#000a';
     ctx.fillText('KO', hx + 1, hy - 13 + Math.round(Math.sin(t * 3) * 2));
     ctx.fillStyle = '#ffe45a';
     ctx.fillText('KO', hx, hy - 14 + Math.round(Math.sin(t * 3) * 2));
-    // cuánto le falta para levantarse
+
     const k = Math.max(0, 1 - m.t / MON.noqDur), bx = x - 20, by = GROUND - 44;
     ctx.fillStyle = '#000a';
     ctx.fillRect(bx - 1, by - 1, 42, 4);
@@ -11593,7 +11340,7 @@ function montaBrillos(m, t) {
     }
     ctx.textAlign = 'left';
   } else if (MONTA && MONTA.m === m) {
-    // tiempo de la montura
+
     const k = Math.max(0, MONTA.t / MON.monta), bx = x - 30, by = Math.round(p.y) - 112;
     ctx.fillStyle = '#000a';
     ctx.fillRect(bx - 1, by - 1, 62, 5);
@@ -11626,21 +11373,21 @@ function montar(m) {
 function bajar() {
   const m = MONTA.m;
   MONTA = null;
-  // la bestia cae rendida
+
   m.st = 'muere';
   m.t = 0;
   m.x = p.x;
   pick.push({ x: m.x, id: 'nac', y: GROUND, got: false });
   sfx('boom');
   SHK = Math.max(SHK, 5);
-  // Smara salta para atrás
+
   p.y = GROUND - 50;
   p.vy = -380;
   p.vx = -p.face * 140;
   p.on = false;
   p.kb = 0.25;
 }
-// lo que la bestia muerde o atropella
+
 function montaPega(x0, x1, d, quien) {
   const a = Math.min(x0, x1), b = Math.max(x0, x1), ahora = performance.now();
   for (const o of [...CD.mons, ...(LL.esp || [])]) {
@@ -11649,7 +11396,7 @@ function montaPega(x0, x1, d, quien) {
     if (ahora - (MONTA.golpe.get(o) || 0) < 450) continue;
     MONTA.golpe.set(o, ahora);
     SHK = Math.max(SHK, 3);
-    if (LL.esp.includes(o)) espDanio(o, d, MONTA.m.face); // el Espanto (28f)
+    if (LL.esp.includes(o)) espDanio(o, d, MONTA.m.face);
     else { monDanio(o, d, quien == 'muerde'); o.x += MONTA.m.face * 18; }
   }
 }
@@ -11661,7 +11408,7 @@ function montaTick(dt) {
   MONTA.sube -= dt;
   MONTA.muerde -= dt;
   MONTA.cd -= dt;
-  // más rápida que Smara a pie
+
   if (p.kb <= 0 && p.dash <= 0 && MONTA.sube <= 0) {
     const dir = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
     p.x += dir * (keys.ShiftLeft || keys.ShiftRight ? 170 : 120) * dt;
@@ -11670,7 +11417,7 @@ function montaTick(dt) {
   p.crouch = false;
   m.x = p.x;
   m.face = p.face;
-  // pisadas pesadas
+
   if (p.on && Math.abs(p.vx) > 25) {
     MONTA.paso -= dt * (1 + Math.abs(p.vx) / 200);
     if (MONTA.paso <= 0) {
@@ -11680,13 +11427,13 @@ function montaTick(dt) {
       for (let i = 0; i < 4; i++) pfx(m.x - m.face * 10 + rnd(-10, 10), GROUND - 1, rnd(-60, 60), rnd(-70, -20), 0.35, '#4a2a58', 2, 300);
     }
   }
-  // mordida
+
   if (MONTA.muerde > 0 && MONTA.muerde < 0.28 && !MONTA.mordio) {
     MONTA.mordio = 1;
     cdRuido(0.15, 900, 0.25);
     montaPega(m.x + m.face * 30, m.x + m.face * 120, 34, 'muerde');
   }
-  // atropella al correr o embestir
+
   if (p.dash > 0 || Math.abs(p.vx) > 150) montaPega(m.x - m.face * 10, m.x + m.face * 80, p.dash > 0 ? 22 : 10, 'pisa');
   if (MONTA.t <= 0) bajar();
 }
@@ -11704,7 +11451,7 @@ addEventListener('keydown', e => {
   const m = (CD.mons || []).find(m => m.st == 'noqueado' && m.t > 0.66 && montaCerca(m));
   if (m) montar(m);
 });
-// Smara sentada en el lomo
+
 const drawPlayerMON = drawPlayer;
 drawPlayer = function () {
   if (!MONTA || area != 9) return drawPlayerMON();
@@ -11713,7 +11460,7 @@ drawPlayer = function () {
   const y0 = p.y, x0 = p.x, c0 = p.crouch, v0 = p.vx, o0 = p.on, l0 = p.landT;
   p.y -= alto;
   p.x -= p.face * 4;
-  // sentada con las piernas recogidas, también cuando la bestia salta
+
   if (!p.atk && MONTA.sube <= 0) { p.crouch = true; p.vx = 0; p.on = true; p.landT = 0; }
   drawPlayerMON();
   p.y = y0; p.x = x0; p.crouch = c0; p.vx = v0; p.on = o0; p.landT = l0;
@@ -11728,7 +11475,6 @@ drawPShadow = function () {
   drawPShadowMON();
 };
 
-/* ---------------- conexión ---------------- */
 const loadAreaMON = loadArea;
 loadArea = function (n) {
   loadAreaMON(n);
@@ -11750,43 +11496,29 @@ drawPFX = function () {
   drawPFXMON();
   if (area == 9) monBrillos(performance.now() / 1000);
 };
-// el empujón al recibir un golpe va en la dirección correcta
+
 const nearestFoeXMON = nearestFoeX;
 nearestFoeX = function () {
   if (area == 9 && CD.golpe != null) { const g = CD.golpe; CD.golpe = null; return g; }
   return nearestFoeXMON();
 };
 
-/* ---------- 28f-campo-de-noche.js ---------- */
-/* =====================================================================
-   EL LLANO DE LOS SUSURROS (área 9, del otro lado del pilar)
-   · Cielo: las NUBES DE NOCHE con la luna (zn1-zn4), en parallax:
-     cuando Smara camina, cada capa se corre a distinta velocidad.
-   · Lomas, un ranchito lejos, cercos y pasto alto (también en parallax).
-   · Suelo de pasto color tierra morada con PASTO BRILLANTE BLANCO que
-     se mece con el viento y se aparta cuando Smara pasa.
-   · Abajo, el AGUA con el reflejo de todo.
-   · El ESPANTO (sprites de character.zip): una sombra con jaula en la
-     cabeza y una lanza; barre el suelo con un tajo blanco (¡saltalo!).
-   · Ambiente del campo: viento, grillos, ranas, un búho... y SUSURROS.
-   ===================================================================== */
 const LL = { suelo: 310, agua: 336, sueloY: 296 };
 ZN[9] = ['EL LLANO DE LOS SUSURROS', 'un mundo que no es real'];
 
-/* ---------------- capas pre-dibujadas ---------------- */
 const LLC = {};
 function cnArmar() {
   if (LLC.ok) return;
   LLC.ok = 1;
   const R = (() => { let s = 77; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
-  // cada capa guarda solo la franja que usa (y0..y1): dibujar pixeles vacíos también cuesta
+
   const capa = (w, y0, y1, f) => { const c = document.createElement('canvas'); c.width = w; c.height = y1 - y0; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.translate(0, -y0); f(x); c.y = y0; return c; };
-  // brillo redondo pre-dibujado (luna, halos, ojos): más barato que un degradado nuevo en cada cuadro
+
   const halo = (r, c0, c1) => { const c = document.createElement('canvas'); c.width = c.height = r * 2; const x = c.getContext('2d'), g = x.createRadialGradient(r, r, 0, r, r, r); g.addColorStop(0, c0); g.addColorStop(1, c1); x.fillStyle = g; x.fillRect(0, 0, r * 2, r * 2); return c; };
   LLC.luna = halo(44, 'rgba(120,220,255,.25)', 'rgba(80,120,255,0)');
   LLC.halo = halo(70, 'rgba(120,100,170,.22)', 'rgba(60,40,100,0)');
   LLC.ojo = halo(10, 'rgba(255,60,60,.8)', 'rgba(255,0,0,0)');
-  // pasto blanco: cada hoja (alto x inclinación x capa) ya dibujada en una hoja de sprites
+
   const PA = document.createElement('canvas');
   PA.width = 17 * 20; PA.height = 2 * 13 * 13;
   const pa = PA.getContext('2d');
@@ -11799,7 +11531,7 @@ function cnArmar() {
           pa.fillRect((L + 8) * 20 + 10 + Math.round(L * k * k), (cp * 13 + h) * 13 + 12 - j, 1, 1);
         }
   LLC.pasto = PA;
-  // lomas lejanas con un ranchito y árboles de ceiba
+
   LLC.lomas = capa(1200, 150, 300, c => {
     const alto = x => 250 - 22 * Math.sin(x * 0.006) - 12 * Math.sin(x * 0.017 + 1) - 5 * Math.sin(x * 0.05);
     for (let x = 0; x < 1200; x++) {
@@ -11807,21 +11539,21 @@ function cnArmar() {
       c.fillStyle = '#1d1430'; c.fillRect(x, y, 1, H - y);
       c.fillStyle = '#2c1f45'; c.fillRect(x, y, 1, 1);
     }
-    // matorrales redondos sobre las lomas
+
     for (const cx of [140, 520, 930]) {
       const b = Math.round(alto(cx));
       c.fillStyle = '#181026';
       for (let i = 0; i < 90; i++) { const a = R() * Math.PI, r = R() * 16; c.fillRect(Math.round(cx + Math.cos(a) * r * 1.6), Math.round(b + 2 - Math.sin(a) * r * 0.7), 3, 2); }
     }
-    // ranchito con la ventana encendida
+
     const rx = 720, rb = Math.round(alto(rx));
     c.fillStyle = '#140d22'; c.fillRect(rx, rb - 12, 22, 12);
     for (let k = 0; k < 8; k++) c.fillRect(rx - 3 + k, rb - 12 - k, 28 - k * 2, 1);
     c.fillStyle = '#ffcf6a'; c.fillRect(rx + 14, rb - 8, 3, 3);
   });
-  // ruinas del campo: casas de adobe, una ermita, un pozo y muros de piedra
+
   LLC.ruinas = capa(1600, 170, 300, c => cnRuinas(c, R));
-  // pasto alto (más cerca)
+
   LLC.cerco = capa(900, 252, 300, c => {
     for (let x = 0; x < 900; x++) {
       const y = Math.round(286 + 4 * Math.sin(x * 0.02) + 2 * Math.sin(x * 0.07));
@@ -11829,7 +11561,7 @@ function cnArmar() {
     }
     for (let i = 0; i < 1400; i++) { const x = R() * 900, h = 3 + R() * 10, y = 288 + 4 * Math.sin(x * 0.02); c.fillStyle = R() < 0.5 ? '#2e2046' : '#382858'; c.fillRect(Math.round(x), Math.round(y - h), 1, Math.round(h)); }
   });
-  // el suelo del área 6 pintado de tierra morada
+
   const s = document.createElement('canvas');
   s.width = 320; s.height = 20;
   const sx = s.getContext('2d');
@@ -11842,7 +11574,7 @@ function cnArmar() {
   }
   sx.putImageData(d, 0, 0);
   LLC.suelo = s;
-  // brillito para las puntas del pasto blanco
+
   const g = document.createElement('canvas');
   g.width = g.height = 12;
   const gx = g.getContext('2d'), gr = gx.createRadialGradient(6, 6, 0, 6, 6, 6);
@@ -11853,45 +11585,43 @@ function cnArmar() {
 }
 const cnHash = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
-/* ---------------- el fondo (va detrás de Smara) ---------------- */
 function cnFondo(t) {
   cnArmar();
   t = tMundo();
   ctx.fillStyle = '#1b1430';
   ctx.fillRect(0, 296, W, 40);
-  // nubes de noche: estrellas, luna, nubes de atrás y de adelante.
-  // [capa, parallax, viento, franja de la imagen que tiene algo (y0, alto, x0, ancho)]
+
   const top = -20, cap = [['zn1', 0.03, 0, 0, 324, 0, 576], ['zn2', 0.01, 0, 79, 21, 246, 21], ['zn3', 0.1, 1.5, 53, 271, 0, 576], ['zn4', 0.2, 3.5, 127, 197, 0, 576]];
   for (const [k, f, v, y0, h, x0, w] of cap) {
     const im = img[k];
     if (!im) continue;
     const o = (((cam * f + t * v) % 576) + 576) % 576;
     for (let x = -o; x < W; x += 576) if (x + x0 + w > 0 && x + x0 < W) ctx.drawImage(im, x0, y0, w, h, Math.round(x) + x0, top + y0, w, h);
-    if (k == 'zn2') { // la luna brilla
+    if (k == 'zn2') {
       const mx = ((256 - cam * f) % 576 + 576) % 576, my = top + 89, r = Math.round(40 + Math.sin(t * 0.8) * 3);
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       for (const xl of [mx, mx - 576, mx + 576]) if (xl > -60 && xl < W + 60) ctx.drawImage(LLC.luna, Math.round(xl - r), my - r, r * 2, r * 2);
       ctx.restore();
     }
   }
-  // estrellitas que titilan
+
   for (let i = 0; i < 30; i++) {
     const x = (((i * 97.3 - cam * 0.03) % W) + W) % W, y = (i * 37.1) % 170;
     if (Math.sin(t * 1.7 + i * 2.1) > 0.8) { ctx.fillStyle = 'rgba(235,240,255,.9)'; ctx.fillRect(Math.round(x), Math.round(y), 1, 1); ctx.fillStyle = 'rgba(235,240,255,.3)'; ctx.fillRect(Math.round(x) - 1, Math.round(y), 3, 1); ctx.fillRect(Math.round(x), Math.round(y) - 1, 1, 3); }
   }
-  // lomas, ruinas y pasto alto en parallax
+
   for (const [c, f] of [[LLC.lomas, 0.3], [LLC.ruinas, 0.42], [LLC.cerco, 0.55]]) {
     const w = c.width, o = Math.round(((cam * f) % w + w) % w);
     for (let x = -o; x < W; x += w) ctx.drawImage(c, x, c.y);
   }
-  // neblina baja
+
   for (let i = 0; i < 7; i++) {
     const x = ((((i * 173 + t * (6 + i)) - cam * 0.7) % (W + 300)) + W + 300) % (W + 300) - 150;
     ctx.fillStyle = 'rgba(160,140,210,' + (0.05 + 0.02 * Math.sin(t + i)) + ')';
     ctx.fillRect(Math.round(x), 280 + (i % 3) * 5, 160 + (i % 4) * 30, 4);
     ctx.fillRect(Math.round(x) + 20, 284 + (i % 3) * 5, 110, 3);
   }
-  // suelo de tierra morada (se repite en espejo como en el área 6)
+
   const c0 = Math.floor(cam / 640);
   for (let i = c0; i <= c0 + 2; i++) {
     const x = i * 640 - Math.round(cam);
@@ -11905,21 +11635,19 @@ function cnFondo(t) {
   cnPasto(t, 0);
 }
 
-/* ---------------- estructuras del fondo ---------------- */
-// colores: pared, sombra, borde que alumbra la luna, techo, hueco oscuro, luz de vela
 const RU = { pa: '#2b1f3e', so: '#1f1630', lu: '#4d3d6b', te: '#3a2036', te2: '#2a1628', hu: '#110a1b', ve: '#ffcf6a' };
 function cnRuinas(c, R) {
-  const B = 292; // donde se apoyan (el pasto alto les tapa la base)
+  const B = 292;
   const rect = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
-  // pared de adobe con grietas y ladrillos marcados
+
   const pared = (x, y, w, h) => {
     rect(x, y, w, h, RU.pa);
-    rect(x, y, 2, h, RU.lu); // la luna alumbra el lado izquierdo
+    rect(x, y, 2, h, RU.lu);
     rect(x + w - 3, y, 3, h, RU.so);
     for (let i = 0; i < w * h / 60; i++) rect(x + 3 + R() * (w - 8), y + 2 + R() * (h - 4), 3 + R() * 4, 1, R() < 0.5 ? RU.so : '#33264a');
     for (let k = 0; k < 2; k++) { let gx = x + 6 + R() * (w - 12), gy = y + R() * 6; for (let j = 0; j < 8; j++) { rect(gx, gy, 1, 2, RU.hu); gx += R() < 0.5 ? -1 : 1; gy += 2; } }
   };
-  // techo de tejas a dos aguas (si "roto", le falta un pedazo)
+
   const techo = (x, y, w, alto, roto) => {
     for (let j = 0; j < alto; j++) {
       const a = x - 4 + j * (w / 2 + 4) / alto, b = x + w + 4 - j * (w / 2 + 4) / alto;
@@ -11933,32 +11661,32 @@ function cnRuinas(c, R) {
   const casa = (x, w, h, roto, vela) => {
     const y = B - h;
     pared(x, y, w, h);
-    rect(x + w * 0.2, B - 20, 10, 20, RU.hu); // puerta
+    rect(x + w * 0.2, B - 20, 10, 20, RU.hu);
     rect(x + w * 0.2 - 1, B - 21, 12, 1, RU.lu);
-    rect(x + w * 0.62, y + 8, 9, 8, vela ? '#2a1a10' : RU.hu); // ventana
+    rect(x + w * 0.62, y + 8, 9, 8, vela ? '#2a1a10' : RU.hu);
     if (vela) { rect(x + w * 0.62 + 3, y + 11, 3, 4, RU.ve); rect(x + w * 0.62 + 4, y + 10, 1, 1, '#fff2c0'); }
     rect(x + w * 0.62 + 4, y + 8, 1, 8, RU.so);
     techo(x, y, w, Math.round(w / 3.2), roto);
   };
-  // ermita de pueblo: fachada con espadaña y campana
+
   const ermita = (x) => {
     const w = 56, h = 46, y = B - h;
-    pared(x + 50, B - 30, 64, 30); // la nave, atrás
+    pared(x + 50, B - 30, 64, 30);
     techo(x + 50, B - 30, 64, 14, false);
     pared(x, y, w, h);
-    for (let j = 0; j < 18; j++) rect(x + j * 1.5, y - j, w - j * 3, 1, j % 3 ? RU.pa : RU.lu); // frontón
-    // espadaña con la campana
+    for (let j = 0; j < 18; j++) rect(x + j * 1.5, y - j, w - j * 3, 1, j % 3 ? RU.pa : RU.lu);
+
     rect(x + w / 2 - 9, y - 34, 18, 18, RU.pa);
     rect(x + w / 2 - 9, y - 34, 2, 18, RU.lu);
     rect(x + w / 2 - 5, y - 30, 10, 10, RU.hu);
     rect(x + w / 2 - 3, y - 27, 6, 6, '#6b5a3a'); rect(x + w / 2 - 1, y - 21, 2, 2, '#6b5a3a');
     rect(x + w / 2 - 11, y - 36, 22, 2, RU.lu);
-    // puerta en arco y ventana redonda
+
     rect(x + w / 2 - 7, B - 22, 14, 22, RU.hu);
     for (let i = 0; i < 4; i++) rect(x + w / 2 - 6 + i, B - 23 - i, 12 - i * 2, 1, RU.hu);
     rect(x + w / 2 - 3, y + 6, 6, 6, '#2a1a10'); rect(x + w / 2 - 1, y + 8, 2, 2, RU.ve);
   };
-  // pozo de piedra con su techito
+
   const pozo = (x) => {
     rect(x, B - 12, 26, 12, RU.pa); rect(x, B - 12, 26, 2, RU.lu);
     for (let i = 0; i < 6; i++) rect(x + 1 + i * 4, B - 9 + (i % 2) * 4, 3, 2, RU.so);
@@ -11966,14 +11694,14 @@ function cnRuinas(c, R) {
     for (let j = 0; j < 6; j++) rect(x - 2 + j, B - 30 - j, 30 - j * 2, 1, j % 2 ? RU.te : RU.te2);
     rect(x + 12, B - 28, 1, 10, '#6a6070'); rect(x + 10, B - 18, 5, 4, '#3a3040');
   };
-  // muro de piedras caído
+
   const muro = (x, w) => {
     for (let i = 0; i < w; i += 7) {
       const h = 8 + Math.round(10 * Math.abs(Math.sin(i * 0.05)) * (R() * 0.5 + 0.5));
       for (let y = 0; y < h; y += 5) rect(x + i + ((y / 5) % 2) * 3, B - y - 5, 6, 4, (i + y) % 3 ? RU.pa : '#33264a');
       rect(x + i, B - h - 1, 6, 1, RU.lu);
     }
-    for (let i = 0; i < 6; i++) rect(x + w + 4 + R() * 30, B - 4 - R() * 3, 5, 4, RU.pa); // piedras sueltas
+    for (let i = 0; i < 6; i++) rect(x + w + 4 + R() * 30, B - 4 - R() * 3, 5, 4, RU.pa);
   };
   const roca = (x, w, h) => { for (let j = 0; j < h; j++) { const k = Math.sin((j / h) * Math.PI * 0.5); rect(x + (1 - k) * w * 0.3, B - j, w - (1 - k) * w * 0.6 + j % 2, 1, j > h - 3 ? RU.lu : RU.pa); } };
   casa(110, 74, 36, true, false);
@@ -11987,8 +11715,6 @@ function cnRuinas(c, R) {
   muro(1400, 70);
 }
 
-/* ---------------- plataformas de tierra morada ---------------- */
-// [x, y donde se pisa, ancho]. Smara salta ~90 px: ninguna queda a más de 60 del piso o de otra.
 const LL_PLAT = [
   [300, 252, 96],
   [470, 200, 80],
@@ -12006,16 +11732,16 @@ function cnPlatCanvas(w) {
   const x = c.getContext('2d');
   let s = w * 31;
   const R = () => (s = (s * 16807) % 2147483647) / 2147483647;
-  // terrón de tierra morada que se angosta para abajo
+
   for (let j = 0; j < 22; j++) {
     const m = Math.round(Math.pow(j / 22, 1.6) * w * 0.35) + Math.round(R() * 2);
     x.fillStyle = j < 3 ? '#6c4078' : j < 7 ? '#563062' : j < 14 ? '#44244e' : '#341a3e';
     x.fillRect(4 + m, 6 + j, w - m * 2, 1);
   }
   for (let i = 0; i < w / 3; i++) { x.fillStyle = R() < 0.5 ? '#26122e' : '#8a5896'; x.fillRect(Math.round(6 + R() * (w - 8)), Math.round(10 + R() * 10), 2, 1); }
-  // raíces colgando
+
   for (let k = 10; k < w - 6; k += 9 + Math.floor(R() * 8)) { const l = 3 + Math.floor(R() * 8); x.fillStyle = '#2a1830'; x.fillRect(4 + k, 26, 1, l); }
-  // borde de pasto y florecitas blancas
+
   for (let i = 0; i < w; i++) { x.fillStyle = (i * 7) % 5 ? '#8a5896' : '#a596d6'; x.fillRect(4 + i, 5 - ((i * 13) % 3 == 0 ? 1 : 0), 1, 2); }
   for (let i = 6; i < w - 4; i += 5 + Math.floor(R() * 7)) { const h = 2 + Math.floor(R() * 4); x.fillStyle = '#e4dcff'; x.fillRect(4 + i, 5 - h, 1, h); x.fillStyle = '#ffffff'; x.fillRect(4 + i, 5 - h, 1, 1); }
   return (LLC.plat[w] = c);
@@ -12024,21 +11750,19 @@ function cnPlataformas(t) {
   for (const pl of platforms) {
     const x0 = Math.round(pl.x - cam);
     if (x0 > W + 20 || x0 + pl.w < -20) continue;
-    const bob = 0; // quietas: se pisan firme
+    const bob = 0;
     ctx.fillStyle = 'rgba(10,4,16,.3)';
-    ctx.fillRect(x0 + 10, GROUND - 1, pl.w - 20, 2); // sombra en el suelo
+    ctx.fillRect(x0 + 10, GROUND - 1, pl.w - 20, 2);
     ctx.drawImage(cnPlatCanvas(pl.w), x0 - 4, pl.y - 6 + bob);
-    // unas chispitas blancas que caen de las raíces
+
     const k = Math.floor(t * 2 + pl.x) % 4;
     ctx.fillStyle = 'rgba(228,220,255,.6)';
     ctx.fillRect(x0 + 12 + ((pl.x + k * 23) % (pl.w - 20)), pl.y + 24 + ((t * 20 + pl.x) % 30), 1, 1);
   }
 }
 
-/* ---------------- pasto blanco brillante ---------------- */
-// capa 0: detrás de Smara (raíz en el suelo) · capa 1: adelante (más bajito y ralo)
 function cnPasto(t, capa) {
-  // calidad (35-opciones.js): BAJO sin pasto de adelante y más ralo · ULTRA más tupido
+
   const q = GFX.n;
   if (capa && q == 0) return;
   const paso = capa ? (q == 3 ? 5 : 7) : q == 0 ? 6 : q == 3 ? 2 : 3, y0 = capa ? LL.suelo + 9 : LL.suelo + 2;
@@ -12049,7 +11773,7 @@ function cnPasto(t, capa) {
     if (r < (capa ? 0.45 : 0.25)) continue;
     const wx = i * paso + Math.floor(r * paso), x = Math.round(wx - cam);
     const h = capa ? 4 + Math.floor(r * 6) : 3 + Math.floor(r * 8);
-    // el viento y Smara al pasar
+
     let lean = Math.sin(t * 1.8 + wx * 0.03) * 1.6 + Math.sin(t * 4.1 + i) * 0.4;
     const dx = wx - p.x;
     if (Math.abs(dx) < 14 && p.y > GROUND - 14) lean += Math.sign(dx || 1) * (14 - Math.abs(dx)) * 0.45;
@@ -12057,7 +11781,7 @@ function cnPasto(t, capa) {
     ctx.drawImage(LLC.pasto, (L + 8) * 20, (capa * 13 + h) * 13, 20, 13, x - 10, y0 - 13, 20, 13);
     if (r > 0.82) brillos.push([x + lean, y0 - h]);
   }
-  if (q < 2) return; // los brillitos de las puntas, desde ALTO
+  if (q < 2) return;
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   ctx.globalAlpha = 0.7 + Math.sin(t * 2) * 0.2;
@@ -12065,7 +11789,6 @@ function cnPasto(t, capa) {
   ctx.restore();
 }
 
-/* ---------------- luciérnagas ---------------- */
 function cnLuciernagas(t) {
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
@@ -12082,7 +11805,6 @@ function cnLuciernagas(t) {
   ctx.restore();
 }
 
-/* ---------------- el agua con el reflejo de todo ---------------- */
 function cnAgua(t) {
   t = tMundo();
   const wt = LL.agua, hh = H - wt;
@@ -12115,19 +11837,16 @@ function cnAgua(t) {
   ctx.fillRect(0, wt, W, 2);
 }
 
-/* =====================================================================
-   EL ESPANTO (character.zip)
-   ===================================================================== */
 const ESPA = {
   fw: 312, fh: 144, ax: 96, fps: 17, n: 29, vida: 120,
   fila: { quieto: 0, aparece: 0, camina: 1, ataca: 2, muere: 0 },
-  tajos: [7, 13], // cuadros del ataque donde sale el tajo blanco
-  // cuando Smara pasa por "x", aparece uno en "en"
+  tajos: [7, 13],
+
   oleadas: [{ x: 200, en: 440 }, { x: 1120, en: 1340 }],
 };
 function espNuevo(x) {
   LL.esp.push({ x, face: -1, hp: ESPA.vida, st: 'aparece', t: 0, cd: 1.2, flash: 0, kb: 0, golpes: {} });
-  cnSusurro(1.6, 0.09); // aparece susurrando
+  cnSusurro(1.6, 0.09);
   cdTono(300, 120, 1.2, 'sine', 0.05);
 }
 function espCuadro(e) {
@@ -12155,7 +11874,7 @@ function espTick(dt) {
       else if (e.st != 'quieto') { e.st = 'quieto'; e.t = 0; }
       if (ad < 200 && e.cd <= 0) {
         e.st = 'ataca'; e.t = 0; e.golpes = {};
-        cdTono(900, 1400, 0.25, 'triangle', 0.05); // aviso
+        cdTono(900, 1400, 0.25, 'triangle', 0.05);
         cnSusurro(0.6, 0.07);
       }
     } else if (e.st == 'ataca') {
@@ -12166,7 +11885,7 @@ function espTick(dt) {
           cdRuido(0.3, 2600, 0.18, 0.7);
           cdTono(1800, 300, 0.25, 'sawtooth', 0.04);
           SHK = Math.max(SHK, 3);
-          // el tajo barre el suelo: de un poco atrás hasta bien adelante
+
           const rel = (p.x - e.x) * e.face;
           if (rel > -85 && rel < 210 && p.y > GROUND - 38 && p.inv <= 0 && p.dash <= 0) { CD.golpe = e.x; hurt(13); }
         }
@@ -12175,7 +11894,7 @@ function espTick(dt) {
     }
     e.x = Math.max(40, Math.min(LEVEL - 40, e.x));
   }
-  // golpes de Smara
+
   const a = p.atk;
   if (a && a.hit && LL.ultAtk !== a) {
     LL.ultAtk = a;
@@ -12187,7 +11906,7 @@ function espTick(dt) {
   }
   LL.esp = LL.esp.filter(e => !(e.st == 'muere' && e.t > 1.6));
 }
-// daño al Espanto (de la guadaña de Smara o de la bestia montada); "emp" lo empuja hacia ese lado
+
 function espDanio(e, d, emp, fuerte) {
   if (e.st == 'muere' || e.st == 'aparece') return;
   e.hp -= d; e.flash = 0.09; e.kb = 0.1;
@@ -12203,8 +11922,6 @@ function espDanio(e, d, emp, fuerte) {
   }
 }
 
-/* ---------------- CHOQUE: los enemigos empujan a Smara para atrás ---------------- */
-// cuerpo de cada enemigo: centro (corrido hacia donde mira), medio ancho y alto
 function cnCuerpos() {
   const L = [];
   for (const m of CD.mons || []) if (m.st != 'muere' && m.st != 'nace' && m.st != 'noqueado' && m.st != 'montado') L.push({ o: m, cx: m.x + m.face * 8, hw: m.st == 'embiste' ? 40 : 34, h: 56 });
@@ -12216,17 +11933,17 @@ function cnEmpuje(dt) {
   const montada = typeof MONTA != 'undefined' && MONTA;
   for (const c of cnCuerpos()) {
     const dx = p.x - c.cx, lim = c.hw + 8;
-    if (Math.abs(dx) >= lim || p.y < GROUND - c.h) continue; // saltando por encima no choca
+    if (Math.abs(dx) >= lim || p.y < GROUND - c.h) continue;
     const lado = dx == 0 ? -(c.o.face || 1) : Math.sign(dx);
     if (montada) {
-      // montada en la bestia, la que empuja es ella
+
       c.o.x -= lado * Math.min(lim - Math.abs(dx), 4);
       continue;
     }
-    p.x = c.cx + lado * lim; // no se atraviesan
+    p.x = c.cx + lado * lim;
     if (LL.empT <= 0) {
       LL.empT = 0.35;
-      p.vx = lado * 280; // ¡empujón para atrás!
+      p.vx = lado * 280;
       p.vy = Math.min(p.vy, -110);
       p.on = false;
       p.kb = 0.18;
@@ -12244,7 +11961,7 @@ function espDibujar(t) {
     const x = Math.round(e.x - cam);
     if (x < -260 || x > W + 260) continue;
     const fila = ESPA.fila[e.st] || 0, k = espCuadro(e);
-    // un halo pálido para que la sombra se recorte contra la noche
+
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.drawImage(LLC.halo, x - 70, GROUND - 140);
@@ -12257,13 +11974,13 @@ function espDibujar(t) {
     if (e.flash > 0) ctx.filter = 'brightness(5)';
     ctx.drawImage(img.espanto, k * ESPA.fw, fila * ESPA.fh, ESPA.fw, ESPA.fh, -ESPA.ax, -ESPA.fh, ESPA.fw, ESPA.fh);
     ctx.restore();
-    // antes del tajo le brillan los ojos de rojo
+
     if (e.st == 'ataca' && k < 7) {
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       ctx.drawImage(LLC.ojo, x + e.face * 2 - 10, GROUND - 102);
       ctx.restore();
     }
-    // barrita de vida
+
     if (e.st != 'aparece' && e.st != 'muere') {
       const bx = x - 20, by = GROUND - 152;
       ctx.fillStyle = '#000a'; ctx.fillRect(bx - 1, by - 1, 42, 4);
@@ -12272,11 +11989,8 @@ function espDibujar(t) {
   }
 }
 
-/* =====================================================================
-   SONIDOS DEL CAMPO (todo sintetizado)
-   ===================================================================== */
 const LLA = { on: false, src: [], g: null, prox: {} };
-// un solo buffer de ruido (4 s) que comparten el viento y los susurros
+
 function cnRuidoBuf() {
   if (LLA.ruido && LLA.ruido.sampleRate == AC.sampleRate) return LLA.ruido;
   const seg = 4, b = AC.createBuffer(1, Math.ceil(AC.sampleRate * seg), AC.sampleRate), d = b.getChannelData(0);
@@ -12297,7 +12011,7 @@ function cnAmbEmpezar() {
   LLA.g.gain.setValueAtTime(0.0001, t);
   LLA.g.gain.exponentialRampToValueAtTime(1, t + 2.5);
   LLA.g.connect(MG);
-  // viento: ruido grave que sube y baja
+
   const s = AC.createBufferSource(); s.buffer = cnRuidoBuf(); s.loop = true;
   const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 420;
   const vg = AC.createGain(); vg.gain.value = 0.05;
@@ -12328,9 +12042,9 @@ function cnNota(f0, f1, d, ty, gan, pan, dl) {
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gan, t + Math.min(0.02, d / 3)); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
   o.connect(g); o.start(t); o.stop(t + d + 0.05);
 }
-// grillo: tres o cuatro "cri" muy agudos
+
 function cnGrillo() {
-  // un solo oscilador con el volumen en pulsos (antes era uno por cada "cri")
+
   const f = 4300 + Math.random() * 700, n = 3 + Math.floor(Math.random() * 3), gan = 0.006 + Math.random() * 0.008;
   const t = AC.currentTime, o = AC.createOscillator(), g = cnSalida(Math.random() * 1.6 - 0.8);
   o.frequency.value = f;
@@ -12338,24 +12052,24 @@ function cnGrillo() {
   for (let i = 0; i < n; i++) { const u = t + i * 0.06; g.gain.setValueAtTime(0, u); g.gain.linearRampToValueAtTime(gan, u + 0.008); g.gain.linearRampToValueAtTime(0, u + 0.035); }
   o.connect(g); o.start(t); o.stop(t + n * 0.06 + 0.05);
 }
-// rana: "croc" grave
+
 function cnRana() {
   const pan = Math.random() * 1.6 - 0.8, f = 110 + Math.random() * 60;
   for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) cnNota(f, f * 0.8, 0.09, 'square', 0.012, pan, i * 0.14);
 }
-// búho: "uu... uu-uu"
+
 function cnBuho() {
   const pan = Math.random() * 1.4 - 0.7;
   cnNota(390, 350, 0.45, 'sine', 0.03, pan, 0);
   cnNota(380, 340, 0.25, 'sine', 0.025, pan, 0.7);
   cnNota(380, 330, 0.5, 'sine', 0.025, pan, 1.0);
 }
-// un perro ladra muy lejos
+
 function cnPerroLejos() {
   const pan = Math.random() < 0.5 ? -0.8 : 0.8;
   for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) { cnNota(520, 300, 0.12, 'sawtooth', 0.006, pan, i * 0.35); cnNota(700, 380, 0.08, 'square', 0.003, pan, i * 0.35); }
 }
-// una vaca muge a lo lejos
+
 function cnVaca() {
   const pan = Math.random() * 1.2 - 0.6, t = AC.currentTime, o = AC.createOscillator(), f = AC.createBiquadFilter(), g = cnSalida(pan);
   o.type = 'sawtooth'; o.frequency.setValueAtTime(140, t); o.frequency.linearRampToValueAtTime(175, t + 0.5); o.frequency.linearRampToValueAtTime(120, t + 1.6);
@@ -12363,7 +12077,7 @@ function cnVaca() {
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.02, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.7);
   o.connect(f); f.connect(g); o.start(t); o.stop(t + 1.8);
 }
-// SUSURROS: ruido que pasa por "vocales" que cambian, con eses, de un lado al otro
+
 function cnSusurro(dur, gan) {
   if (!AC || muted) return;
   dur = dur || 1 + Math.random() * 1.5;
@@ -12379,13 +12093,13 @@ function cnSusurro(dur, gan) {
   if (AC.createStereoPanner) { pn = AC.createStereoPanner(); const a = Math.random() < 0.5 ? -1 : 1; pn.pan.setValueAtTime(a * 0.9, t); pn.pan.linearRampToValueAtTime(-a * 0.5, t + dur); salida.connect(pn); pn.connect(LLA.g || MG); }
   else salida.connect(LLA.g || MG);
   g.gain.setValueAtTime(0.0001, t); gs.gain.setValueAtTime(0.0001, t);
-  // sílabas
+
   let u = t;
   while (u < t + dur - 0.1) {
     const sy = 0.09 + Math.random() * 0.14, v = F[Math.floor(Math.random() * F.length)];
     f1.frequency.setValueAtTime(v[0], u); f2.frequency.setValueAtTime(v[1], u);
     g.gain.linearRampToValueAtTime(gan, u + sy * 0.3); g.gain.linearRampToValueAtTime(gan * 0.15, u + sy);
-    if (Math.random() < 0.35) { gs.gain.linearRampToValueAtTime(gan * 0.5, u + 0.03); gs.gain.linearRampToValueAtTime(0.0001, u + sy * 0.8); } // "sss"
+    if (Math.random() < 0.35) { gs.gain.linearRampToValueAtTime(gan * 0.5, u + 0.03); gs.gain.linearRampToValueAtTime(0.0001, u + sy * 0.8); }
     u += sy + (Math.random() < 0.2 ? 0.15 : 0.02);
   }
   g.gain.linearRampToValueAtTime(0.0001, u + 0.05);
@@ -12404,11 +12118,10 @@ function cnAmbTick(dt) {
   if (P.buho <= 0) { cnBuho(); P.buho = 10 + Math.random() * 10; }
   if (P.perro <= 0) { cnPerroLejos(); P.perro = 18 + Math.random() * 15; }
   if (P.vaca <= 0) { cnVaca(); P.vaca = 25 + Math.random() * 20; }
-  // los susurros se hacen más seguidos mientras más avanza Smara
+
   if (P.susurro <= 0) { cnSusurro(); P.susurro = Math.max(2, 7 - p.x / 350) + Math.random() * 4; }
 }
 
-/* ---------------- conexión ---------------- */
 const loadAreaCN = loadArea;
 loadArea = function (n) {
   loadAreaCN(n);
@@ -12424,7 +12137,7 @@ drawEnemies = function (t) {
   drawEnemiesCN(t);
   if (area == 9) espDibujar(performance.now() / 1000);
 };
-// adelante de Smara: pasto, luciérnagas, el agua y, encima de todo, el globo del Cadejo
+
 const drawPFXCN = drawPFX;
 drawPFX = function () {
   drawPFXCN();
@@ -12445,8 +12158,6 @@ draw = function () {
   drawCN();
 };
 
-/* ---------- 29-despues-de-arlos.js ---------- */
-/* ===== DESPUES DE ARLOS: «me siento rara», rayo del cielo que la absorbe ===== */
 const easeIO = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
 let SQ = { t: 0, r: 0, ps: [] };
 function startSkyQ() {
@@ -12639,26 +12350,8 @@ function drawSkyQ() {
   }
 }
 
-/* ---------- 29b-arlos-espadas-rojas.js ---------- */
-/* =====================================================================
-   ARLOS: ATAQUE NUEVO "LAS ESPADAS ROJAS"
-   · Cuando a Arlos le baja la vida (70% y 35% en la fase 1, 50% en la 2)
-     se DESVANECE durante 15 SEGUNDOS y del suelo salen exactamente DOS
-     guerreros de espada roja (el enemigo "demon").
-   · Mientras no está, no se le puede pegar. Si Smara mata a los dos antes,
-     Arlos vuelve un poco antes. Si a los 15 s siguen vivos, se deshacen en
-     humo cuando él regresa.
-   · Además, los guerreros de espada roja (en todo el juego) tienen ATAQUES
-     NUEVOS con sus animaciones, sacados de la hoja de referencia:
-       ESTOCADA BAJA  se agacha y se lanza a ras del suelo (saltala)
-       GIRO           vuelta completa con un anillo rojo (pega a los dos lados)
-       CORTE AMPLIO   media luna horizontal larga hacia adelante
-       ASCENDENTE     media luna vertical que sube con un saltito
-       SALTO + CORTE  salta hacia Smara y cae con un tajo que hace temblar el piso
-   ===================================================================== */
 const ESPROJA = { dura: 15 };
 
-/* ---------------- 1) Arlos se esconde ---------------- */
 function arlosDebeEsconderse() {
   if (B.aus || B.st == 'enter' || B.st == 'morph') return false;
   B.conv = B.conv || {};
@@ -12679,15 +12372,15 @@ function arlosEsconder() {
 function arlosAusente(dt) {
   const A = B.aus;
   A.t += dt;
-  // se desvanece (0-0.6 s)
+
   if (!A.vuelve) B.a = Math.max(0, 1 - A.t / 0.6);
-  // salen los dos guerreros
+
   if (A.t > 0.6 && !A.dem.length) {
     for (const lado of [-1, 1]) {
       const x = Math.max(cam + 50, Math.min(cam + W - 50, p.x + lado * 180));
       const e = mkE('demon', x, GROUND);
       foeInit(e);
-      e.sp = 0.9; // el círculo morado del que salen
+      e.sp = 0.9;
       e.arlos = 1;
       e.x0 = cam + 20;
       e.x1 = cam + W - 20;
@@ -12697,14 +12390,14 @@ function arlosAusente(dt) {
     SHK = Math.max(SHK, 5);
     sfx('boom');
   }
-  // si los dos ya murieron, vuelve antes
+
   const vivos = A.dem.filter(e => !e.dying && !e.dead && enemies.includes(e));
   if (A.dem.length && !vivos.length && A.t < ESPROJA.dura - 1.5) A.t = ESPROJA.dura - 1.5;
-  // vuelve
+
   if (A.t >= ESPROJA.dura && !A.vuelve) {
     A.vuelve = true;
     A.tv = 0;
-    for (const e of vivos) { e.dying = 1; e.dt = 0; e.mode = 'move'; } // los que quedan se hacen humo
+    for (const e of vivos) { e.dying = 1; e.dt = 0; e.mode = 'move'; }
     flashW = Math.max(flashW, 0.9);
     sfx('boom');
     say('¡Arlos regresa!');
@@ -12727,13 +12420,13 @@ bossAI = function (dt) {
   if (arlosDebeEsconderse()) { arlosEsconder(); return; }
   bossAIRojas(dt);
 };
-// mientras no está, no recibe golpes
+
 const hitBossRojas = hitBoss;
 hitBoss = function (d) {
   if (B.aus) return;
   hitBossRojas(d);
 };
-// cuenta regresiva arriba
+
 function arlosCuenta() {
   if (!B.on || !B.aus || B.aus.vuelve) return;
   const s = Math.max(0, Math.ceil(ESPROJA.dura - B.aus.t));
@@ -12746,7 +12439,6 @@ function arlosCuenta() {
   ctx.textAlign = 'left';
 }
 
-/* ---------------- 2) ataques nuevos del guerrero de espada roja ---------------- */
 const DM_ATAQ = ['est', 'giro', 'amplio', 'asc', 'salto'];
 const esDMx = e => e.t == 'demon' && DM_ATAQ.includes(e.mode) && !e.dying;
 const DM_CORTES = [];
@@ -12770,7 +12462,7 @@ function dmTick(e, dt) {
       e.x += dir * 520 * dt;
       if (Math.random() < 0.6) pfx(e.x - dir * 14, GROUND - 2, -dir * rnd(40, 120), rnd(-50, -10), 0.3, '#5a2030', 2, 200);
       if (!e.fx1) { e.fx1 = 1; dmCorte({ e, recta: 1, x: 10, y: -14, largo: 110, alto: 5, vida: 0.32 }); sfx('swing'); }
-      golpe(Math.abs(p.x - e.x) < 42 && p.y > GROUND - 30, 14); // va bajito: saltando se esquiva
+      golpe(Math.abs(p.x - e.x) < 42 && p.y > GROUND - 30, 14);
     }
     fin(0.8, 1.8);
   } else if (e.mode == 'giro') {
@@ -12810,18 +12502,18 @@ function dmTick(e, dt) {
 }
 const updEnemiesRojas = updEnemies;
 updEnemies = function (dt) {
-  // antes del juego normal: decidir si el guerrero usa un ataque nuevo (60% de las veces)
+
   for (const e of enemies) {
-    if (e.t == 'demon' && e.z && !esDMx(e)) e.z = 0; // si lo golpearon en el aire, baja
-    if (e.t != 'demon' || e.dying || e.sp > 0 || e.hitT > 0 || e.mode != 'move' || e.cd - dt > 0) continue; // (el juego normal ataca en el mismo cuadro en que cd llega a 0)
-    if (Math.random() > 0.6) continue; // deja que use sus ataques de siempre
+    if (e.t == 'demon' && e.z && !esDMx(e)) e.z = 0;
+    if (e.t != 'demon' || e.dying || e.sp > 0 || e.hitT > 0 || e.mode != 'move' || e.cd - dt > 0) continue;
+    if (Math.random() > 0.6) continue;
     const m = dmElegir(e);
     if (!m) continue;
     e.mode = m; e.am = 0; e.hd = 0; e.fx1 = 0; e.cayo = 0; e.sx0 = 0; e.z = 0;
     e.dir = Math.sign(p.x - e.x) || 1;
-    cdTono(500, 900, 0.18, 'triangle', 0.03); // brillito de aviso
+    cdTono(500, 900, 0.18, 'triangle', 0.03);
   }
-  // los que están en un ataque nuevo se manejan aparte (el juego normal los cortaría)
+
   const nuevos = enemies.filter(esDMx);
   if (nuevos.length) enemies = enemies.filter(e => !esDMx(e));
   updEnemiesRojas(dt);
@@ -12834,7 +12526,7 @@ updEnemies = function (dt) {
   }
   for (let i = DM_CORTES.length - 1; i >= 0; i--) { DM_CORTES[i].t += dt; if (DM_CORTES[i].t > DM_CORTES[i].vida) DM_CORTES.splice(i, 1); }
 };
-// cuerpo del guerrero en los ataques nuevos (cuadros de su hoja + aplastar/girar)
+
 function dmCuadro(e) {
   const am = e.am;
   switch (e.mode) {
@@ -12855,8 +12547,8 @@ drawDemon = function (e, t) {
   }
   const S = 2, [row, fr, sy] = dmCuadro(e);
   let dir = e.dir;
-  if (e.mode == 'giro' && e.am > 0.25 && e.am < 0.6 && Math.floor((e.am - 0.25) / 0.06) % 2) dir = -dir; // da vueltas
-  // aviso: la espada brilla antes de atacar
+  if (e.mode == 'giro' && e.am > 0.25 && e.am < 0.6 && Math.floor((e.am - 0.25) / 0.06) % 2) dir = -dir;
+
   const aviso = (e.mode == 'est' && e.am < 0.3) || (e.mode == 'amplio' && e.am < 0.38) || (e.mode == 'giro' && e.am < 0.25) || (e.mode == 'asc' && e.am < 0.28) || (e.mode == 'salto' && e.am < 0.25);
   ctx.save();
   ctx.globalAlpha = e.hit > 0 ? 0.6 : 1;
@@ -12875,7 +12567,7 @@ drawDemon = function (e, t) {
   }
   if (e.arlos) dmMarca(e, t);
 };
-// los dos de Arlos llevan una llamita morada encima (para distinguirlos)
+
 function dmMarca(e, t) {
   const x = Math.round(e.x - cam), y = Math.round(e.y - (e.z || 0) - 62 + Math.sin(t * 5) * 2);
   ctx.fillStyle = '#9b2fd6';
@@ -12883,7 +12575,7 @@ function dmMarca(e, t) {
   ctx.fillStyle = '#e6c2ff';
   ctx.fillRect(x - 1, y + 1, 2, 2);
 }
-// medias lunas rojas
+
 function dmCorteDibujar(c) {
   const k = c.t / c.vida;
   if (k >= 1) return;
@@ -12929,17 +12621,6 @@ drawZC = function () {
   arlosCuenta();
 };
 
-/* ---------- 29c-cadejo-noche.js ---------- */
-/* =====================================================================
-   EL CADEJO NEGRO EN LA NOCHE DE LOS DUHINDU (área 5, antes de Arlos)
-   · Al empezar la noche se oye un AULLIDO DOBLE, raro, como dos perros
-     aullando a destiempo y desafinados. Smara mira para todos lados...
-   · ¡PUM! aparece el Cadejo (sprites de wolf_sin_fuego.zip) y conversan.
-   · El Cadejo le siembra la duda: ¿y si el malo no es él... sino el BLANCO?
-     (el Cadejo blanco de los cuentos, y el espacio en blanco del Errante)
-   · Al final se ríe y se va corriendo. Pasa una sola vez por partida.
-   Controles: E / ESPACIO / J / click para pasar el texto.
-   ===================================================================== */
 const CJN_FRASES = [
   ['c', '¡Guau! Niña... ¿qué hace una humana en estos escenarios?'],
   ['s', '¡Aaaa! ¡El Cadejo negro!'],
@@ -12956,7 +12637,7 @@ const CJN_FRASES = [
   ['c', '¿Quién dijo que te estoy ayudando? ...Guau.'],
 ];
 const CJN = { visto: false, on: false };
-// la escena pasa una sola vez por partida (y no si cargás una partida ya adelantada)
+
 const initCJN = init;
 init = function () {
   initCJN();
@@ -12964,7 +12645,6 @@ init = function () {
   CJN.on = false;
 };
 
-/* ---------------- el aullido doble ---------------- */
 function cjAullido(largo) {
   if (!AC || muted) return;
   largo = largo || 3;
@@ -12973,13 +12653,13 @@ function cjAullido(largo) {
   out.gain.exponentialRampToValueAtTime(0.2, t + 0.45);
   out.gain.exponentialRampToValueAtTime(0.16, t + largo * 0.75);
   out.gain.exponentialRampToValueAtTime(0.0001, t + largo);
-  // eco largo, como en el monte
+
   const dl = AC.createDelay(1), fb = AC.createGain();
   dl.delayTime.value = 0.27;
   fb.gain.value = 0.42;
   dl.connect(fb); fb.connect(dl);
   out.connect(MG); out.connect(dl); dl.connect(MG);
-  // tres voces: el aullido, otro desafinado (tritono) que entra tarde, y un gruñido grave
+
   for (const [m, d, ring] of [[1, 0, 0], [1.414, 0.14, 1], [0.5, 0.06, 0]]) {
     const o = AC.createOscillator(), bp = AC.createBiquadFilter(), g = AC.createGain();
     o.type = 'sawtooth';
@@ -12998,7 +12678,7 @@ function cjAullido(largo) {
     g.gain.value = m == 0.5 ? 0.5 : 0.9;
     o.connect(bp); bp.connect(g);
     if (ring) {
-      // modulación en anillo: lo que lo hace sonar raro, como de otro mundo
+
       const rm = AC.createGain(), ro = AC.createOscillator();
       rm.gain.value = 0;
       ro.frequency.value = 33;
@@ -13011,7 +12691,6 @@ function cjAullido(largo) {
   }
 }
 
-/* ---------------- la escena ---------------- */
 function cjnEmpezar() {
   CJN.visto = true;
   CJN.on = true;
@@ -13035,7 +12714,7 @@ function cjnSiguiente() {
   CJN.vis = 0;
   CJN.s = 0;
   if (CJN.i >= CJN_FRASES.length) {
-    // se ríe y se va corriendo
+
     CJN.i = CJN_FRASES.length - 1;
     CJN.sale = 0.001;
     cdSnd.grunido();
@@ -13045,13 +12724,13 @@ function cjnSiguiente() {
 function cjnTick(dt) {
   const C = CJN;
   C.t += dt;
-  // Smara mira para todos lados mientras suena el aullido
+
   if (C.t < 2.6) {
     p.face = C.t < 0.9 ? 1 : C.t < 1.7 ? -1 : 1;
     SHK = Math.max(SHK, 0.6);
   }
   if (C.t > 2.7 && !C.pum) {
-    // ¡PUM!
+
     C.pum = true;
     p.face = 1;
     flashW = 0.35;
@@ -13059,7 +12738,7 @@ function cjnTick(dt) {
     cdSnd.susto();
     for (let i = 0; i < 30; i++) pfx(C.x + rnd(-40, 40), GROUND - rnd(0, 70), rnd(-200, 200), rnd(-200, 40), rnd(0.3, 0.9), i % 3 ? '#0c0a12' : '#5ae0ff', 3, 300);
   }
-  if (C.pum && C.t < 3.1) p.x -= dt * 80; // retrocede del susto
+  if (C.pum && C.t < 3.1) p.x -= dt * 80;
   if (C.t > 3.6 && C.i < 0) { C.i = 0; C.vis = 0; C.s = 0; }
   if (C.i >= 0 && !C.sale) {
     const [q, L] = CJN_FRASES[C.i];
@@ -13067,7 +12746,7 @@ function cjnTick(dt) {
     const n0 = Math.floor(C.vis);
     C.vis = Math.min(L.length, C.vis + dt * 30);
     if (Math.floor(C.vis) > n0 && L[Math.floor(C.vis) - 1] != ' ' && Math.floor(C.vis) % 2 == 0) q == 'c' ? cdSnd.voz() : blip(880 + Math.random() * 120);
-    // si nadie aprieta nada, igual avanza
+
     if (C.vis >= L.length && C.s > L.length / 30 + 3.2) cjnSiguiente();
   }
   if (C.sale) {
@@ -13080,7 +12759,7 @@ function cjnTick(dt) {
     }
   }
 }
-// cuadro del perro: corre al irse, abre el hocico al hablar, respira quieto
+
 function cjnCuadro() {
   const C = CJN;
   if (C.sale) return Math.floor(C.sale * 16) % 6;
@@ -13093,9 +12772,9 @@ function cjnCuadro() {
 function cjnPerro(t) {
   const C = CJN;
   if (!C.on || !C.pum || !img.cdj) return;
-  const k = cjnCuadro(), sc = 2, x = Math.round(C.x - cam), resp = C.sale ? 0 : Math.round(Math.sin(t * 3)); // un poco más chico que Smara
+  const k = cjnCuadro(), sc = 2, x = Math.round(C.x - cam), resp = C.sale ? 0 : Math.round(Math.sin(t * 3));
   const a = Math.min(1, (C.t - 2.7) / 0.12) * (C.sale ? Math.max(0, 1 - C.sale / 1.2) : 1);
-  // humo negro a los pies
+
   ctx.fillStyle = 'rgba(8,6,14,.35)';
   ctx.fillRect(x - 40, GROUND - 2, 80, 3);
   ctx.save();
@@ -13110,7 +12789,7 @@ function cjnPerro(t) {
   ctx.globalAlpha = a;
   ctx.drawImage(img.cdj, k * 48, 0, 48, 43, x - 24 * sc, GROUND - 43 * sc + resp, 48 * sc, 43 * sc);
   ctx.restore();
-  // ojos celestes
+
   if (!C.sale) {
     const ex = x + (-24 + 7.5) * sc, ey = GROUND + (-43 + 21.5) * sc + resp;
     ctx.save();
@@ -13126,13 +12805,13 @@ function cjnPerro(t) {
 function cjnOverlay(t) {
   const C = CJN;
   if (!C.on) return;
-  // la noche se pone más oscura mientras suena el aullido
+
   const os = C.t < 2.7 ? Math.min(0.45, C.t / 2.7 * 0.45) : Math.max(0.2, 0.45 - (C.t - 2.7) * 0.3);
   ctx.fillStyle = 'rgba(4,2,10,' + (C.sale ? os * Math.max(0, 1 - C.sale) : os) + ')';
   ctx.fillRect(0, 0, W, H);
-  // el perro va encima de todo (que nada del escenario lo tape) y resalta en lo oscuro
+
   cjnPerro(t);
-  // franjas de cine
+
   const lb = Math.min(1, C.t / 0.6) * 30 * (C.sale ? Math.max(0, 1 - C.sale / 1.2) : 1);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, lb);
@@ -13156,7 +12835,6 @@ function cjnOverlay(t) {
   }
 }
 
-/* ---------------- conexión ---------------- */
 const updEnemiesCJN = updEnemies;
 updEnemies = function (dt) {
   updEnemiesCJN(dt);
@@ -13185,14 +12863,12 @@ draw = function () {
   cjnUlt = now;
   if (state == 'cjcine') {
     cjnTick(dt);
-    // durante la escena se dibuja el mundo como si se jugara (con temblor)
+
     if (state == 'cjcine') { state = 'play'; drawCJN(); state = 'cjcine'; return; }
   }
   drawCJN();
 };
 
-/* ---------- 30-espacio-en-blanco.js ---------- */
-/* ===== EL ESPACIO EN BLANCO: el Errante (animacion del video + extras) y dialogo ===== */
 const MEET = [
   [0, 'Llegaste. Todos llegan después de matar a algo grande.'],
   [1, '¿Dónde estoy? Hace un segundo había un monstruo... y ahora no hay nada. Ni siquiera colores.'],
@@ -13279,7 +12955,7 @@ function updMeet(dt) {
       p.hp = Math.min(100, p.hp + 40);
       p.sta = 100;
       sfx('boom');
-      save(); // la partida queda guardada al llegar al Bosque de la Niebla
+      save();
     }
   }
 }
@@ -13323,7 +12999,7 @@ function drawMeet() {
     x.fillRect(1, 1, 1, 1);
     DITH = ctx.createPattern(c, 'repeat');
   }
-  // horizonte de puntos y rayitas que se mueven con el viento
+
   ctx.fillStyle = ink;
   for (let r = 0; r < 10; r++) {
     const y = GY - 6 + r * 6 + ((r * 3) % 4),
@@ -13335,21 +13011,21 @@ function drawMeet() {
       if ((i + r) % 9 == 0) ctx.fillRect(Math.round(xx) + 1, y - 1, 1, 1);
     }
   }
-  // franja inferior tramada con borde escalonado
+
   ctx.fillStyle = DITH;
   for (let i = 0; i < 40; i++) {
     const x0 = i * 18,
       h = m.gy[i];
     ctx.fillRect(x0, GY + 60 - h, 18, H);
   }
-  // polvo
+
   ctx.fillStyle = ink;
   for (const d of m.dust) {
     ctx.globalAlpha = d.c ? d.l : 1;
     ctx.fillRect(Math.round(d.x), Math.round(d.y), d.c ? 1 : 2, 1);
   }
   ctx.globalAlpha = 1;
-  // el Errante (cuadros del video) con extras: respira, brillo en los ojos al hablar, aura del baston
+
   const talkF = m.i >= 0 && MEET[m.i][0] == 0 && m.s * 30 < MEET[m.i][1].length,
     fx = 455,
     fa = Math.min(1, t / 1.4),
@@ -13393,7 +13069,7 @@ function drawMeet() {
   }
   ctx.restore();
   ctx.globalAlpha = 1;
-  // Smara aparece desde un hilo de tinta y queda en gris
+
   const sxp = 235,
     ap = Math.min(1, Math.max(0, (t - 0.3) / 1.6));
   if (t < 2) {
@@ -13425,12 +13101,12 @@ function drawMeet() {
     ctx.restore();
     HFLT = null;
   }
-  // franjas de cine
+
   const lb = Math.min(1, t / 1) * 26;
   ctx.fillStyle = ink;
   ctx.fillRect(0, 0, W, lb);
   ctx.fillRect(0, H - lb * 0.4, W, lb * 0.4);
-  // globo inferior
+
   if (m.i >= 0 && !m.end) {
     const [sp, txt] = MEET[m.i],
       typed = Math.floor(m.s * 30),
@@ -13493,8 +13169,6 @@ function drawMeet() {
   }
 }
 
-/* ---------- 31-npc-vida.js ---------- */
-/* ===== NPC CON MAS VIDA: contorno, respiracion, parpadeo, gestos, emotes y sorpresa al ver a Smara ===== */
 const NPX = {},
   NPFX = {
     elder: { gem: [35, 12, '79,232,216'], emo: '...' },
@@ -13730,7 +13404,6 @@ function npcSurprise(t) {
   }
 }
 
-/* ---------- 32-hud-menu-guardado.js ---------- */
 function bar(x, y, w, h, v, col, label) {
   ctx.fillStyle = '#000a';
   ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
@@ -13772,7 +13445,7 @@ const MI = ['NEW GAME', 'CONTINUE', 'PERSONALIZAR', 'EXIT'];
 function enterMenu() {
   state = 'menu';
   try {
-    hasSave = !!leerPartida(); // solo cuenta si la firma es valida (ver 34-proteccion.js)
+    hasSave = !!leerPartida();
   } catch (e) {
     hasSave = false;
   }
@@ -13803,14 +13476,14 @@ function menuPick(i) {
     } else {
       init();
       try {
-        const s = leerPartida(); // partida firmada y revisada: si alguien la edito, se rechaza
+        const s = leerPartida();
         if (!s) throw new Error('partida invalida');
         loadArea(s.area || 1);
         p.x = s.x;
         cam = Math.max(0, Math.min(LEVEL - W, p.x - W / 2));
         inv = Array.isArray(s.inv) ? {} : s.inv || {};
-        invCargar(s.inv2, s.inv); // casillas del inventario (o conteos viejos)
-        faseCargar(s.fase); // avance de la nueva fase (28-espiritus.js)
+        invCargar(s.inv2, s.inv);
+        faseCargar(s.fase);
         hasSword = !!s.sw;
         hasGem = !!s.gem;
         s.pick.forEach((g, k) => {
@@ -13834,6 +13507,76 @@ function menuKey(e) {
   else if (e.code == 'Enter' || e.code == 'Space') menuPick(ms);
 }
 const PS = "'Press Start 2P',monospace";
+const MENU_EST = (() => {
+  let sd = 77;
+  const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const est = [];
+  for (let i = 0; i < 90; i++) est.push({ x: r() * 760 - 30, y: r() * 430 - 12, f: 0.6 + r() * 2.4, ph: r() * 6.28, z: 0.3 + r() * 0.9, c: r() < 0.25 ? '#ffd6ff' : r() < 0.5 ? '#c9b6ff' : '#ffffff', g: r() < 0.08 });
+  const polvo = [];
+  for (let i = 0; i < 40; i++) polvo.push({ x: r() * 700, y: r() * 406, v: 4 + r() * 9, ph: r() * 6.28, a: 0.15 + r() * 0.3 });
+  return { est, polvo, fugaz: null, prox: 2.5, ult: 0 };
+})();
+function fondoMenu() {
+  const t = performance.now() / 1000;
+  const im = img.mbe && img.mbe.width ? img.mbe : img.mb, k = Math.max(W / im.width, H / im.height) * 1.08, w = im.width * k, h = im.height * k;
+  const px = Math.sin(t * 0.06) * (w - W) * 0.45, py = Math.sin(t * 0.045 + 1) * (h - H) * 0.4;
+  const s = ctx.imageSmoothingEnabled;
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(im, Math.round((W - w) / 2 + px), Math.round((H - h) / 2 + py), w, h);
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  const nx = W * 0.66 + px, ny = H * 0.33 + py, R = 230 + Math.sin(t * 0.7) * 25;
+  const g = ctx.createRadialGradient(nx, ny, 0, nx, ny, R);
+  g.addColorStop(0, 'rgba(190,90,230,' + (0.16 + 0.1 * Math.sin(t * 0.9)) + ')');
+  g.addColorStop(0.5, 'rgba(110,60,200,' + (0.07 + 0.05 * Math.sin(t * 0.9 + 1)) + ')');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  const M = MENU_EST;
+  for (const e of M.est) {
+    const a = Math.max(0, Math.sin(t * e.f + e.ph)) * 0.85 + 0.1;
+    const x = Math.round(e.x + px * (1 + e.z * 0.6)), y = Math.round(e.y + py * (1 + e.z * 0.6));
+    if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
+    ctx.globalAlpha = a;
+    ctx.fillStyle = e.c;
+    if (e.g) {
+      const L = 2 + Math.round(a * 4);
+      ctx.fillRect(x - L, y, L * 2 + 1, 1);
+      ctx.fillRect(x, y - L, 1, L * 2 + 1);
+      ctx.globalAlpha = a * 0.35;
+      ctx.fillRect(x - 1, y - 1, 3, 3);
+    } else ctx.fillRect(x, y, e.z > 0.9 ? 2 : 1, e.z > 0.9 ? 2 : 1);
+  }
+  for (const d of M.polvo) {
+    const y = ((((d.y - t * d.v) % (H + 10)) + H + 10) % (H + 10)) - 5, x = Math.round(d.x + Math.sin(t * 0.5 + d.ph) * 6 + px * 1.6);
+    ctx.globalAlpha = d.a * (0.6 + 0.4 * Math.sin(t * 2 + d.ph));
+    ctx.fillStyle = '#e8c8ff';
+    ctx.fillRect(((x % W) + W) % W, Math.round(y), 1, 1);
+  }
+  const dt = Math.min(0.05, Math.max(0, t - (M.ult || t)));
+  M.ult = t;
+  M.prox -= dt;
+  if (!M.fugaz && M.prox <= 0) {
+    M.fugaz = { x: 200 + Math.random() * 480, y: -10 + Math.random() * 120, t: 0, v: 420 + Math.random() * 220, an: 2.55 + Math.random() * 0.35 };
+    M.prox = 3 + Math.random() * 5;
+  }
+  if (M.fugaz) {
+    const F = M.fugaz;
+    F.t += dt;
+    const d = F.t * F.v, x = F.x + Math.cos(F.an) * d, y = F.y + Math.sin(F.an) * d, vida = 1 - F.t / 0.9;
+    if (vida <= 0) M.fugaz = null;
+    else {
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 18; i++) {
+        ctx.globalAlpha = vida * (1 - i / 18) * 0.9;
+        ctx.fillStyle = i < 3 ? '#ffffff' : '#d9a8ff';
+        ctx.fillRect(Math.round(x - Math.cos(F.an) * i * 3), Math.round(y - Math.sin(F.an) * i * 3), i < 2 ? 2 : 1, i < 2 ? 2 : 1);
+      }
+    }
+  }
+  ctx.restore();
+  ctx.imageSmoothingEnabled = s;
+}
 function drawMenu() {
   if (state == 'exit') {
     ctx.fillStyle = '#000';
@@ -13847,33 +13590,32 @@ function drawMenu() {
     ctx.textAlign = 'left';
     return;
   }
-  ctx.drawImage(img.mb, 0, 0, W, H);
+  fondoMenu();
   const g = ctx.createLinearGradient(0, 0, W * 0.6, 0);
-  g.addColorStop(0, 'rgba(0,12,4,.7)');
-  g.addColorStop(1, 'rgba(0,12,4,0)');
+  g.addColorStop(0, 'rgba(10,4,26,.72)');
+  g.addColorStop(1, 'rgba(10,4,26,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
   ctx.textAlign = 'left';
   ctx.font = '44px ' + PS;
   ctx.lineWidth = 7;
-  ctx.strokeStyle = '#0c2410';
+  ctx.strokeStyle = '#1a0c30';
   ctx.lineJoin = 'round';
   ctx.strokeText('ASAGMBA', 32, 118);
-  ctx.fillStyle = '#f4fff0';
+  ctx.fillStyle = '#f6efff';
   ctx.fillText('ASAGMBA', 32, 118);
   ctx.font = '12px ' + PS;
   MI.forEach((s, i) => {
     const on = i == ms,
       ok = menuOK(i);
-    ctx.fillStyle = !ok ? '#5f6f5c' : on ? '#fff' : '#bfd1b8';
+    ctx.fillStyle = !ok ? '#6a5f80' : on ? '#fff' : '#d3c6ec';
     ctx.fillText((on ? '> ' : '  ') + (i == 1 && paused ? 'RESUME' : s), 36, 196 + i * 30);
   });
   ctx.font = '7px ' + PS;
-  ctx.fillStyle = '#9fb596';
+  ctx.fillStyle = '#b4a6d6';
   ctx.fillText('W/S + ENTER, or click', 36, H - 14);
 }
 
-/* ---------- 33-dibujo-principal.js ---------- */
 function draw() {
   const _sk = SHK > 0 && state == 'play' ? SHK : 0;
   ctx.setTransform(
@@ -14047,16 +13789,16 @@ function draw() {
     drawWater1(performance.now() / 1000);
     drawFore(performance.now() / 1000);
   } else if (area == 6) drawCieloAgua(performance.now() / 1000);
-  // HUD
+
   bar(8, 8, 110, 9, p.hp / 100, '#d6384a', 'HP ' + Math.ceil(p.hp));
   bar(8, 21, 110, 7, p.sta / 100, '#3fcf6b', 'STAMINA');
   if (B.on && B.st != 'enter') bar(W / 2 - 110, H - 30, 220, 8, B.hp / B.max, '#9b2fd6', 'ARLOS');
-  drawHotbar(); // barra rápida de 5 casillas (21c-inventario.js)
+  drawHotbar();
   ctx.fillStyle = '#fff';
   ctx.font = '10px monospace';
   ctx.textAlign = 'center';
   if (toastT > 0) ctx.fillText(toast, W / 2, 48);
-  if (INV.open) drawInventario(); // inventario interactivo (21c-inventario.js)
+  if (INV.open) drawInventario();
 
   if (state == 'intro') {
     const a = iT < 0.6 ? iT / 0.6 : iT > 2.6 ? Math.max(0, (3.2 - iT) / 0.6) : 1;
@@ -14118,30 +13860,15 @@ function draw() {
   ctx.textAlign = 'left';
 }
 
-/* ---------- 34-proteccion.js ---------- */
-/* ===== PROTECCION DE STATS (personaje y enemigos) =====
-   Capas de defensa:
-   1) Todo el juego corre dentro de un cierre privado (lo arma build.py), asi que desde la
-      consola del navegador NO existen p, B, enemies, ET, ATK... no hay nada que tocar.
-   2) Las tablas de stats (vida de enemigos, ataques, comidas) quedan congeladas: ni el propio
-      codigo puede cambiarlas despues de cargar.
-   3) Un vigilante revisa cada cuadro que ningun valor se salga de lo legal (vida, stamina,
-      escudo, invulnerabilidad, efectos de comida, vida de enemigos y del jefe) y lo corrige.
-   4) La partida guardada va firmada: si alguien la edita en localStorage, se rechaza.
-   Nota honesta: en un juego que corre en el navegador nada es 100% imposible de trampear para
-   alguien experto con el depurador, pero esto bloquea los trucos normales (consola,
-   editar el guardado, cambiar valores sueltos). */
-
 const LIM = Object.freeze({
-  hp: 100, // vida maxima de Smara
-  sta: 100, // stamina maxima
-  escudo: 3, // golpes que aguanta el quesillo
-  invul: 2, // segundos maximos de invulnerabilidad seguidos
-  porItem: 9, // maximo de cada comida en el inventario
-  jefe: Object.freeze([300, 220]), // vida maxima de Arlos en fase 1 y 2
+  hp: 100,
+  sta: 100,
+  escudo: 3,
+  invul: 2,
+  porItem: 9,
+  jefe: Object.freeze([300, 220]),
 });
 
-/* ---- 2) tablas congeladas ---- */
 function congelar(o) {
   if (o && typeof o == 'object' && !Object.isFrozen(o)) {
     Object.freeze(o);
@@ -14157,8 +13884,7 @@ congelar(DUSK);
 Object.freeze(ATK);
 ATK.forEach(a => Object.freeze(a));
 
-/* ---- 3) vigilante de stats ---- */
-const VIDA_ENEMIGO = new WeakMap(); // vida con la que nacio cada enemigo
+const VIDA_ENEMIGO = new WeakMap();
 const num = (v, def) => (typeof v == 'number' && Number.isFinite(v) ? v : def);
 const tope = (v, a, b) => Math.max(a, Math.min(b, v));
 let vidaLegal = LIM.hp;
@@ -14178,7 +13904,7 @@ function vigilarStats() {
       else buf[k] = Math.min(num(buf[k], 0), f.t);
     }
   }
-  invValidar(); // casillas del inventario: tipos válidos y máximo 9 por casilla (21c-inventario.js)
+  invValidar();
   if (enemies) {
     for (const e of enemies) {
       if (!VIDA_ENEMIGO.has(e)) VIDA_ENEMIGO.set(e, num(e.hp, ET[e.t] ? ET[e.t].hp : 1));
@@ -14194,14 +13920,12 @@ function vigilarStats() {
   }
 }
 
-// el vigilante corre antes de cada cuadro del juego
 const loopOriginal = loop;
 loop = function (now) {
   vigilarStats();
   loopOriginal(now);
 };
 
-/* ---- 4) partida guardada con firma ---- */
 const CLAVE_PARTIDA = 'asagmba';
 const SAL = 'Mulukuku·ribera-de-sahinos·Smara·' + 0x5a6b;
 function huella(txt) {
@@ -14231,10 +13955,10 @@ function leerPartida() {
     return null;
   }
 }
-// aunque la firma sea buena, cada dato se revisa contra los limites del juego
+
 function limpiarPartida(s) {
   if (!s || typeof s != 'object') return null;
-  const area = Number.isInteger(s.area) && s.area >= 0 && s.area <= 6 ? s.area : 1;
+  const area = Number.isInteger(s.area) && [0, 1, 3, 4, 5, 6, 7, 9].includes(s.area) ? s.area : 1;
   const inv = {};
   if (s.inv && typeof s.inv == 'object' && !Array.isArray(s.inv))
     for (const k in s.inv) if (ITEMS[k]) inv[k] = tope(Math.floor(num(s.inv[k], 0)), 0, LIM.porItem);
@@ -14242,8 +13966,8 @@ function limpiarPartida(s) {
     area,
     x: num(s.x, 120),
     inv,
-    inv2: s.inv2 && typeof s.inv2 == 'object' ? s.inv2 : null, // invCargar revisa cada casilla
-    fase: s.fase && typeof s.fase == 'object' ? s.fase : null, // faseCargar solo acepta claves conocidas
+    inv2: s.inv2 && typeof s.inv2 == 'object' ? s.inv2 : null,
+    fase: s.fase && typeof s.fase == 'object' ? s.fase : null,
     sw: !!s.sw,
     gem: !!s.gem,
     pick: Array.isArray(s.pick) ? s.pick.map(g => !!g) : [],
@@ -14251,23 +13975,6 @@ function limpiarPartida(s) {
   };
 }
 
-/* ---------- 35-opciones.js ---------- */
-/* =====================================================================
-   OPCIONES (la tuerca del menú principal)
-   · Arriba a la derecha del menú hay una tuerca. Click en ella (o la tecla O)
-     abre las OPCIONES.
-   · AUDIO: volumen general, música, efectos y silenciar (lo mismo que la M).
-   · JUEGO: la dificultad (FÁCIL · NORMAL · MEDIO · DIFÍCIL), ver 36-dificultad.js
-   · GRÁFICOS: BAJO · MEDIO · ALTO · ULTRA
-       BAJO  : sin reflejo en el agua, sin resplandores, pocas partículas,
-               menos pasto y sin luciérnagas (para compus lentas)
-       MEDIO : reflejo y resplandores, pero menos partículas y luciérnagas
-       ALTO  : todo como fue diseñado
-       ULTRA : todo + bloom (la luz se derrama), viñeta, grano de película,
-               más luciérnagas y pasto más tupido
-   · Se guarda en el navegador y se aplica al instante (se ve detrás del panel).
-   Controles: W/S elegir · A/D cambiar · ENTER activar · ESC volver
-   ===================================================================== */
 const OPC = { general: 1, musica: 0.8, efectos: 1, calidad: 2, sel: 0, hover: -1, gearHover: false, abierta: 0 };
 const GFX_NOMBRES = ['BAJO', 'MEDIO', 'ALTO', 'ULTRA'];
 const GFX_INFO = [
@@ -14276,7 +13983,7 @@ const GFX_INFO = [
   ['Todo como fue diseñado.', 'Recomendado.'],
   ['RTX: rayos de luz, bloom y sombras reales.', '(!) Baja el rendimiento en PCs lentas.'],
 ];
-// GFX.n lo leen otras partes del juego (pasto, luciérnagas, partículas, reflejo)
+
 const GFX = { n: 2 };
 (() => {
   try {
@@ -14293,8 +14000,6 @@ function opcGuardar() {
   } catch (e) {}
 }
 
-/* ---------------- AUDIO: tres canales ----------------
-   antes todo iba a MG. Ahora: MG = efectos · OPC.bm = música · los dos van a OPC.bg (general) */
 function opcAudio() {
   if (!AC || !MG) return;
   if (!OPC.bg) {
@@ -14307,7 +14012,7 @@ function opcAudio() {
       MG.connect(OPC.bg);
     } catch (e) { OPC.bg = null; return; }
   }
-  // la música (la ópera de Arlos y la música por zona) pasa a su propio canal
+
   for (const n of [MUS.g, ZM.bus]) if (n && !n.opc) { n.disconnect(); n.connect(OPC.bm); n.opc = 1; }
   const g = OPC.general, ef = muted ? 0 : 0.6 * OPC.efectos, mu = muted ? 0 : 0.6 * OPC.musica;
   if (OPC.bg.gain.value != g) OPC.bg.gain.value = g;
@@ -14315,28 +14020,26 @@ function opcAudio() {
   if (OPC.bm.gain.value != mu) OPC.bm.gain.value = mu;
 }
 
-/* ---------------- GRÁFICOS ---------------- */
-// partículas: en BAJO y MEDIO salen menos
 const pfxOPC = pfx;
 pfx = function (x, y, vx, vy, l, c, s, g) {
   if (GFX.n == 0 && Math.random() < 0.7) return;
   if (GFX.n == 1 && Math.random() < 0.4) return;
   pfxOPC(x, y, vx, vy, l, c, s, g);
 };
-// reflejo del agua: en BAJO no se copia nada (el agua queda lisa)
+
 const grabBandOPC = grabBand;
 grabBand = function (y0, y1) {
   if (GFX.n > 0 || !RFC) return grabBandOPC(y0, y1);
   if (!OPC.rfLimpio) { RFX.clearRect(0, 0, RFC.width, RFC.height); OPC.rfLimpio = 1; }
   return Math.max(0, Math.floor(y0 * 2));
 };
-// resplandor del Bosque de la Niebla: apagado en BAJO
+
 const brilloBloomOPC = brilloBloom;
 brilloBloom = function (t) {
   if (GFX.n == 0) return;
   brilloBloomOPC(t);
 };
-// ULTRA: bloom + viñeta + grano, pintado encima de todo
+
 const PFXU = {};
 function ultraPreparar() {
   if (PFXU.ok && PFXU.w == cv.width) return;
@@ -14365,7 +14068,7 @@ function ultraPreparar() {
 function ultraDibujar() {
   ultraPreparar();
   const c = PFXU.cx, w = PFXU.chico.width, h = PFXU.chico.height;
-  // bloom: la imagen achicada (borrosa) y con las luces realzadas, sumada encima
+
   c.globalCompositeOperation = 'copy';
   c.imageSmoothingEnabled = true;
   c.filter = 'brightness(.8) contrast(2.2) saturate(1.4)';
@@ -14377,11 +14080,11 @@ function ultraDibujar() {
   ctx.globalCompositeOperation = 'screen';
   ctx.globalAlpha = 0.32;
   ctx.drawImage(PFXU.chico, 0, 0, cv.width, cv.height);
-  // viñeta
+
   ctx.globalCompositeOperation = 'source-over';
   ctx.globalAlpha = 1;
   ctx.drawImage(PFXU.vin, 0, 0);
-  // grano que se mueve
+
   ctx.globalCompositeOperation = 'overlay';
   ctx.globalAlpha = 0.5;
   ctx.translate(Math.floor(Math.random() * 128), Math.floor(Math.random() * 128));
@@ -14391,7 +14094,6 @@ function ultraDibujar() {
   ctx.imageSmoothingEnabled = false;
 }
 
-/* ---------------- la tuerca (pixel art, 8 dientes, gira cuando la apuntás) ---------------- */
 const TUERCA = [];
 function tuercaPreparar() {
   if (TUERCA.length) return;
@@ -14405,7 +14107,7 @@ function tuercaPreparar() {
         const diente = Math.cos(a * 8) > 0.35;
         const borde = diente ? 12 : 9.5;
         if (r > borde || r < 3.6) continue;
-        // luz arriba a la izquierda, sombra abajo a la derecha
+
         const luz = (-dx - dy) / (r || 1);
         x.fillStyle = r > borde - 1.2 || r < 4.8 ? '#20283a' : luz > 0.5 ? '#e6edf5' : luz > -0.3 ? '#b3bfcc' : '#7b889a';
         x.fillRect(i, j, 1, 1);
@@ -14413,7 +14115,7 @@ function tuercaPreparar() {
     TUERCA.push(c);
   }
 }
-const TU = { x: W - 40, y: 12, s: 28 }; // donde está en el menú
+const TU = { x: W - 40, y: 12, s: 28 };
 function tuercaDibujar(t) {
   tuercaPreparar();
   const on = OPC.gearHover || state == 'opc';
@@ -14433,8 +14135,6 @@ function enTuerca(x, y) {
   return x > TU.x - 4 && x < TU.x + TU.s + 4 && y > TU.y - 4 && y < TU.y + TU.s + 4;
 }
 
-/* ---------------- la pantalla de opciones ---------------- */
-// filas: 0 general · 1 música · 2 efectos · 3 silenciar · 4 calidad · 5 volver
 const OP = { x: 130, y: 26, w: 440, h: 362 };
 const OP_FILAS = [
   { k: 'general', n: 'VOLUMEN GENERAL', y: 86 },
@@ -14446,7 +14146,7 @@ const OP_FILAS = [
   { k: 'consejos', n: 'CONSEJOS', y: 344 },
   { k: 'volver', n: 'VOLVER', y: 368 },
 ];
-const SL = { x: 330, w: 150 }; // barra de los volúmenes
+const SL = { x: 330, w: 150 };
 function abrirOpciones() {
   OPC.volverA = state;
   state = 'opc';
@@ -14463,7 +14163,7 @@ function opcCambiar(fila, d) {
   const F = OP_FILAS[fila];
   if (F.k == 'general' || F.k == 'musica' || F.k == 'efectos') {
     OPC[F.k] = Math.max(0, Math.min(1, Math.round((OPC[F.k] + d * 0.1) * 10) / 10));
-    if (F.k != 'musica') sfx('hit'); // para escuchar cómo queda
+    if (F.k != 'musica') sfx('hit');
   } else if (F.k == 'mudo') {
     muted = !muted;
     if (!muted) sfx('hit');
@@ -14494,7 +14194,7 @@ function opcTecla(e) {
     else opcCambiar(OPC.sel, 1);
   }
 }
-// las cajitas de calidad
+
 function cajaCalidad(i) {
   return { x: 236 + i * 80, y: 184, w: 74, h: 20 };
 }
@@ -14531,7 +14231,7 @@ function opcClick(x, y) {
 function opcDibujar(t) {
   OPC.abierta = Math.min(1, OPC.abierta + 1 / 12);
   const a = OPC.abierta, e = 0.9 + 0.1 * a;
-  // detrás se ve el menú, oscurecido
+
   drawMenu();
   ctx.fillStyle = 'rgba(0,6,2,' + 0.55 * a + ')';
   ctx.fillRect(0, 0, W, H);
@@ -14540,7 +14240,7 @@ function opcDibujar(t) {
   ctx.scale(e, e);
   ctx.translate(-W / 2, -H / 2);
   ctx.globalAlpha = a;
-  // panel
+
   ctx.fillStyle = '#0c2410';
   ctx.fillRect(OP.x - 3, OP.y - 3, OP.w + 6, OP.h + 6);
   ctx.fillStyle = '#16341b';
@@ -14554,7 +14254,7 @@ function opcDibujar(t) {
   ctx.textAlign = 'center';
   ctx.fillText('OPCIONES', W / 2, OP.y + 26);
   ctx.textAlign = 'left';
-  // títulos de sección
+
   ctx.font = '8px ' + PS;
   ctx.fillStyle = '#8fd49a';
   ctx.fillText('AUDIO', OP.x + 20, 66);
@@ -14577,7 +14277,7 @@ function opcDibujar(t) {
     }
     ctx.fillText((on ? '> ' : '  ') + F.n, OP.x + 20, y);
     if (F.k == 'general' || F.k == 'musica' || F.k == 'efectos') {
-      // barra de 10 cuadritos
+
       const v = OPC[F.k], n = Math.round(v * 10);
       for (let q = 0; q < 10; q++) {
         ctx.fillStyle = q < n ? (muted ? '#5f6f5c' : on ? '#8ff09f' : '#5fc070') : '#0a1e0d';
@@ -14605,21 +14305,21 @@ function opcDibujar(t) {
         ctx.fillText(GFX_NOMBRES[q], b.x + b.w / 2, b.y + 14);
         ctx.textAlign = 'left';
       }
-      // qué hace cada calidad
+
       ctx.font = '7px ' + PS;
       ctx.fillStyle = '#d6e8cf';
       const I = GFX_INFO[OPC.calidad];
       ctx.fillText(I[0], OP.x + 34, 222);
       ctx.fillStyle = OPC.calidad == 3 ? '#ffb05a' : '#9fb596';
       ctx.fillText(I[1], OP.x + 34, 236);
-      // mini muestra de partículas según la calidad
+
       const cant = [3, 7, 12, 18][OPC.calidad];
       for (let k = 0; k < cant; k++) {
         const px = OP.x + 34 + ((k * 53 + t * 40) % (OP.w - 70)), py = 246 + Math.sin(t * 2 + k) * 4;
         ctx.fillStyle = k % 2 ? '#e4dcff' : '#8ff6ff';
         ctx.fillRect(Math.round(px), Math.round(py), 2, 2);
       }
-    } else if (F.k == 'dificultad') difFilaDibujar(on, t); // 36-dificultad.js
+    } else if (F.k == 'dificultad') difFilaDibujar(on, t);
     else if (F.k == 'consejos') {
       ctx.fillStyle = CSJ.on ? '#8ff09f' : '#ff8a6a';
       ctx.fillText(CSJ.on ? 'SÍ' : 'NO', SL.x, y);
@@ -14637,13 +14337,12 @@ function opcDibujar(t) {
   ctx.globalAlpha = 1;
 }
 
-/* ---------------- conexión ---------------- */
 addEventListener(
   'keydown',
   e => {
     if (state == 'opc') {
       e.preventDefault();
-      e.stopImmediatePropagation(); // que no la agarren los controles del juego (R reinicia, etc.)
+      e.stopImmediatePropagation();
       if (!e.repeat || /Arrow|Key[WASD]/.test(e.code)) opcTecla(e);
       return;
     }
@@ -14666,13 +14365,13 @@ cv.addEventListener('mousedown', e => {
   if (state == 'opc') return opcClick(x, y);
   if (state == 'menu' && enTuerca(x, y)) abrirOpciones();
 });
-// la música del menú sigue sonando dentro de las opciones
+
 const zmWantOPC = zmWant;
 zmWant = function () {
   if (state == 'opc') return 'menu';
   return zmWantOPC();
 };
-// el menú se dibuja con su tuerca
+
 const drawMenuOPC = drawMenu;
 drawMenu = function () {
   drawMenuOPC();
@@ -14680,7 +14379,7 @@ drawMenu = function () {
     const t = performance.now() / 1000;
     tuercaDibujar(t);
     ctx.font = '7px ' + PS;
-    ctx.fillStyle = '#9fb596';
+    ctx.fillStyle = '#b4a6d6';
     ctx.textAlign = 'right';
     ctx.fillText('O: OPCIONES', W - 14, H - 14);
     ctx.textAlign = 'left';
@@ -14698,31 +14397,13 @@ draw = function () {
   if (GFX.n == 3) ultraDibujar();
 };
 
-/* ---------- 36-dificultad.js ---------- */
-/* =====================================================================
-   DIFICULTAD: FÁCIL · NORMAL · MEDIO · DIFÍCIL
-   Se elige al empezar una NUEVA PARTIDA (y se puede cambiar en la tuerca).
-                 golpes para   stamina   daño que   velocidad de   jefes
-                 matar         gasta     recibe     los enemigos   (vida)
-     FÁCIL       como antes    no        x0.7       normal         -20%
-     NORMAL      5             no        x1         normal         igual
-     MEDIO       6             sí        x1.25      +10%           +15%
-     DIFÍCIL     7             sí        x1.5       +20%           +30%
-   · "Golpes" = cortes normales de Smara (20 de daño). Los ataques fuertes
-     del combo matan antes.
-   · Desde MEDIO los enemigos tienen MÁS ATAQUES:
-       - el Espanto tira su lanza de lejos (agachate o saltala)
-       - la bestia roja da un SALTO APLASTANTE que hace temblar el piso
-     En DIFÍCIL atacan todavía más seguido.
-   · Los enemigos chicos muestran una barrita de vida cuando los golpeás.
-   ===================================================================== */
 const DIF_NOM = ['FÁCIL', 'NORMAL', 'MEDIO', 'DIFÍCIL'];
 const DIF_COL = ['#7fd6ff', '#8ff09f', '#ffd25a', '#ff6a5a'];
 const DIF_DAT = [
   { golpes: 0, sta: false, dano: 0.7, vel: 1, jefe: 0.8, mon: 5, esp: 4, ataques: 0, info: ['Enemigos como siempre. Sin stamina.', 'Recibís menos daño. Para disfrutar la historia.'] },
-  { golpes: 5, sta: false, dano: 1, vel: 1, jefe: 1, mon: 7, esp: 6, ataques: 0, info: ['Los enemigos aguantan 5 espadazos.', 'Sin stamina.'] },
-  { golpes: 6, sta: true, dano: 1.25, vel: 1.1, jefe: 1.15, mon: 8, esp: 7, ataques: 1, info: ['6 espadazos, con stamina, pegan más fuerte.', 'Los enemigos tienen ataques nuevos.'] },
-  { golpes: 7, sta: true, dano: 1.5, vel: 1.2, jefe: 1.3, mon: 9, esp: 8, ataques: 2, info: ['7 espadazos, con stamina, pegan mucho más.', 'Más rápidos y atacan todo el tiempo.'] },
+  { golpes: 6, sta: false, dano: 1.15, vel: 1.05, jefe: 1.1, mon: 8, esp: 7, ataques: 0, info: ['Los enemigos aguantan 6 espadazos.', 'Sin stamina. Arlos tiene ataques nuevos.'] },
+  { golpes: 7, sta: true, dano: 1.4, vel: 1.15, jefe: 1.3, mon: 9, esp: 8, ataques: 1, info: ['7 espadazos, con stamina, pegan más fuerte.', 'Los enemigos y Arlos atacan más.'] },
+  { golpes: 8, sta: true, dano: 1.75, vel: 1.3, jefe: 1.5, mon: 11, esp: 10, ataques: 2, info: ['8 espadazos, con stamina, pegan muchísimo.', 'Rápidos, agresivos y sin respiro.'] },
 ];
 const DIF = { n: 1 };
 try {
@@ -14739,8 +14420,7 @@ function difCambiar(d, vuelta) {
   difPoner(vuelta ? (DIF.n + d + 4) % 4 : DIF.n + d);
 }
 
-/* ---------------- vida de los enemigos ---------------- */
-const DIF_VISTO = new WeakMap(); // enemigo -> vida máxima que le tocó
+const DIF_VISTO = new WeakMap();
 function difAjustarEnemigos() {
   if (!enemies) return;
   const D = difD();
@@ -14749,20 +14429,20 @@ function difAjustarEnemigos() {
     let hp = e.hp;
     const jefe = DUSK[e.t] || e.t == 'wboss';
     if (jefe) hp = Math.round(hp * D.jefe);
-    else if (D.golpes) hp = Math.max(hp, D.golpes * 20 - 2); // -2: el 5º espadazo siempre termina
+    else if (D.golpes) hp = Math.max(hp, D.golpes * 20 - 2);
     e.hp = hp;
     if (e.mhp != null) e.mhp = hp;
     DIF_VISTO.set(e, hp);
   }
 }
-// esto corre ANTES del vigilante de 34-proteccion.js, así la vida nueva es la "de nacimiento"
+
 const loopDIF = loop;
 loop = function (now) {
   difAjustarEnemigos();
-  try { if (!difD().sta && p) p.sta = 100; } catch (e) {} // FÁCIL y NORMAL: sin stamina
+  try { if (!difD().sta && p) p.sta = 100; } catch (e) {}
   loopDIF(now);
 };
-// la barra de stamina solo aparece cuando cuenta
+
 const barDIF = bar;
 bar = function (x, y, w, h, v, col, label) {
   if (label == 'STAMINA' && !difD().sta) {
@@ -14773,23 +14453,23 @@ bar = function (x, y, w, h, v, col, label) {
   }
   barDIF(x, y, w, h, v, col, label);
 };
-// daño que recibe Smara
+
 const hurtDIF = hurt;
 hurt = function (d) {
   hurtDIF(Math.max(1, Math.round(d * difD().dano)));
 };
-// la vida de Arlos tiene tope fijo (34-proteccion.js): en vez de subirla, Smara le pega más o menos
+
 const hitBossDIF = hitBoss;
 hitBoss = function (d) {
   hitBossDIF(Math.max(1, Math.round(d / difD().jefe)));
 };
-// enemigos más rápidos (se mueven y atacan más seguido)
+
 const updEnemiesDIF = updEnemies;
 updEnemies = function (dt) {
   updEnemiesDIF(dt * difD().vel);
   if (area == 9) difAtaquesNuevos(dt);
 };
-// barrita de vida de los enemigos chicos (cuando ya les pegaste)
+
 const drawEnemiesDIF = drawEnemies;
 drawEnemies = function (t) {
   drawEnemiesDIF(t);
@@ -14804,7 +14484,6 @@ drawEnemies = function (t) {
   }
 };
 
-/* ---------------- área 9: vida según dificultad y ATAQUES NUEVOS ---------------- */
 const loadAreaDIF = loadArea;
 loadArea = function (n) {
   if (n == 9) { MON.vida = difD().mon * 20; ESPA.vida = difD().esp * 20; LL.lanzas = []; }
@@ -14813,7 +14492,7 @@ loadArea = function (n) {
 };
 MON.anim.salta = { a: 55, b: 79, fps: 26, loop: true };
 ESPA.fila.lanza = 2;
-// al tirar la lanza usa solo el impulso del ataque (cuadros 0-6)
+
 const espCuadroDIF = espCuadro;
 espCuadro = function (e) {
   if (e.st == 'lanza') return Math.min(6, Math.floor(e.t * ESPA.fps));
@@ -14823,7 +14502,7 @@ function difAtaquesNuevos(dt) {
   const A = difD().ataques;
   LL.lanzas = LL.lanzas || [];
   if (A > 0 && state == 'play') {
-    // el Espanto tira la lanza cuando Smara está lejos
+
     for (const e of LL.esp || []) {
       const ad = Math.abs(p.x - e.x);
       if ((e.st == 'quieto' || e.st == 'camina') && ad > 210 && ad < 460 && e.cd <= 0 && Math.random() < dt * (A == 2 ? 3 : 1.6)) {
@@ -14839,7 +14518,7 @@ function difAtaquesNuevos(dt) {
         if (e.t > 0.6) { e.st = 'quieto'; e.t = 0; e.cd = A == 2 ? 0.9 : 1.5; }
       }
     }
-    // la bestia roja: SALTO APLASTANTE
+
     for (const m of CD.mons || []) {
       const ad = Math.abs(p.x - m.x);
       if (m.st == 'camina' && ad > 150 && ad < 330 && m.cd <= 0 && !(m.kb > 0) && Math.random() < dt * (A == 2 ? 1.2 : 0.6)) {
@@ -14852,7 +14531,7 @@ function difAtaquesNuevos(dt) {
         else if (k < 1) { m.x = m.sx + (m.tx - m.sx) * k; m.y = GROUND - Math.sin(k * Math.PI) * 110; }
         else {
           m.y = GROUND; m.x = m.tx;
-          // ¡PUM! onda en el piso a los dos lados
+
           SHK = Math.max(SHK, 8);
           sfx('boom');
           cdRuido(0.5, 160, 0.35, 2);
@@ -14863,18 +14542,18 @@ function difAtaquesNuevos(dt) {
       }
     }
   }
-  // las lanzas vuelan
+
   for (const L of LL.lanzas) {
     L.t += dt;
     L.x += L.vx * dt;
-    // le pega si está parada (agachada o saltando la esquiva)
+
     const cuerpoArriba = p.y - (p.crouch ? 34 : 60);
     if (!L.fin && Math.abs(L.x - p.x) < 14 && L.y > cuerpoArriba && L.y < p.y - 4 && p.inv <= 0 && p.dash <= 0) {
       L.fin = 1;
       CD.golpe = L.x - L.vx;
       hurt(10);
     }
-    // con la guadaña se puede partir
+
     const a = p.atk;
     if (!L.fin && a && a.t < 0.2 && Math.abs(L.x - (p.x + a.f * 30)) < 40 && Math.abs(L.y - pcy()) < 40) {
       L.fin = 1;
@@ -14888,11 +14567,11 @@ function difLanzasDibujar() {
   for (const L of LL.lanzas || []) {
     const x = Math.round(L.x - cam), y = Math.round(L.y), f = Math.sign(L.vx);
     ctx.fillStyle = 'rgba(228,220,255,.25)';
-    ctx.fillRect(x - f * 40, y - 1, f * 40, 3); // estela
+    ctx.fillRect(x - f * 40, y - 1, f * 40, 3);
     ctx.fillStyle = '#2a2038';
-    ctx.fillRect(Math.min(x, x - f * 26), y, 26, 2); // asta
+    ctx.fillRect(Math.min(x, x - f * 26), y, 26, 2);
     ctx.fillStyle = '#e4dcff';
-    for (let k = 0; k < 6; k++) ctx.fillRect(x + f * k, y - 2 + Math.floor(k / 2), 1, 6 - Math.floor(k / 2) * 2); // punta
+    for (let k = 0; k < 6; k++) ctx.fillRect(x + f * k, y - 2 + Math.floor(k / 2), 1, 6 - Math.floor(k / 2) * 2);
   }
 }
 const drawPFXDIF = drawPFX;
@@ -14901,7 +14580,6 @@ drawPFX = function () {
   drawPFXDIF();
 };
 
-/* ---------------- elegir dificultad al empezar NUEVA PARTIDA ---------------- */
 const SDIF = { sel: 1, t: 0 };
 const menuPickDIF = menuPick;
 menuPick = function (i) {
@@ -14909,7 +14587,7 @@ menuPick = function (i) {
     state = 'dific';
     SDIF.sel = DIF.n;
     SDIF.t = 0;
-    SDIF.t0 = performance.now(); // el mismo click de NEW GAME no elige una carta
+    SDIF.t0 = performance.now();
     sfx('page');
     return;
   }
@@ -14941,7 +14619,7 @@ function difPantalla(t) {
     ctx.font = '10px ' + PS;
     ctx.fillStyle = DIF_COL[i];
     ctx.fillText(DIF_NOM[i], b.x + b.w / 2, yy + 26);
-    // calaveritas: cuántas más, más difícil
+
     for (let k = 0; k <= i; k++) {
       const cx = b.x + b.w / 2 - i * 9 + k * 18, cy = yy + 42;
       ctx.fillStyle = on ? '#f4fff0' : '#7f9a7a';
@@ -14966,7 +14644,7 @@ function difPantalla(t) {
   ctx.fillText('A/D elegir · ENTER empezar · ESC volver · (se puede cambiar en la tuerca)', W / 2, H - 40);
   ctx.textAlign = 'left';
 }
-// fila de dificultad dentro de la tuerca (35-opciones.js)
+
 function difFilaDibujar(on, t) {
   for (let q = 0; q < 4; q++) {
     const b = cajaCalidad(q), sel = DIF.n == q, y = 274;
@@ -15028,26 +14706,11 @@ draw = function () {
   drawDIF();
 };
 
-/* ---------- 37-rtx.js ---------- */
-/* =====================================================================
-   RTX (calidad ULTRA en la tuerca)
-   Al elegir ULTRA el juego usa los efectos de luz de la escena del video:
-   · RAYOS DE LUZ (god rays): lo brillante de la pantalla se estira desde
-     la luz de cada zona (la luna en el Llano y en la noche, el cielo en
-     el bosque, el sol en la ribera) y bajan haces de luz suaves.
-   · BLOOM: las luces se derraman sobre lo que tienen alrededor.
-   · SOMBRA DE SMARA proyectada por esa luz, estirada sobre el piso.
-   · Viñeta de color y grano de película.
-   Todo esto pide más a la computadora: por eso, al elegir ULTRA, sale un
-   AVISO de que puede bajar el rendimiento (y el texto queda en naranja).
-   En menús y pantallas especiales se usa el ULTRA simple (sin rayos).
-   ===================================================================== */
-// de dónde viene la luz en cada zona (coordenadas de pantalla, 700x406) y de qué color
 function rtxFuente() {
   if (area == 9) return { x: ((256.5 - cam * 0.01) % 576 + 576) % 576, y: 69.5, col: '150,210,255', haces: true, tono: 'rgba(6,8,30,.45)' };
   if (area == 5) return { x: W * 0.36, y: 40, col: '160,200,255', haces: true, tono: 'rgba(4,8,26,.45)' };
   if (area == 6) return { x: W * 0.32, y: -10, col: '170,240,255', haces: true, tono: 'rgba(6,14,28,.4)' };
-  if (area == 1) return { x: W * 0.78, y: -20, col: '255,230,160', haces: true, tono: 'rgba(30,18,4,.3)', fuerza: 0.3, umbral: 'brightness(.42) contrast(4.5) saturate(1.2)', mezcla: 0.45 }; // de día todo es claro: rayos más suaves
+  if (area == 1) return { x: W * 0.78, y: -20, col: '255,230,160', haces: true, tono: 'rgba(30,18,4,.3)', fuerza: 0.3, umbral: 'brightness(.42) contrast(4.5) saturate(1.2)', mezcla: 0.45 };
   if (area == 3) return { x: W * 0.5, y: 60, col: '255,255,255', haces: false, tono: 'rgba(0,0,0,.5)' };
   return { x: W * 0.5, y: -20, col: '220,230,255', haces: false, tono: 'rgba(0,0,10,.4)' };
 }
@@ -15082,13 +14745,13 @@ function rtxVineta(tono) {
 function rtxPase(t) {
   rtxGPreparar();
   const F = rtxFuente(), w = RTXP.a.width, h = RTXP.a.height, k = w / W;
-  // 1) solo lo brillante
+
   const a = RTXP.ax;
   a.globalCompositeOperation = 'copy';
   a.filter = F.umbral || 'brightness(.55) contrast(3.2) saturate(1.3)';
   a.drawImage(cv, 0, 0, w, h);
   a.filter = 'none';
-  // 2) se estira desde la luz (rayos)
+
   const mx = F.x * k, my = F.y * k, b = RTXP.bx;
   b.globalCompositeOperation = 'copy';
   b.globalAlpha = 1;
@@ -15099,7 +14762,7 @@ function rtxPase(t) {
     b.globalAlpha = 0.42 * (F.fuerza || 1) * (1 - i / 10);
     b.drawImage(RTXP.a, mx - mx * s, my - my * s, w * s, h * s);
   }
-  // 3) haces de luz suaves
+
   if (F.haces) {
     b.globalAlpha = 1;
     for (let i = 0; i < 5; i++) {
@@ -15116,7 +14779,7 @@ function rtxPase(t) {
       b.fill();
     }
   }
-  // 4) todo encima: luz + viñeta + grano
+
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.imageSmoothingEnabled = true;
@@ -15135,16 +14798,15 @@ function rtxPase(t) {
   ctx.restore();
   ctx.imageSmoothingEnabled = false;
 }
-// ULTRA: en el juego usa RTX; en menús, cine y el espacio en blanco, el ULTRA simple
+
 const ultraDibujarRTX = ultraDibujar;
 ultraDibujar = function () {
   const enJuego = (state == 'play' || state == 'cdcine' || state == 'cjcine' || state == 'room') && area != 0;
   if (!enJuego) return ultraDibujarRTX();
-  ultraPreparar(); // deja listo el grano de película
+  ultraPreparar();
   rtxPase(performance.now() / 1000);
 };
 
-/* ---------------- sombra de Smara proyectada por la luz ---------------- */
 let RTX_SOMBRA = false;
 const hdrawRTX = hdraw;
 hdraw = function (fi) {
@@ -15157,7 +14819,7 @@ drawPShadow = function () {
   drawPShadowRTX();
   if (GFX.n != 3 || !p.on || state == 'dead' || ![1, 5, 6, 9].includes(area)) return;
   const F = rtxFuente(), fx = Math.round(p.x - cam), fy = Math.round(p.y);
-  const lado = fx >= F.x ? 1 : -1; // la sombra se aleja de la luz
+  const lado = fx >= F.x ? 1 : -1;
   ctx.save();
   ctx.globalAlpha = area == 1 ? 0.3 : 0.42;
   ctx.translate(fx, fy);
@@ -15168,7 +14830,6 @@ drawPShadow = function () {
   ctx.restore();
 };
 
-/* ---------------- aviso al elegir ULTRA ---------------- */
 let rtxUlt = performance.now();
 const drawRTX = draw;
 draw = function () {
@@ -15198,17 +14859,6 @@ draw = function () {
   }
 };
 
-/* ---------- 38-consejos.js ---------- */
-/* =====================================================================
-   CONSEJOS: el juego enseña cada cosa justo cuando hace falta
-   Un cartelito arriba ("CONSEJO") aparece la primera vez que algo se vuelve
-   útil, y se va solo cuando Smara lo hace (o a los pocos segundos).
-   Cada consejo sale UNA sola vez (queda guardado en el navegador).
-   Se pueden apagar o volver a ver en la tuerca → JUEGO → CONSEJOS.
-     moverse · atacar y combo · dash · parry · ataques en el aire ·
-     stamina · comidas · montar a la bestia · detener el tiempo ·
-     forma espíritu · pilar
-   ===================================================================== */
 const CONSEJOS = {
   mover: { t: 'A / D para caminar. W o ESPACIO para saltar. SHIFT para correr.', hecho: () => CSJ.movio && CSJ.salto },
   atacar: { t: 'J, K o clic para atacar. Seguí apretando: es un combo de 5 golpes (giro, estocada y tajo ascendente al final).', hecho: () => CSJ.ataques >= 4 },
@@ -15219,7 +14869,7 @@ const CONSEJOS = {
   comida: { t: 'Las comidas van a la barra 1-5: apretá el número para comer. I abre el inventario.', hecho: () => false },
   montar: { t: '¡La bestia está noqueada! Acercate y apretá E para MONTARLA unos segundos. Montada: E muerde y atropellás todo.', hecho: () => typeof MONTA != 'undefined' && MONTA },
   tiempo: { t: 'Q = DETENER EL TIEMPO unos segundos. Todo se congela menos vos: aprovechalo para pegar.', hecho: () => TIEMPO.parado },
-  forma: { t: 'FORMA ESPÍRITU: clic detiene el tiempo. Atacá subiendo, cayendo o corriendo para cortes distintos.', hecho: () => false },
+  forma: { t: 'FORMA ESPÍRITU: Q detiene el tiempo. Atacá subiendo, cayendo o corriendo para cortes distintos.', hecho: () => false },
   pilar: { t: 'Los pilares llevan a otros mundos. Hablá con el Gato Negro antes de tocarlo.', hecho: () => false },
 };
 const CSJ = { visto: {}, cola: [], act: null, t: 0, movio: false, salto: false, ataques: 0, ultAtk: null, on: true };
@@ -15234,7 +14884,7 @@ function consejo(k) {
   if (!CSJ.on || CSJ.visto[k] || CSJ.cola.includes(k) || (CSJ.act && CSJ.act.k == k)) return;
   CSJ.cola.push(k);
 }
-// tuerca → JUEGO → CONSEJOS: al volver a prenderlos, se ven todos otra vez
+
 function consejosAlternar() {
   CSJ.on = !CSJ.on;
   if (CSJ.on) { CSJ.visto = {}; CSJ.cola = []; }
@@ -15246,7 +14896,7 @@ function consejosTick(dt) {
   if (Math.abs(p.vx) > 30) CSJ.movio = true;
   if (!p.on) CSJ.salto = true;
   if (p.atk && p.atk !== CSJ.ultAtk && !(p.atk.raiz && p.atk.raiz === CSJ.ultAtk)) { CSJ.ataques++; CSJ.ultAtk = p.atk.raiz || p.atk; }
-  // ¿cuándo hace falta cada consejo?
+
   if (area == 1) consejo('mover');
   if (hasSword) consejo('atacar');
   const cerca = x => Math.abs(x - p.x) < 320;
@@ -15260,17 +14910,17 @@ function consejosTick(dt) {
   if (area == 7 && typeof JF != 'undefined' && JF.on && !JF.cine) consejo('tiempo');
   if (typeof FORMA != 'undefined' && FORMA.on) consejo('forma');
   if (area == 6 && Math.abs(p.x - PILAR.x) < 300) consejo('pilar');
-  // mostrar de a uno
+
   if (!CSJ.act && CSJ.cola.length) { CSJ.act = { k: CSJ.cola.shift(), t: 0, listo: 0 }; blip(660); }
   if (CSJ.act) {
     const A = CSJ.act, C = CONSEJOS[A.k];
     A.t += dt;
-    if (!A.listo && A.t > 1.2 && C.hecho()) { A.listo = A.t; blip(990); } // lo hizo: se va con un "¡bien!"
+    if (!A.listo && A.t > 1.2 && C.hecho()) { A.listo = A.t; blip(990); }
     const fin = A.listo ? A.listo + 1.2 : 9;
     if (A.t > fin) { CSJ.visto[A.k] = 1; consejosGuardar(); CSJ.act = null; }
   }
 }
-// avisar de la comida cuando agarra la primera
+
 const invAgregarCS = invAgregar;
 invAgregar = function (id, n) {
   const r = invAgregarCS(id, n);
@@ -15295,7 +14945,7 @@ function consejosDibujar() {
   ctx.fillText(A.listo ? '¡BIEN!' : 'CONSEJO', x + 10, y + 12);
   ctx.fillStyle = '#e8ecf6';
   L.forEach((l, i) => ctx.fillText(l, x + 10, y + 26 + i * 11));
-  // barrita del tiempo que le queda
+
   ctx.fillStyle = 'rgba(255,255,255,.2)';
   ctx.fillRect(x, y + h - 2, Math.round(w * Math.max(0, 1 - A.t / fin)), 2);
   ctx.restore();
@@ -15309,34 +14959,19 @@ draw = function () {
   if (state == 'play' && !INV.open) { consejosTick(dt); consejosDibujar(); }
 };
 
-/* ---------- 39-mapas.js ---------- */
-/* =====================================================================
-   MAPAS Y RITMO
-   1) LA NOCHE DE LOS DUHINDU era larguísima (13.300 px) y se hacía pesada.
-      Ahora mide ~72 %: todo se acerca (fogatas, cofres, guardianes, el
-      obelisco) y se sacan algunas plataformas repetidas. Lo que estaba
-      encima de una plataforma que se quitó baja al suelo.
-   2) EL LLANO DE LOS SUSURROS era corto: ahora es más largo y tiene una
-      SUBIDA por escalones (plataformas en 3 alturas) antes del Cadejo,
-      con murciélagos y fantasmas, otra bestia y un tercer Espanto.
-   3) EL BOSQUE DE LA NIEBLA tenía su "zona de combate" vacía: ahora hay
-      sombras, fantasmas, murciélagos y encapuchados entre los escalones.
-   ===================================================================== */
-
-/* ---------------- 1) la Noche, más corta ---------------- */
 const NOCHE_K = 0.72;
 const MBX0 = MBX.slice();
 function nocheAcortar() {
   const K = NOCHE_K, G = GROUND, sx = x => Math.round(x * K);
-  // a qué plataforma pertenece cada cosa que está arriba de una
+
   const deQue = o => platforms.find(pl => o.x >= pl.x - 2 && o.x <= pl.x + pl.w + 2 && Math.abs(pl.y - o.y) < 3);
   const sobre = [];
   for (const k of pick) if (k.y < G - 1) sobre.push([k, deQue(k)]);
   for (const e of ENC) if (e.pl) sobre.push([e, deQue(e)]);
   for (const [o, pl] of sobre) if (pl) o.dx = o.x - pl.x;
-  // se quita 1 de cada 3 plataformas (las del medio de cada tramo)
+
   const quedan = platforms.filter((pl, i) => i % 3 != 2);
-  // se acercan, sin que ninguna se monte encima de la anterior
+
   let fin = -1e9;
   for (const pl of quedan) {
     pl.x = Math.max(sx(pl.x), fin + 44);
@@ -15344,7 +14979,7 @@ function nocheAcortar() {
   }
   for (const [o, pl] of sobre) {
     if (pl && quedan.includes(pl)) o.x = pl.x + o.dx;
-    else { o.x = sx(o.x); o.y = G; o.pl = 0; } // su plataforma ya no está: baja al suelo
+    else { o.x = sx(o.x); o.y = G; o.pl = 0; }
     delete o.dx;
   }
   platforms = quedan;
@@ -15359,18 +14994,15 @@ function nocheAcortar() {
   LEVEL = Math.round(LEVEL * K);
 }
 
-/* ---------------- 2) el Llano, más largo y con subida ---------------- */
-CD_X.susto = 2780; // el Cadejo espera al final
+CD_X.susto = 2780;
 MON.oleadas.push({ x: 1720, en: 1960 });
 ESPA.oleadas.push({ x: 2160, en: 2420 });
-// la subida: tres alturas, se puede ir por arriba y saltarse peleas... o no
+
 LL_PLAT.push(
   [1470, 252, 96], [1600, 200, 80], [1730, 148, 96], [1880, 200, 80],
   [2000, 252, 96], [2130, 200, 96], [2270, 148, 80], [2410, 200, 96], [2550, 252, 80],
 );
 
-/* ---------------- enemigos extra por zona ---------------- */
-// [x donde aparecen, [[tipo, x, y], ...]]  (y = 0 es el suelo)
 const OLAS_EXTRA = {
   6: [
     [950, [['ghost', 1180, 240], ['bat', 1260, 190]]],
@@ -15391,19 +15023,18 @@ function olasExtraTick() {
     for (const [t, x, y] of L[olaExtra][1]) {
       const e = mkE(t, Math.min(LEVEL - 40, x), y || GROUND);
       foeInit(e);
-      e.sp = 0.8; // salen de su círculo morado
+      e.sp = 0.8;
       enemies.push(e);
     }
     olaExtra++;
   }
 }
 
-/* ---------------- conexión ---------------- */
 const loadAreaMAP = loadArea;
 loadArea = function (n) {
-  if (n == 5) for (let b = 0; b < MBX.length; b++) MBX[b] = MBX0[b]; // se genera con las medidas de siempre...
+  if (n == 5) for (let b = 0; b < MBX.length; b++) MBX[b] = MBX0[b];
   loadAreaMAP(n);
-  if (n == 5) nocheAcortar(); // ...y después se acerca todo
+  if (n == 5) nocheAcortar();
   if (n == 9) LEVEL = W * 4.5;
   olaExtra = 0;
 };
@@ -15413,28 +15044,9 @@ updEnemies = function (dt) {
   olasExtraTick();
 };
 
-/* ---------- 40-jefe-cuentero.js ---------- */
-/* =====================================================================
-   JEFE FINAL: EL CUENTERO  (área 7 · "El Blanco")
-   Se llega desde el Llano de los Susurros: el Cadejo arrastra a Smara
-   hasta aquí, al "blanco" del que le habló en la noche. Al vencerlo
-   sigue el epílogo (40b-epilogo.js).
-   Un mago encapuchado con máscara blanca, manto gris con bordes dorados,
-   gemas azules y un arco mágico celeste en la espalda.
-   · Aparece en el suelo, habla con Smara y después se eleva.
-   · Se teletransporta cerca o lejos de Smara.
-   · RAYO: saca la mano, la apunta y el arco de su espalda dispara un rayo
-     que la persigue durante 0.6 s.
-   · MINI SOL: después de ciertos ataques va al medio, se vuelve un sol y
-     tira una ráfaga de columnas de luz. Mientras, el escenario cambia al
-     del inicio (Ribera de Sahinos) pero vacío, sin NPC, y le hace ver a
-     Smara que solo conoce esta tierra porque la toman en broma.
-   · FASE 2 (50 %): se transforma en un ser humano con el cuerpo hecho
-     de galaxia y suma meteoros, constelaciones, estrellas y palmazo.
-   ===================================================================== */
 const CU_SUELO = 330,
   CU_VIDA = 1000,
-  CU_ALTO = 68; // del capuchón al ruedo (Smara mide ~64)
+  CU_ALTO = 68;
 const CU_CHARLA = [
   ['CUENTERO', 'Bienvenida, Smara. Pasá adelante, que el cuento ya empezó.'],
   ['SMARA', '¿Esto es... el blanco? El Cadejo me dijo que aquí estaba el malo.'],
@@ -15447,7 +15059,7 @@ const CU_CHARLA = [
   ['CUENTERO', 'El viejo del bastón te habló bonito, ¿verdad? En el blanco todos hablamos bonito.'],
   ['CUENTERO', 'Tranquila. De risas también se hacen mundos. Vamos a ver cuánto aguanta el tuyo.'],
 ];
-// lo que dice cuando se vuelve sol y el escenario cambia al del inicio
+
 const CU_SOL = [
   'Mirá, Smara: este es el lugar de donde sacaste tu Mulukukú.',
   'Cada pantalla es un video que te hizo reír. Ninguno lo grabó alguien de allá.',
@@ -15456,7 +15068,7 @@ const CU_SOL = [
   'Las risas suenan fuerte, ¿verdad? Tapan todo lo demás.',
   'Y aun así, de todo este ruido sacaste algo tuyo. Eso ya no es un chiste.',
 ];
-// lo que va diciendo en la fase 2
+
 const CU_HIST = [
   'Tu Mulukukú nació de un chiste que alguien dijo en voz alta.',
   'Lo demás lo pusiste vos: un video gracioso por aquí, un meme por allá.',
@@ -15469,7 +15081,6 @@ const CU_HIST = [
 let JF = { on: false },
   cuIntroVista = false;
 
-/* ---------------- utilidades ---------------- */
 const jfE = {
   in: k => k * k,
   out: k => 1 - (1 - k) * (1 - k),
@@ -15496,7 +15107,6 @@ function jfLinea(x0, y0, x1, y1, c) {
 }
 const cuOscuro = () => JF.fondo == 1 || JF.inicio > 0 || JF.inv > 0.5;
 
-/* ---------------- sonido ---------------- */
 function jfTono(f0, f1, d, ty, g, dl) {
   if (!AC || muted) return;
   const t = AC.currentTime + (dl || 0), o = AC.createOscillator(), gn = AC.createGain();
@@ -15536,7 +15146,6 @@ const jfSnd = {
   palma: () => { jfRuido(0.3, 1600, 0.25); jfTono(200, 60, 0.3, 'sine', 0.2); },
 };
 
-/* ---------------- reiniciar ---------------- */
 function jfReset() {
   JF = {
     on: true, hp: CU_VIDA, max: CU_VIDA, fase: 1, forma: 'manto', x: 530, y: CU_SUELO, face: -1, vis: 0, flash: 0, t: 0,
@@ -15549,13 +15158,10 @@ function jfReset() {
 }
 const cuFlota = () => CU_SUELO - 22 + Math.sin(JF.t * 2) * 3;
 function cuArco() {
-  // de dónde salen los rayos: el centro del arco (o del halo en la forma de galaxia)
+
   return JF.forma == 'galaxia' ? { x: JF.x, y: JF.y - 58 } : { x: JF.x - JF.face * 7, y: JF.y - CU_ALTO + 21 };
 }
 
-/* =====================================================================
-   PASOS Y ATAQUES
-   ===================================================================== */
 const JF_ATQ = {
   rayo: () => [{ k: 'tele' }, { k: 'apunta' }, { k: 'dispara' }, { k: 'tele', r: 1 }, { k: 'apunta', d: 0.4 }, { k: 'dispara' }, { k: 'rec', d: 0.7 }],
   rayo2: () => [{ k: 'tele' }, { k: 'apunta' }, { k: 'dispara' }, { k: 'tele', r: 1 }, { k: 'apunta', d: 0.35 }, { k: 'dispara' }, { k: 'tele', r: 1 }, { k: 'apunta', d: 0.3 }, { k: 'dispara' }, { k: 'rec', d: 0.6 }],
@@ -15595,8 +15201,8 @@ function jfElegir() {
   }
   JF.ciclo++;
   let k;
-  if (JF.fase == 1) k = ['rayo', 'arcos', 'rayo', 'sol', 'arcos', 'tormenta'][(JF.ciclo - 1) % 6]; // la tormenta llega después de varios ataques
-  else if (JF.ciclo % 3 == 0) k = 'sol'; // cada tercer ataque: el mini sol
+  if (JF.fase == 1) k = ['rayo', 'arcos', 'rayo', 'sol', 'arcos', 'tormenta'][(JF.ciclo - 1) % 6];
+  else if (JF.ciclo % 3 == 0) k = 'sol';
   else {
     const pool = ['rayo2', 'meteoros', 'constel', 'orbes', 'palma', 'arcos', 'tormenta'];
     do k = pool[Math.floor(Math.random() * pool.length)];
@@ -15605,7 +15211,7 @@ function jfElegir() {
   JF.ultimo = k;
   JF.alerta = 0.45;
   if (!JF.tipParry && (k == 'arcos' || k == 'rayo')) { JF.tipParry = true; say('Tip: presioná L justo cuando te llegue la flecha o el rayo para hacer PARRY y devolverlo.'); }
-  // a veces encadena un ataque detrás de otro sin descansar
+
   const pausa = Math.random() < 0.45 ? 0.12 : JF.fase == 1 ? 0.5 : 0.3;
   jfPlan([{ k: 'idle', d: pausa }, ...JF_ATQ[k]()]);
 }
@@ -15616,7 +15222,7 @@ function jfFlotar(dt, quieto) {
   const meta = jfC(p.x + (JF.x > p.x ? 160 : -160), 50, W - 50);
   JF.x += jfC(meta - JF.x, -70 * dt, 70 * dt);
 }
-// cambia el escenario (con un velo blanco rápido)
+
 function cuEscenario(a) {
   JF.cambio = { t0: JF.t, a };
 }
@@ -15636,7 +15242,6 @@ const PASO = {
   },
   rec: { d: 0.8, tick(P, u, dt) { jfFlotar(dt, true); JF.cansado = 1; JF.mano = null; JF.arco = jfL(JF.arco, 0, 0.1); } },
 
-  /* ---------- TELETRANSPORTE (cerca o lejos) ---------- */
   tele: {
     d: P => (JF.fase == 2 ? 0.5 : 0.6) * (P.r ? 0.75 : 1),
     ini(P) { P.lejos = P.cerca ? false : Math.random() < 0.5; },
@@ -15665,7 +15270,6 @@ const PASO = {
     fin() { JF.vis = 1; },
   },
 
-  /* ---------- RAYO: apunta con la mano y el arco dispara ---------- */
   apunta: {
     d: P => (JF.fase == 2 ? 0.45 : 0.6),
     ini() { jfSnd.apunta(); },
@@ -15696,7 +15300,6 @@ const PASO = {
     fin() { JF.arco = 0.3; },
   },
 
-  /* ---------- MINI SOL + ráfaga de columnas de luz ---------- */
   sol: {
     d: P => 0.9 + (JF.fase == 2 ? 7 : 5) * 1.35 + 1.0 + 0.9,
     ini(P) {
@@ -15707,7 +15310,7 @@ const PASO = {
       const s = JF.pt, n = P.olas.length, fin = 0.9 + n * 1.35 + 1.0;
       JF.mano = null;
       if (s < 0.9) {
-        // va al medio, sube y se vuelve sol
+
         const k = jfE.io(s / 0.9);
         JF.x = jfL(P.x0, W / 2, k);
         JF.y = jfL(P.y0, 130, k);
@@ -15716,14 +15319,14 @@ const PASO = {
       } else if (s < fin) {
         JF.solK = 1;
         JF.y = 130 + Math.sin(JF.t * 2) * 3;
-        // dos frases por cada sol
+
         if (s > 1.0 && !P.hecho.d1) { P.hecho.d1 = 1; cuDecir(CU_SOL[JF.lineaSol++ % CU_SOL.length], 3.6); }
         if (s > 4.8 && !P.hecho.d2) { P.hecho.d2 = 1; cuDecir(CU_SOL[JF.lineaSol++ % CU_SOL.length], 3.6); }
         for (let i = 0; i < n; i++) {
           if (s >= 0.9 + i * 1.35 && !P.hecho['o' + i]) { P.hecho['o' + i] = 1; cuOla(P.olas[i]); }
         }
       } else {
-        // vuelve a la normalidad
+
         const k = jfE.io(jfC((s - fin) / 0.9, 0, 1));
         JF.solK = 1 - k;
         JF.y = jfL(130, cuFlota(), k);
@@ -15733,7 +15336,6 @@ const PASO = {
     fin() { JF.solK = 0; if (JF.inicio) cuEscenario('blanco'); },
   },
 
-  /* ---------- FASE 2 ---------- */
   meteoros: {
     d: 3.0,
     ini() {
@@ -15746,7 +15348,7 @@ const PASO = {
     tick(P, u, dt) { jfFlotar(dt, true); JF.mano = { a: -Math.PI / 2, k: 1 }; },
   },
   constel: {
-    // estrellas que se unen en líneas; las líneas avisan y luego queman
+
     d: 2.2,
     ini() {
       const N = [];
@@ -15765,7 +15367,7 @@ const PASO = {
         for (let i = 0; i < C.N.length - 1; i++) {
           const a = C.N[i], b = C.N[i + 1], ax = b.x - a.x, ay = b.y - a.y, L2 = ax * ax + ay * ay;
           const k = jfC(((p.x - a.x) * ax + (pcy() - a.y) * ay) / L2, 0, 1);
-          // revisa la cabeza, el centro y los pies de Smara
+
           for (const yy of [p.y - 8, pcy(), p.y - (p.crouch ? 36 : 56)]) {
             const k2 = jfC(((p.x - a.x) * ax + (yy - a.y) * ay) / L2, 0, 1);
             if (Math.hypot(p.x - (a.x + ax * k2), yy - (a.y + ay * k2)) < 7) { JF.srcX = a.x + ax * k; jfDanar(16); }
@@ -15792,7 +15394,7 @@ const PASO = {
     },
   },
   palma: {
-    // aparece pegado y empuja con la palma: ola de estrellas → dash o saltar hacia atrás
+
     d: 0.9,
     tick(P, u, dt) {
       JF.face = P.dir || (P.dir = p.x < JF.x ? -1 : 1);
@@ -15808,7 +15410,6 @@ const PASO = {
     },
   },
 
-  /* ---------- TORMENTA: desaparece, el fondo se invierte y caen rayos ---------- */
   tormenta: {
     d: 5.4,
     tick(P, u, dt) {
@@ -15830,7 +15431,7 @@ const PASO = {
           }
         }
       } else {
-        // vuelve a aparecer, lejos de Smara
+
         JF.inv = Math.max(0, 1 - (s - 4.5) / 0.5);
         if (!P.hecho.v) {
           P.hecho.v = 1;
@@ -15846,11 +15447,10 @@ const PASO = {
     fin() { JF.inv = 0; JF.vis = 1; },
   },
 
-  /* ---------- CUATRO ARCOS: disparan en orden; las flechas hacen mini pilares ---------- */
   arcos: {
     d: 4.4,
     ini() {
-      // izquierda, arriba-izquierda, arriba-derecha, derecha (en ese orden disparan)
+
       JF.arcos = { t: 0, B: [Math.PI, -2.35, -0.79, 0].map(a => ({ a, tens: 0 })) };
       jfSnd.carga();
       cuDecir('Cada flecha es una risa que escuchaste.', 2.6);
@@ -15867,9 +15467,9 @@ const PASO = {
         if (s >= tf && !P.hecho['f' + n]) {
           P.hecho['f' + n] = 1;
           B.tens = 0;
-          B.retro = 1; // retroceso del arco al disparar
+          B.retro = 1;
           cuAnillo(cuArcoPos(B).x, cuArcoPos(B).y, 4, 18, '#e8d6ff', 0.25, true);
-          const o = cuArcoPos(B), tx = jfC(p.x + p.vx * 0.12, 10, W - 10), ty = p.y - 24; // apunta al cuerpo; si esquiva, sigue hasta el suelo
+          const o = cuArcoPos(B), tx = jfC(p.x + p.vx * 0.12, 10, W - 10), ty = p.y - 24;
           const a = Math.atan2(ty - o.y, tx - o.x);
           JF.flechas.push({ x: o.x, y: o.y, vx: Math.cos(a) * 560, vy: Math.sin(a) * 560, a, t: 0 });
           jfTono(1600, 700, 0.15, 'sawtooth', 0.04);
@@ -15880,7 +15480,6 @@ const PASO = {
     fin() { if (JF.arcos) for (const B of JF.arcos.B) { const o = cuArcoPos(B); cuChispas(o.x, o.y, 6); } JF.arcos = null; JF.arco = 0; },
   },
 
-  /* ---------- ATURDIDO (le devolviste el rayo) ---------- */
   aturdido: {
     d: 1.5,
     ini() { JF.mareo = 1; JF.mano = null; JF.arco = 0; },
@@ -15892,7 +15491,6 @@ const PASO = {
     fin() { JF.mareo = 0; },
   },
 
-  /* ---------- cambio de fase ---------- */
   centro: {
     d: 0.9,
     tick(P, u) {
@@ -15906,11 +15504,11 @@ const PASO = {
     ini() { JF.cine = { k: 'transforma', t: 0 }; state = 'jfcine'; JF.habla = null; },
   },
 };
-// una ola de columnas de luz (aviso 1 s, quema 0.75 s)
+
 function cuOla(tipo) {
   const t0 = JF.t, L = JF.pil.L, w6 = W / 6;
   const n0 = L.length;
-  // (solo la primera columna de cada ola hace los pitidos de aviso)
+
   const add = (x0, x1, extra) => L.push(Object.assign({ x0, x1, ta: t0, tf: t0 + 1.0, td: 0.75, calla: L.length > n0 }, extra || {}));
   if (tipo == 'lados') { add(0, W / 2 - 70); add(W / 2 + 70, W); }
   else if (tipo == 'centro') add(W / 2 - 100, W / 2 + 100);
@@ -15922,9 +15520,6 @@ function cuDecir(txt, dur) {
   JF.habla = { txt, t: 0, dur: dur || Math.max(3.2, txt.length / 16 + 1.6), n: 0 };
 }
 
-/* =====================================================================
-   DAÑO
-   ===================================================================== */
 function jfToca(x0, y0, x1, y1) {
   const top = p.y - (p.crouch ? 40 : 62);
   return p.x + 9 > x0 && p.x - 9 < x1 && p.y > y0 && top < y1;
@@ -15959,7 +15554,7 @@ function jfHerir(d, big) {
     JF.hp = JF.max / 2;
     if (!JF.transPedida) {
       JF.transPedida = true;
-      // si está siendo sol, espera a que termine; si no, se transforma ya
+
       if (jfPaso().k == 'sol') JF.pendiente = true;
       else { cuLimpiar(); JF.vis = 1; jfPlan(JF_ATQ.transforma()); }
     }
@@ -15985,9 +15580,6 @@ function cuChispas(x, y, n) {
   }
 }
 
-/* =====================================================================
-   BUCLE DEL JEFE
-   ===================================================================== */
 function jfTick(dt) {
   if (!JF.on) return;
   JF.t += dt;
@@ -16006,7 +15598,7 @@ function jfTick(dt) {
   JF.rayas = JF.rayas.filter(r => r.t < 0.35);
   for (const q of JF.quemas) q.t += dt;
   JF.quemas = JF.quemas.filter(q => q.t < 2.5);
-  // estela fantasma cuando se mueve rápido o aparece
+
   JF.estT = (JF.estT || 0) - dt;
   const mov = Math.hypot(JF.x - (JF.ux || JF.x), JF.y - (JF.uy || JF.y));
   if (JF.estT <= 0 && JF.vis > 0.4 && JF.solK < 0.3 && (mov > 1.2 || JF.pop > 0.3)) { JF.estT = 0.04; JF.estela.push({ x: JF.x, y: JF.y, a: 0.45, f: JF.face, forma: JF.forma }); }
@@ -16036,7 +15628,7 @@ function jfTick(dt) {
     else jfIni();
   }
   jfGolpesSmara();
-  // rayos que persiguen 0.6 s
+
   for (const R of JF.rayos) {
     R.t += dt;
     const o = cuArco();
@@ -16062,7 +15654,7 @@ function jfTick(dt) {
     }
   }
   JF.rayos = JF.rayos.filter(R => R.t < 0.9);
-  // columnas de luz (tiempos absolutos)
+
   for (const q of JF.pil.L) {
     if (q.sigue && JF.t < q.sigue) {
       const c = jfL((q.x0 + q.x1) / 2, p.x, 1 - Math.exp(-4 * dt));
@@ -16084,7 +15676,7 @@ function jfTick(dt) {
     if (k > 0.07 && k < q.td - 0.1 && p.x + 8 > q.x0 && p.x - 8 < q.x1) { JF.srcX = (q.x0 + q.x1) / 2; jfDanar(20); }
   }
   JF.pil.L = JF.pil.L.filter(q => JF.t < q.tf + q.td);
-  // meteoros
+
   for (const g of JF.gotas) {
     if (JF.t < g.ts + 0.7) continue;
     if (!g.cae) { g.cae = true; jfSnd.estrella(); }
@@ -16097,7 +15689,7 @@ function jfTick(dt) {
     if (!g.ok && jfToca(g.x - 6, g.y - 18, g.x + 6, g.y)) { JF.srcX = g.x; jfDanar(12); }
   }
   JF.gotas = JF.gotas.filter(g => !g.ok || JF.t - g.tImp < 0.5);
-  // estrellas que persiguen
+
   for (const o of JF.orbes) {
     if (!o.vivo) continue;
     o.t += dt;
@@ -16112,7 +15704,7 @@ function jfTick(dt) {
     if (o.t > 4.5 || o.y > CU_SUELO) { o.vivo = false; cuChispas(o.x, Math.min(o.y, CU_SUELO), 6); }
   }
   JF.orbes = JF.orbes.filter(o => o.vivo);
-  // rayos de la tormenta (aviso 0.7 s y luego cae)
+
   for (const r of JF.relampagos) {
     r.t += dt;
     if (r.t >= 0.7 && !r.son) {
@@ -16128,7 +15720,7 @@ function jfTick(dt) {
     if (r.t >= 0.7 && r.t < 0.9 && Math.abs(p.x - r.x) < 14) { JF.srcX = r.x; jfDanar(14); }
   }
   JF.relampagos = JF.relampagos.filter(r => r.t < 1.0);
-  // flechas de los arcos
+
   for (const f of JF.flechas) {
     f.t += dt;
     f.x += f.vx * dt;
@@ -16136,7 +15728,7 @@ function jfTick(dt) {
     if (Math.random() < 0.6) pfx(f.x, f.y, rnd(-30, 30), rnd(-30, 30), 0.2, Math.random() < 0.5 ? '#e8d6ff' : '#9fe4ff', 1, 0);
     const dP = Math.hypot(p.x - f.x, pcy() - f.y);
     if (f.amiga) {
-      // flecha devuelta: va contra el Cuentero
+
       if (Math.hypot(JF.x - f.x, JF.y - 34 - f.y) < 22 && !f.fin) {
         f.fin = 1;
         cuAnillo(f.x, f.y, 4, 30, '#ffd95a', 0.3, true);
@@ -16146,7 +15738,7 @@ function jfTick(dt) {
       if (f.y >= CU_SUELO || f.y < -20) f.fin = 1;
     } else if (dP < (p.parry > 0 ? 22 : 12) && !f.fin) {
       if (p.parry > 0) {
-        // PARRY: la flecha sale disparada hacia el Cuentero
+
         f.amiga = true;
         const a = Math.atan2(JF.y - 34 - f.y, JF.x - f.x);
         f.vx = Math.cos(a) * 760; f.vy = Math.sin(a) * 760; f.a = a; f.t = 0;
@@ -16164,7 +15756,7 @@ function jfTick(dt) {
     }
   }
   JF.flechas = JF.flechas.filter(f => !f.fin && f.t < 2 && f.x > -20 && f.x < W + 20);
-  // mini pilares de luz donde caen las flechas
+
   for (const m of JF.minip) {
     m.t += dt;
     if (m.t > 0.08 && m.t < 0.5 && Math.abs(p.x - m.x) < 13) { JF.srcX = m.x; jfDanar(12); }
@@ -16173,7 +15765,6 @@ function jfTick(dt) {
   jfMusica();
 }
 
-/* ---------------- música ---------------- */
 const JF_ARP = [60, 64, 67, 71, 72, 71, 67, 64];
 function jfMusica() {
   if (!AC || muted) return;
@@ -16193,9 +15784,6 @@ function jfMusica() {
   }
 }
 
-/* =====================================================================
-   CINEMÁTICAS
-   ===================================================================== */
 function cuCharlaLinea() {
   const C = JF.cine;
   return C && C.k == 'intro' && C.i >= 0 && C.i < CU_CHARLA.length ? CU_CHARLA[C.i] : null;
@@ -16220,7 +15808,7 @@ function jfCineTick(dt) {
   if (C.k == 'intro') {
     p.face = JF.x > p.x ? 1 : -1;
     JF.face = -1;
-    // 1) aparece de pie en el suelo, dentro de un círculo de runas
+
     JF.vis = jfC((C.t - 0.4) / 1.2, 0, 1);
     if (!C.sube) JF.y = CU_SUELO;
     if (C.t > 0.4 && !C.s0) { C.s0 = 1; jfSnd.aparece(); }
@@ -16232,7 +15820,7 @@ function jfCineTick(dt) {
       if (n > C.n) { if (n % 2 == 0 && L[1][n] != ' ') (L[0] == 'SMARA' ? jfSnd.letraS : jfSnd.letra)(); C.n = n; }
       if (C.n >= L[1].length && C.s > L[1].length / 32 + 2.2) { C.i++; C.s = 0; C.n = 0; }
     } else if (C.i >= CU_CHARLA.length) {
-      // 2) se eleva y empieza la pelea
+
       C.sube = (C.sube || 0) + dt;
       const k = jfE.io(jfC(C.sube / 1.1, 0, 1));
       JF.y = jfL(CU_SUELO, cuFlota(), k);
@@ -16241,7 +15829,7 @@ function jfCineTick(dt) {
       if (C.sube > 3.4) { cuIntroVista = true; JF.cine = null; state = 'play'; }
     }
   } else if (C.k == 'transforma') {
-    // anillos, el manto se deshace, flash blanco, y el blanco se encoge en su pecho
+
     JF.y = jfL(JF.y, CU_SUELO - 70, 0.04);
     if (C.t < 1.4 && Math.random() < 0.9) pfx(JF.x + rnd(-14, 14), JF.y - rnd(0, CU_ALTO), rnd(-60, 60), rnd(-40, 80), rnd(0.4, 0.9), ['#5b4535', '#7f8171', '#d9a43a', '#3fd8ff'][Math.floor(Math.random() * 4)], 2, 200);
     if (C.t > 0.1 && !C.s0) { C.s0 = 1; jfTono(110, 880, 1.3, 'sawtooth', 0.08); jfRuido(1.3, 3000, 0.12, true); }
@@ -16274,13 +15862,10 @@ function jfCineTick(dt) {
       if (Math.random() < 0.9) for (let i = 0; i < 2; i++) pfx(JF.x + rnd(-16, 16), JF.y - rnd(0, 72), rnd(-30, 30), rnd(-140, -60), rnd(0.6, 1.2), ['#9fe4ff', '#ffffff', '#c44cff'][i % 3], 2, -60);
     }
     if (C.t > 4.8) JF.fondoMix = jfC((C.t - 4.8) / 1.6, 0, 1);
-    if (C.t > 7.6 && !C.epi) { C.epi = 1; epiEmpezar(); } // 40b-epilogo.js
+    if (C.t > 7.6 && !C.epi) { C.epi = 1; epiEmpezar(); }
   }
 }
 
-/* =====================================================================
-   EL CUENTERO, dibujado pixel por pixel (1 pixel = 1 pixel del mundo)
-   ===================================================================== */
 const CUC = {
   capa: '#8b8d7c', capaS: '#6b6d5e', capaL: '#a7a996', oro: '#d9a43a', oroS: '#a8761e',
   tunica: '#5b4535', tunicaS: '#3a2c22', tunicaD: '#2a201a', manto: '#7f8171', mantoS: '#666858', mantoL: '#9a9c8b',
@@ -16289,7 +15874,7 @@ const CUC = {
   arco: '#3fd8ff', arcoD: '#2bb8e8', chispa: '#7a4cff', luz: '#e6f6ff', luzA: '#8ad8ff',
 };
 function cuArcoMagico(cx, cy, r, t, k) {
-  // el arco celeste de la espalda: anillo, figuras geométricas y chispas
+
   ctx.save();
   if (k > 0.05) {
     ctx.globalCompositeOperation = cuOscuro() ? 'lighter' : 'source-over';
@@ -16306,10 +15891,10 @@ function cuArcoMagico(cx, cy, r, t, k) {
   ctx.fillStyle = CUC.arcoD;
   const r2 = Math.round(r * 0.62);
   for (let a = t * 0.8; a < t * 0.8 + 4.4; a += 1 / r2) ctx.fillRect(Math.round(cx + Math.cos(a) * r2), Math.round(cy + Math.sin(a) * r2), 1, 1);
-  // triángulo que gira
+
   const v = [0, 1, 2].map(i => [cx + Math.cos(-t * 0.6 + i * 2.094) * r, cy + Math.sin(-t * 0.6 + i * 2.094) * r]);
   for (let i = 0; i < 3; i++) jfLinea(v[i][0], v[i][1], v[(i + 1) % 3][0], v[(i + 1) % 3][1]);
-  // nodo blanco y chispas violetas
+
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(Math.round(cx + Math.cos(t * 1.4) * r) - 1, Math.round(cy + Math.sin(t * 1.4) * r) - 1, 3, 3);
   ctx.fillStyle = CUC.chispa;
@@ -16331,16 +15916,16 @@ function cuManto(x, y, t, o) {
     ctx.fillRect(Math.round(f > 0 ? x + dx : x - dx - w), top + dy, w, h || 1);
   };
   const sway = Y => Math.sin(Y * 0.18 - t * 2) * Math.max(0, Y - 40) * 0.04;
-  // arco mágico detrás
+
   if (!o.sil && vis > 0.3) cuArcoMagico(Math.round(f > 0 ? x - 7 : x + 7), top + 21, 17, t, o.arco || 0);
-  // --- túnica (Y 24..66) ---
+
   for (let Y = 24; Y <= 66; Y++) {
     const k = (Y - 24) / 42, hw = Math.round(9 + 6 * k), s = Math.round(sway(Y));
     P(-hw + s, Y, hw * 2, 1, CUC.tunica);
-    P(hw - 4 + s, Y, 3, 1, CUC.tunicaD); // frente oscuro
-    if (Y >= 30) P(hw - 5 + s, Y, 1, 1, CUC.oro); // borde dorado del frente
+    P(hw - 4 + s, Y, 3, 1, CUC.tunicaD);
+    if (Y >= 30) P(hw - 5 + s, Y, 1, 1, CUC.oro);
     if (Y < 61) {
-      // manto gris sobre la espalda
+
       const mw = Math.round(hw + 1 - k * 2);
       P(-hw + s, Y, mw, 1, CUC.manto);
       P(-hw + s, Y, 2, 1, CUC.mantoS);
@@ -16348,17 +15933,17 @@ function cuManto(x, y, t, o) {
       P(-hw + mw + s, Y, 1, 1, CUC.oro);
     }
   }
-  // ruedo dorado
+
   P(-15 + Math.round(sway(66)), 65, 30, 2, CUC.oro);
   P(-15 + Math.round(sway(66)), 67, 30, 1, CUC.oroS);
-  P(-13, 60, 2, 1, CUC.oro); // borde del manto gris
-  // gemas azules en el borde del manto
+  P(-13, 60, 2, 1, CUC.oro);
+
   for (const Y of [34, 40, 46, 52]) { const hw = Math.round(9 + 6 * ((Y - 24) / 42)); P(-hw + 2, Y, 2, 2, CUC.gema); P(-hw + 2, Y, 1, 1, CUC.gemaL); }
-  // broche del pecho
+
   P(-7, 26, 5, 6, CUC.oro);
   P(-6, 27, 3, 4, CUC.gemaD);
   P(-6, 27, 1, 1, CUC.gemaL);
-  // --- capucha (Y 6..27) ---
+
   const hwH = [3, 5, 6, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9];
   for (let r = 0; r < hwH.length; r++) {
     const Y = 6 + r, hw = hwH[r];
@@ -16366,7 +15951,7 @@ function cuManto(x, y, t, o) {
     P(-hw, Y, 2, 1, CUC.capaS);
     if (r < 4) P(-hw + 2, Y, hw, 1, CUC.capaL);
   }
-  // abertura de la cara con borde dorado y la máscara
+
   for (let Y = 9; Y <= 23; Y++) {
     const e = (Y - 16) / 7, hw = Math.round(4.6 * Math.sqrt(Math.max(0, 1 - e * e)));
     if (hw <= 0) continue;
@@ -16384,11 +15969,11 @@ function cuManto(x, y, t, o) {
   }
   P(5, 13, 2, 2, CUC.ojo);
   P(6, 13, 1, 1, CUC.ojoL);
-  // --- brazo con la luz (sale de la manga y apunta) ---
+
   const sh = { x: 6, y: 28 };
   let hx = 13, hy = 18 + Math.round(Math.sin(t * 2.4));
   if (o.mano) {
-    const a = f > 0 ? o.mano.a : Math.PI - o.mano.a; // ángulo en coordenadas locales (mirando a la derecha)
+    const a = f > 0 ? o.mano.a : Math.PI - o.mano.a;
     const tx = sh.x + Math.cos(a) * 15, ty = sh.y + Math.sin(a) * 15;
     hx = Math.round(jfL(hx, tx, o.mano.k));
     hy = Math.round(jfL(hy, ty, o.mano.k));
@@ -16413,7 +15998,6 @@ function cuLuzMano(m, t, k) {
   ctx.fillRect(Math.round(m.hx) - 1, Math.round(m.hy) - 1, 3, 3);
 }
 
-/* ---------- forma 2: humano con cuerpo de galaxia ---------- */
 const CU_SIL = document.createElement('canvas'),
   CU_GAL = document.createElement('canvas');
 CU_SIL.width = CU_GAL.width = 56;
@@ -16422,7 +16006,7 @@ const cuSx = CU_SIL.getContext('2d'),
   cuGx = CU_GAL.getContext('2d');
 const CU_ESTR = Array.from({ length: 46 }, (_, i) => ({ x: (i * 37.7) % 56, y: (i * 53.3) % 84, v: 2 + (i % 5), b: i % 7 == 0 }));
 function cuSilueta(c, col, t, o) {
-  // la figura humana (mirando a la derecha); se dibuja en un canvas chico
+
   c.clearRect(0, 0, 56, 84);
   c.fillStyle = col;
   const cx = 28, bob = 0;
@@ -16434,11 +16018,11 @@ function cuSilueta(c, col, t, o) {
     const hw = Y < 21 ? 10 : Y < 37 ? Math.round(jfL(10, 6, (Y - 21) / 16)) : 7;
     c.fillRect(cx + 1 - hw, Y, hw * 2, 1);
   }
-  // piernas flotando, puntas abajo
+
   const sw = Math.sin(t * 2) * 1.5;
   palo(cx - 3, 43, cx - 5 + sw, 80, 5, 2);
   palo(cx + 4, 43, cx + 5 + sw, 78, 5, 2);
-  // brazos
+
   palo(cx - 8, 19, cx - 12, 41, 4, 3);
   const sh = { x: cx + 9, y: 19 };
   let ex = cx + 12, ey = 41;
@@ -16455,11 +16039,11 @@ function cuGalaxia(x, y, t, o) {
   const vis = o.vis == null ? 1 : o.vis;
   if (vis <= 0.01) return null;
   const f = o.face || 1, X0 = Math.round(x - 28), Y0 = Math.round(y - 82);
-  // halo (el arco ahora es un anillo completo)
+
   if (vis > 0.3) cuArcoMagico(Math.round(x), Math.round(y - 58), 19, t, o.arco || 0.3);
-  // silueta para el borde de luz
+
   const m = cuSilueta(cuSx, '#9fe4ff', t, o);
-  // relleno de galaxia
+
   cuSilueta(cuGx, '#ffffff', t, o);
   cuGx.globalCompositeOperation = 'source-in';
   const g = cuGx.createLinearGradient(0, 0, 0, 84);
@@ -16468,7 +16052,7 @@ function cuGalaxia(x, y, t, o) {
   g.addColorStop(1, '#0d1240');
   cuGx.fillStyle = o.flash ? '#ffffff' : g;
   cuGx.fillRect(0, 0, 56, 84);
-  cuGx.globalCompositeOperation = 'source-atop'; // lo demás se pinta encima, solo dentro del cuerpo
+  cuGx.globalCompositeOperation = 'source-atop';
   if (!o.flash) {
     for (const [cx, cy, r, c] of [[28 + Math.sin(t * 0.7) * 8, 30 + Math.cos(t * 0.5) * 8, 16, 'rgba(196,76,255,.45)'], [24 + Math.cos(t * 0.6) * 6, 58 + Math.sin(t * 0.8) * 6, 14, 'rgba(47,208,200,.35)'], [34, 12, 8, 'rgba(255,120,200,.3)']]) {
       const n = cuGx.createRadialGradient(cx, cy, 0, cx, cy, r);
@@ -16483,7 +16067,7 @@ function cuGalaxia(x, y, t, o) {
       cuGx.fillRect(Math.round(s.x), Math.round(yy), 1, 1);
       if (s.b && tw) { cuGx.fillRect(Math.round(s.x) - 1, Math.round(yy), 3, 1); cuGx.fillRect(Math.round(s.x), Math.round(yy) - 1, 1, 3); }
     }
-    // la estrella del pecho
+
     cuGx.fillStyle = '#ffffff';
     cuGx.fillRect(29, 26, 1, 5); cuGx.fillRect(27, 28, 5, 1);
   }
@@ -16494,7 +16078,7 @@ function cuGalaxia(x, y, t, o) {
   ctx.scale(f, 1);
   for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) ctx.drawImage(CU_SIL, dx, dy);
   ctx.drawImage(CU_GAL, 0, 0);
-  // la máscara blanca sigue siendo su cara
+
   ctx.fillStyle = CUC.mascara;
   ctx.fillRect(27, 4, 7, 10);
   ctx.fillRect(28, 3, 5, 12);
@@ -16507,7 +16091,7 @@ function cuGalaxia(x, y, t, o) {
   ctx.restore();
   return { hx: f > 0 ? X0 + m.hx : X0 + 56 - m.hx, hy: Y0 + m.hy };
 }
-/* ---------- mini sol ---------- */
+
 function cuSol(x, y, t, k) {
   const r = Math.round(4 + 12 * k);
   ctx.save();
@@ -16519,13 +16103,13 @@ function cuSol(x, y, t, k) {
   ctx.fillStyle = g;
   ctx.fillRect(x - r * 4, y - r * 4, r * 8, r * 8);
   ctx.restore();
-  // rayos que giran
+
   ctx.fillStyle = '#ffd23f';
   for (let i = 0; i < 12; i++) {
     const a = t * 0.8 + (i * Math.PI) / 6, l = r + 5 + (i % 2 ? 4 : 9) * k + Math.sin(t * 6 + i) * 2;
     jfLinea(x + Math.cos(a) * (r + 2), y + Math.sin(a) * (r + 2), x + Math.cos(a) * l, y + Math.sin(a) * l);
   }
-  // disco pixelado
+
   for (let j = -r; j <= r; j++) {
     const w = Math.round(Math.sqrt(r * r - j * j));
     ctx.fillStyle = Math.abs(j) > r * 0.75 ? '#ff9a1f' : '#ffd23f';
@@ -16534,7 +16118,7 @@ function cuSol(x, y, t, k) {
   const r2 = Math.round(r * 0.6);
   ctx.fillStyle = '#fff6c8';
   for (let j = -r2; j <= r2; j++) { const w = Math.round(Math.sqrt(r2 * r2 - j * j)); ctx.fillRect(Math.round(x - w), Math.round(y + j), w * 2 + 1, 1); }
-  // su máscara en el centro del sol
+
   if (k > 0.5) {
     ctx.fillStyle = CUC.mascara;
     ctx.fillRect(Math.round(x) - 3, Math.round(y) - 4, 7, 9);
@@ -16545,7 +16129,6 @@ function cuSol(x, y, t, k) {
   }
 }
 
-/* ---------- fondo: blanco / inicio (Ribera de Sahinos vacía) / bucles cósmicos ---------- */
 const JF_LB = document.createElement('canvas');
 JF_LB.width = 234;
 JF_LB.height = 136;
@@ -16577,17 +16160,14 @@ function jfBucles(t) {
       }
     }
   }
-  // estrellitas encima
+
   for (let i = 0; i < 60; i++) {
     const x = (i * 97) % 234, y = (i * 59) % 110;
     if (Math.sin(t * 3 + i) > 0.2) jfPx[y * 234 + x] = 0xffffffff;
   }
   jfLx.putImageData(jfImg, 0, 0);
 }
-/* ---------- LA SALA DE LAS PANTALLAS (cuando se vuelve sol) ----------
-   Una pared infinita de televisores viejos flotando en la oscuridad: cada uno pasa
-   un "video" de donde Smara sacó su Mulukukú (recortes de sus propios escenarios),
-   estática, o risas grabadas. Las risas suben flotando como en un video gracioso. */
+
 const CU_RUIDO = document.createElement('canvas');
 CU_RUIDO.width = 48;
 CU_RUIDO.height = 32;
@@ -16605,10 +16185,10 @@ const CU_TVS = (() => {
 const CU_RISAS = ['JAJAJA', 'jsjsjs', 'XD', 'JAJAJ', 'ajjaja', 'JSJSJ', 'LOL', 'jajaj'];
 function cuTele(tv, t) {
   const bob = Math.sin(t * 0.8 + tv.ph) * 3, x = Math.round(tv.x), y = Math.round(tv.y + bob), w = tv.w, h = tv.h, sw = w - 10, sh = h - 12;
-  // cada cierto tiempo cambia de "canal" (con estática en el cambio)
+
   const ciclo = Math.floor((t + tv.ph * 3) / tv.cambia), tipo = (tv.tipo + ciclo) % 6, enCambio = (t + tv.ph * 3) % tv.cambia < 0.18;
   ctx.globalAlpha = tv.prof;
-  // carcasa
+
   ctx.fillStyle = '#05030a';
   ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
   ctx.fillStyle = '#2a2236';
@@ -16618,11 +16198,11 @@ function cuTele(tv, t) {
   ctx.fillStyle = '#16101e';
   ctx.fillRect(x + w - 4, y + 6, 2, 2);
   ctx.fillRect(x + w - 4, y + 10, 2, 2);
-  // antena
+
   ctx.fillStyle = '#3e3450';
   jfLinea(x + w / 2, y, x + w / 2 - 8, y - 9);
   jfLinea(x + w / 2, y, x + w / 2 + 7, y - 10);
-  // pantalla
+
   const px = x + 4, py = y + 5;
   ctx.save();
   ctx.beginPath();
@@ -16641,7 +16221,7 @@ function cuTele(tv, t) {
     ctx.textAlign = 'left';
   } else if (tipo == 4 && img.b2) ctx.drawImage(img.b2, (t * 20 + tv.ph * 100) % 400, 40, 300, 240, px, py, sw, sh);
   else {
-    // barras de "risas grabadas" que suben y bajan
+
     ctx.fillStyle = '#16203a';
     ctx.fillRect(px, py, sw, sh);
     for (let i = 0; i < 6; i++) {
@@ -16650,20 +16230,20 @@ function cuTele(tv, t) {
       ctx.fillRect(px + 3 + i * Math.floor((sw - 6) / 6), py + sh - 3 - bh, Math.floor((sw - 6) / 6) - 2, bh);
     }
   }
-  // líneas de TV y brillo del vidrio
+
   ctx.fillStyle = 'rgba(0,0,0,.25)';
   for (let yy = py + ((t * 20) % 2 | 0); yy < py + sh; yy += 2) ctx.fillRect(px, yy, sw, 1);
   ctx.fillStyle = 'rgba(255,255,255,.08)';
   ctx.fillRect(px, py, sw, Math.round(sh * 0.35));
   ctx.restore();
-  // luz que tira la pantalla
+
   ctx.globalAlpha = tv.prof * 0.12;
   ctx.fillStyle = tipo == 3 ? '#ffd95a' : '#8ad8ff';
   ctx.fillRect(x - 6, y - 6, w + 12, h + 12);
   ctx.globalAlpha = 1;
 }
 function cuPantallas(t) {
-  // estática (se recalcula 20 veces por segundo)
+
   if (Math.abs(t - cuRuidoT) > 0.05) {
     cuRuidoT = t;
     const d = cuRimg.data;
@@ -16675,12 +16255,12 @@ function cuPantallas(t) {
   g.addColorStop(1, '#05030a');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
-  // pared de televisores, de atrás para adelante
+
   for (const tv of CU_TVS) cuTele(tv, t);
-  // oscurece un poco para que se lea la pelea
+
   ctx.fillStyle = 'rgba(8,4,16,.35)';
   ctx.fillRect(0, 0, W, CU_SUELO);
-  // conos de luz del "foco" (el sol)
+
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   for (const dx of [-150, 0, 150]) {
@@ -16693,7 +16273,7 @@ function cuPantallas(t) {
     ctx.fill();
   }
   ctx.restore();
-  // escenario: piso brillante con reflejos de las pantallas
+
   ctx.fillStyle = '#0a0612';
   ctx.fillRect(0, CU_SUELO, W, H - CU_SUELO);
   for (let i = 0; i < 14; i++) {
@@ -16705,7 +16285,7 @@ function cuPantallas(t) {
   ctx.fillRect(0, CU_SUELO, W, 1);
   ctx.fillStyle = 'rgba(255,217,90,.25)';
   for (let i = 1; i < 8; i++) ctx.fillRect(0, CU_SUELO + i * i, W, 1);
-  // risas que flotan hacia arriba
+
   ctx.textAlign = 'center';
   for (let i = 0; i < 12; i++) {
     const vida = 4 + (i % 3), k = ((t + i * 1.7) % vida) / vida, x = ((i * 137) % (W - 80)) + 40 + Math.sin(t * 2 + i) * 8, y = CU_SUELO - 10 - k * 220;
@@ -16718,13 +16298,13 @@ function cuPantallas(t) {
   }
   ctx.globalAlpha = 1;
   ctx.textAlign = 'left';
-  // "grabando"
+
   if (Math.floor(t * 2) % 2) { ctx.fillStyle = '#ff3a4a'; ctx.fillRect(10, 46, 5, 5); }
   ctx.fillStyle = '#ffffff';
   ctx.font = '7px ' + PS;
   ctx.fillText('REC', 19, 52);
 }
-// risas grabadas (sonido)
+
 function cuRisasSnd() {
   if (!AC || muted) return;
   for (let i = 0; i < 9; i++) jfTono(330 + (i % 3) * 60 + Math.random() * 40, 260, 0.09, 'square', 0.025, i * 0.11 + Math.random() * 0.03);
@@ -16767,12 +16347,11 @@ function jfFondo(t) {
   }
 }
 
-/* ---------- el jefe (detrás de Smara) ---------- */
 function jfDibujarJefe(t) {
   if (!JF.on) return;
   const P = jfPaso();
   cuAvisoColumnas(t);
-  // círculo de runas en el suelo cuando aparece
+
   if (JF.cine && JF.cine.k == 'intro' && (!JF.cine.sube || JF.cine.sube < 1.4)) {
     const k = jfC(JF.cine.t / 0.8, 0, 1) * (JF.cine.sube ? 1 - JF.cine.sube / 1.4 : 1), x = Math.round(JF.x - cam), rx = Math.round(30 * k);
     ctx.fillStyle = CUC.arco;
@@ -16780,31 +16359,31 @@ function jfDibujarJefe(t) {
     ctx.fillStyle = CUC.chispa;
     for (let i = 0; i < 6; i++) { const a = t * 2 + i * 1.05; ctx.fillRect(Math.round(x + Math.cos(a) * rx * 0.6), Math.round(CU_SUELO + Math.sin(a) * rx * 0.13), 2, 1); }
   }
-  // aviso de la tele: chispitas donde va a salir
+
   if (P.k == 'tele' && P.tx != null && JF.vis < 0.5) {
     const u = jfC(JF.pt / jfDur(P), 0, 1), k = jfC((u - 0.38) / 0.3, 0, 1), R = jfRng(Math.floor(t * 12));
     ctx.fillStyle = CUC.arco;
     for (let i = 0; i < 6 + k * 18; i++) ctx.fillRect(Math.round(P.tx - cam + (R() - 0.5) * 50 * k), Math.round(CU_SUELO - 20 - R() * 60 * k), 1, 1);
   }
-  // sombra
+
   const sw = Math.round(24 * jfC(1 - (CU_SUELO - JF.y) / 260, 0.3, 1) * JF.vis);
   if (sw > 2 && JF.solK < 0.5) {
     ctx.fillStyle = cuOscuro() ? 'rgba(0,0,0,.45)' : 'rgba(20,10,10,.16)';
     ctx.fillRect(Math.round(JF.x - cam - sw / 2), CU_SUELO, sw, 2);
   }
-  // quemaduras en el suelo que se apagan
+
   for (const q of JF.quemas) {
     ctx.fillStyle = cuOscuro() ? 'rgba(255,200,120,' + 0.35 * (1 - q.t / 2.5) + ')' : 'rgba(80,50,20,' + 0.25 * (1 - q.t / 2.5) + ')';
     ctx.fillRect(Math.round(q.x0 - cam), CU_SUELO, Math.round(q.x1 - q.x0), 2);
   }
-  // estela fantasma
+
   for (const g of JF.estela) {
     ctx.globalAlpha = g.a * 0.6 * JF.vis;
     if (g.forma == 'galaxia') cuGalaxia(g.x - cam, Math.round(g.y), t, { face: g.f, flash: true });
     else cuManto(g.x - cam, Math.round(g.y), t, { face: g.f, sil: cuOscuro() ? '#3fd8ff' : '#9fd0ff' });
   }
   ctx.globalAlpha = 1;
-  // rayas de luz del teletransporte
+
   for (const r of JF.rayas) {
     const k = r.t / 0.35, w = Math.round(10 * (1 - k)) + 1;
     ctx.fillStyle = 'rgba(159,228,255,' + (1 - k) + ')';
@@ -16814,7 +16393,7 @@ function jfDibujarJefe(t) {
   }
   let m = null;
   const bx = JF.x - cam + JF.golpeX;
-  // estirón al aparecer o recibir golpe (squash & stretch)
+
   const sq = JF.pop * Math.sin(JF.pop * 9);
   ctx.save();
   ctx.translate(bx, JF.y);
@@ -16828,7 +16407,7 @@ function jfDibujarJefe(t) {
     if (JF.vis > 0.3 && JF.solK < 0.5) cuLuzMano(m, t, JF.mano ? JF.mano.k : 0.2);
   }
   ctx.restore();
-  // destello en la máscara antes de atacar
+
   if (JF.alerta > 0 && JF.vis > 0.5 && JF.solK < 0.5) {
     const mx = Math.round(bx + JF.face * (JF.forma == 'galaxia' ? 3 : 5)), my = Math.round(JF.y - (JF.forma == 'galaxia' ? 74 : CU_ALTO - 13)), r = Math.round(3 + (0.45 - JF.alerta) * 20);
     ctx.fillStyle = 'rgba(255,255,255,' + Math.min(1, JF.alerta * 3) + ')';
@@ -16836,7 +16415,7 @@ function jfDibujarJefe(t) {
     ctx.fillRect(mx, my - r, 1, r * 2 + 1);
     ctx.fillRect(mx - 1, my - 1, 3, 3);
   }
-  // estrellitas de mareo
+
   if (JF.mareo) {
     for (let i = 0; i < 4; i++) {
       const a = JF.t * 5 + i * 1.57, hx = bx + Math.cos(a) * 14, hy = JF.y - CU_ALTO - 6 + Math.sin(a) * 4;
@@ -16846,7 +16425,7 @@ function jfDibujarJefe(t) {
     }
   }
   if (JF.solK > 0) cuSol(Math.round(bx), Math.round(JF.y - 34), t, JF.solK);
-  // anillos de la transformación
+
   if (JF.cine && JF.cine.k == 'transforma' && JF.cine.t < 1.4) {
     const s = JF.cine.t;
     for (let i = 0; i < 3; i++) {
@@ -16874,7 +16453,6 @@ function cuAvisoColumnas(t) {
   }
 }
 
-/* ---------- lo que va delante de Smara ---------- */
 function jfColumna(q, k, t) {
   const x0 = q.x0 - cam, w = q.x1 - q.x0, cx = x0 + w / 2, osc = cuOscuro();
   const abre = jfE.out(jfC(k / 0.1, 0, 1)), cierra = k > q.td - 0.2 ? jfC((q.td - k) / 0.2, 0, 1) : 1, a = abre * cierra;
@@ -16927,7 +16505,7 @@ function cuRayo(R, t) {
     ctx.stroke();
   }
   ctx.restore();
-  // núcleo pixelado
+
   ctx.globalAlpha = a;
   ctx.fillStyle = '#e8fbff';
   for (let k = 0; k < L; k += 2) ctx.fillRect(Math.round(ox + cx * k) - 1, Math.round(oy + cy * k) - 1, 3, 3);
@@ -16938,7 +16516,7 @@ function cuRayo(R, t) {
 function jfDibujarFrente(t) {
   if (!JF.on) return;
   for (const q of JF.pil.L) { const k = JF.t - q.tf; if (k >= 0 && k <= q.td) jfColumna(q, k, t); }
-  // línea de puntería mientras apunta
+
   const P = jfPaso();
   if (P.k == 'apunta' && JF.apuntaA != null && JF.vis > 0.5) {
     const o = cuArco();
@@ -16946,7 +16524,7 @@ function jfDibujarFrente(t) {
     for (let k = 10; k < 700; k += 6) ctx.fillRect(Math.round(o.x - cam + Math.cos(JF.apuntaA) * k), Math.round(o.y + Math.sin(JF.apuntaA) * k), 2, 1);
   }
   for (const R of JF.rayos) cuRayo(R, t);
-  // meteoros
+
   for (const g of JF.gotas) {
     const x = Math.round(g.x - cam), k = jfC((JF.t - g.ts) / 0.7, 0, 1);
     if (JF.t >= g.ts && !g.ok) {
@@ -16969,7 +16547,7 @@ function jfDibujarFrente(t) {
       ctx.globalAlpha = 1;
     }
   }
-  // constelación
+
   if (JF.constel) {
     const C = JF.constel, s = JF.t - C.t0;
     for (let i = 0; i < C.N.length; i++) {
@@ -17001,7 +16579,7 @@ function jfDibujarFrente(t) {
       }
     }
   }
-  // estrellas que persiguen
+
   for (const o of JF.orbes) {
     const x = Math.round(o.x - cam), y = Math.round(o.y);
     ctx.fillStyle = '#9fe4ff';
@@ -17010,7 +16588,7 @@ function jfDibujarFrente(t) {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(x - 1, y - 1, 3, 3);
   }
-  // el rayo devuelto (de Smara al Cuentero)
+
   if (JF.reflejo) {
     const r = JF.reflejo, a = 1 - r.t / 0.3;
     ctx.save();
@@ -17020,7 +16598,7 @@ function jfDibujarFrente(t) {
     }
     ctx.restore();
   }
-  // números y textos que flotan
+
   ctx.textAlign = 'center';
   for (const x of JF.textos) {
     const k = x.t / 0.9, sc = x.t < 0.1 ? 1 + (0.1 - x.t) * 6 : 1;
@@ -17033,7 +16611,7 @@ function jfDibujarFrente(t) {
   }
   ctx.globalAlpha = 1;
   ctx.textAlign = 'left';
-  // anillos de choque
+
   for (const a of JF.anillos) {
     const k = a.t / a.d, r = jfL(a.r0, a.r1, jfE.out(k));
     ctx.globalAlpha = 1 - k;
@@ -17042,7 +16620,7 @@ function jfDibujarFrente(t) {
     for (let q = 0; q < 6.283; q += paso) ctx.fillRect(Math.round(a.x - cam + Math.cos(q) * r), Math.round(a.y + Math.sin(q) * r * (a.redondo ? 1 : 0.3)), 2, 2);
     ctx.globalAlpha = 1;
   }
-  // tormenta: aviso en el suelo y el rayo que cae
+
   for (const r of JF.relampagos) {
     const x = Math.round(r.x - cam);
     if (r.t < 0.7) {
@@ -17072,13 +16650,12 @@ function jfDibujarFrente(t) {
       ctx.globalAlpha = 1;
     }
   }
-  // mini pilares de luz
+
   for (const m of JF.minip) cuMiniPilar(m, t);
-  // los cuatro arcos y sus flechas
+
   if (JF.arcos) for (const B of JF.arcos.B) cuArcoDorado(B, t);
   for (const f of JF.flechas) cuFlecha(f, t);
-  // pasto del escenario del inicio, adelante
-  // globos
+
   const L = cuCharlaLinea();
   if (L) {
     if (L[0] == 'SMARA') globo(p.x - cam, p.y - 70, 'SMARA', L[1], JF.cine.n, true);
@@ -17115,7 +16692,6 @@ function cuGlobo(txt, n, a) {
   ctx.globalAlpha = 1;
 }
 
-// golpes de Smara (también funcionan con el tiempo detenido)
 function jfGolpesSmara() {
   const a = p.atk;
   if (a && a.hit && JF.ultAtk !== a) {
@@ -17125,7 +16701,7 @@ function jfGolpesSmara() {
     for (const o of JF.orbes) if (o.vivo && Math.hypot(o.x - hx, o.y - pcy()) < 55) { o.vivo = false; cuChispas(o.x, o.y, 8); sfx('hit'); }
   }
 }
-// Q = detener el tiempo (2.5 s, recarga 10 s): el Cuentero y todos sus ataques se congelan
+
 addEventListener('keydown', e => {
   if (e.code != 'KeyQ' || e.repeat || area != 7 || state != 'play') return;
   const now = performance.now() / 1000;
@@ -17135,7 +16711,7 @@ addEventListener('keydown', e => {
   for (let i = 0; i < 18; i++) { const a = (i / 18) * 6.283; pfx(p.x + Math.cos(a) * 8, pcy() + Math.sin(a) * 8, Math.cos(a) * 160, Math.sin(a) * 160, 0.4, i % 2 ? '#8ff6ff' : '#ffffff', 2, 0); }
 });
 function cuReloj() {
-  // relojito arriba a la derecha (tecla Q)
+
   const now = performance.now() / 1000, cx = W - 24, cy = 58, Rr = 11;
   let frac, col;
   if (TIEMPO.parado) { frac = 1 - (now - TIEMPO.t0) / TIEMPO.dura; col = '#8ff6ff'; }
@@ -17179,7 +16755,7 @@ function cuParryFx(x, y, grande) {
   cuTexto('¡PARRY!', p.x, p.y - 74, '#ffd95a');
 }
 function cuParryRayo(R) {
-  // PARRY al rayo: se corta, el reflejo le pega al Cuentero y lo deja mareado
+
   R.parado = 1;
   R.t = Math.max(R.t, 0.78);
   cuParryFx(p.x, pcy(), true);
@@ -17193,7 +16769,7 @@ function cuParryRayo(R) {
 function cuAnillo(x, y, r0, r1, c, d, redondo) {
   JF.anillos.push({ x, y, r0, r1, c, d: d || 0.35, t: 0, redondo });
 }
-/* ---------- arcos dorados con electricidad ---------- */
+
 function cuArcoPos(B) {
   const A = JF.arcos, k = jfE.out(jfC(A.t / 0.5, 0, 1)), r = 54 * k;
   const a = B.a + Math.sin(JF.t * 1.5 + B.a) * 0.08;
@@ -17202,14 +16778,14 @@ function cuArcoPos(B) {
 function cuArcoDorado(B, t) {
   const o0 = cuArcoPos(B), A = JF.arcos, k = jfE.out(jfC(A.t / 0.5, 0, 1));
   if (k <= 0.05) return;
-  // gira al aparecer y retrocede al disparar
+
   const tg = Math.atan2(CU_SUELO - o0.y, p.x - o0.x), o = { x: o0.x - Math.cos(tg) * (B.retro || 0) * 7, y: o0.y - Math.sin(tg) * (B.retro || 0) * 7 };
-  // apunta a Smara
+
   const tgt = tg, ang = A.t < 0.5 ? B.a + (tgt - B.a) * k + (1 - k) * 6.283 : tgt;
   const c = Math.cos(ang), s = Math.sin(ang), X = o.x - cam, Y = o.y;
   const P = (lx, ly, col, w) => { ctx.fillStyle = col; ctx.fillRect(Math.round(X + lx * c - ly * s) - 1, Math.round(Y + lx * s + ly * c) - 1, w || 2, w || 2); };
   const sc = (0.5 + 0.5 * k) * 1.45, tens = B.tens || 0;
-  // brillo
+
   ctx.save();
   ctx.globalCompositeOperation = cuOscuro() ? 'lighter' : 'source-over';
   const g = ctx.createRadialGradient(X, Y, 0, X, Y, 22);
@@ -17218,13 +16794,13 @@ function cuArcoDorado(B, t) {
   ctx.fillStyle = g;
   ctx.fillRect(X - 22, Y - 22, 44, 44);
   ctx.restore();
-  // cuerda de electricidad (se tensa antes de disparar)
+
   const tipY = 13 * sc, pull = -2 - 8 * tens;
   ctx.fillStyle = Math.floor(t * 20) % 2 ? '#ffffff' : '#e8d6ff';
   for (const sg of [-1, 1]) for (let q = 0; q <= 1; q += 0.08) P(jfL(-2, pull, q) + (Math.random() - 0.5) * 1.2, jfL(sg * tipY, 0, q), Math.random() < 0.5 ? '#ffffff' : '#c9b8ff', 1);
-  // flecha de luz puesta
+
   if (tens > 0) for (let q = pull; q < 16; q += 1) P(q, (Math.random() - 0.5) * 0.8, q > 9 ? '#ffffff' : '#9fe4ff', 1);
-  // el arco dorado (curva hacia el frente, puntas recurvas)
+
   for (let q = -1; q <= 1.001; q += 0.07) {
     const lx = (4 - 6 * q * q) * sc, ly = 13 * q * sc;
     P(lx, ly, '#e8b04a');
@@ -17232,9 +16808,9 @@ function cuArcoDorado(B, t) {
     if (Math.abs(q) < 0.6) P(lx + 1, ly, '#ffe9a6', 1);
   }
   P(-3 * sc, -14 * sc, '#e8b04a'); P(-3 * sc, 14 * sc, '#e8b04a');
-  // empuñadura con vendas
+
   P(4 * sc, -2, '#3fc8c0'); P(4 * sc, 2, '#3fc8c0'); P(4 * sc, 0, '#2a2a3a');
-  // chispas de electricidad alrededor
+
   const R = jfRng(Math.floor(t * 18) + Math.round(B.a * 100));
   ctx.fillStyle = '#e8d6ff';
   for (let i = 0; i < 3; i++) {
@@ -17250,7 +16826,7 @@ function cuFlecha(f, t) {
   ctx.lineWidth = f.amiga ? 7 : 5;
   ctx.beginPath(); ctx.moveTo(x - c * 22, y - s * 22); ctx.lineTo(x, y); ctx.stroke();
   ctx.restore();
-  // cuerpo en zigzag (rayo) y punta
+
   ctx.fillStyle = '#ffffff';
   let px_ = x - c * 20, py_ = y - s * 20;
   for (let i = 1; i <= 4; i++) {
@@ -17321,7 +16897,7 @@ function jfEncima(t) {
       ctx.textAlign = 'left';
     }
   }
-  // carteles con el nombre
+
   let cart = null;
   if (enIntro && C.sube > 0.8) cart = [C.sube - 0.8, 'EL CUENTERO', 'el que cuenta a Mulukukú como chiste', '#2f7fe0'];
   if (C && C.k == 'transforma' && C.t > 3.6) cart = [C.t - 3.6, 'EL CUENTERO', 'forma estelar', '#b44cc0'];
@@ -17342,7 +16918,7 @@ function jfEncima(t) {
   }
   if (!(JF.cine && JF.cine.k == 'intro')) { tiempoOnda(); cuReloj(); }
   if (TIEMPO.parado) {
-    // texto grande
+
     const s = performance.now() / 1000 - TIEMPO.t0;
     if (s < 0.8) {
       ctx.globalAlpha = 1 - s / 0.8;
@@ -17392,9 +16968,6 @@ function jfEncima(t) {
   }
 }
 
-/* =====================================================================
-   CONEXIÓN CON EL JUEGO (envoltorios)
-   ===================================================================== */
 const loadAreaJF = loadArea;
 loadArea = function (n) {
   loadAreaJF(n);
@@ -17426,14 +16999,14 @@ const updEnemiesJF = updEnemies;
 updEnemies = function (dt) {
   updEnemiesJF(dt);
   if (area != 7) return;
-  if (TIEMPO.parado) jfGolpesSmara(); // con el tiempo detenido solo Smara se mueve
+  if (TIEMPO.parado) jfGolpesSmara();
   else jfTick(dt);
 };
 const drawPlatJF = drawPlat;
 drawPlat = function () {
   if (area == 7) {
     jfFondo(performance.now() / 1000);
-    // tormenta: los colores del fondo se invierten
+
     if (JF.inv > 0) { ctx.save(); ctx.globalCompositeOperation = 'difference'; ctx.fillStyle = 'rgba(255,255,255,' + JF.inv + ')'; ctx.fillRect(0, 0, W, H); ctx.restore(); }
     return;
   }
@@ -17444,7 +17017,7 @@ drawEnemies = function (t) {
   drawEnemiesJF(t);
   if (area == 7) {
     jfDibujarJefe(t);
-    tiempoVelo(); // el fondo y el jefe se vuelven grises (Smara no)
+    tiempoVelo();
   }
 };
 const drawPFXJF = drawPFX;
@@ -17479,19 +17052,6 @@ draw = function () {
   drawJF();
 };
 
-/* ---------- 40b-epilogo.js ---------- */
-/* =====================================================================
-   EPÍLOGO: EL REMATE DEL "BLANCO"
-   Después de vencer al Cuentero (40-jefe-cuentero.js):
-   · Todo queda en blanco, como una hoja. Llega el Cadejo caminando.
-   · Se responde la pregunta de la noche ("¿y si el malo es el blanco?"):
-     el blanco no miente, se queda callado; el que llena el silencio es el
-     que cuenta. El Errante tampoco era bueno ni malo.
-   · Smara decide conocer el Mulukukú de verdad. El blanco se llena de
-     color (amanece) y se van caminando juntos.
-   · Cartel final y vuelta al menú.
-   E / ESPACIO / J / clic: pasar el texto.
-   ===================================================================== */
 ZN[7] = ['EL BLANCO', 'donde vive el que cuenta'];
 const EPI_FRASES = [
   ['c', '¿Ya ves? Te dije que el malo era el blanco.'],
@@ -17510,8 +17070,8 @@ function epiEmpezar() {
   EPI.i = -1;
   EPI.vis = 0;
   EPI.s = 0;
-  EPI.fase = 'llega'; // llega · charla · amanece · fin
-  EPI.cx = W + 60; // el Cadejo entra por la derecha
+  EPI.fase = 'llega';
+  EPI.cx = W + 60;
   EPI.sx = 230;
   EPI.k = 0;
   state = 'epilogo';
@@ -17547,8 +17107,7 @@ function epiTick(dt) {
     if (EPI.vis >= L.length && EPI.s > L.length / 30 + 3.4) epiSiguiente();
   } else if (EPI.fase == 'amanece') {
     EPI.k += dt;
-    // caminan juntos hacia la derecha mientras el blanco se llena de color
-    // primero el Cadejo se pone al lado de Smara, después caminan juntos
+
     if (EPI.k <= 1.5) EPI.cx += (EPI.sx + 64 - EPI.cx) * Math.min(1, dt * 3);
     else { EPI.sx += dt * 60; EPI.cx = EPI.sx + 64; }
     if (EPI.k > 9) { EPI.fase = 'fin'; EPI.k = 0; sfx('boom'); }
@@ -17557,10 +17116,10 @@ function epiTick(dt) {
 function epiDibujar(t) {
   const k = EPI.fase == 'amanece' ? Math.min(1, EPI.k / 5) : EPI.fase == 'fin' ? 1 : 0;
   const G = 300;
-  // la hoja en blanco
+
   ctx.fillStyle = '#f3f1ea';
   ctx.fillRect(0, 0, W, H);
-  // amanecer que sube desde abajo
+
   if (k > 0) {
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#2b3a6b');
@@ -17570,10 +17129,10 @@ function epiDibujar(t) {
     ctx.globalAlpha = k;
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
-    // el sol saliendo detrás de las lomas
+
     ctx.fillStyle = '#fff3c8';
     ctx.beginPath(); ctx.arc(W * 0.66, G - 40 + (1 - k) * 60, 34, 0, 7); ctx.fill();
-    // lomas verdes, el río Tuma y la orilla
+
     ctx.fillStyle = '#3b6a4a';
     for (let x = 0; x < W; x += 2) { const y = G - 30 - 16 * Math.sin(x * 0.012) - 8 * Math.sin(x * 0.031 + 1); ctx.fillRect(x, y, 2, H - y); }
     ctx.fillStyle = '#2d5a3a';
@@ -17584,7 +17143,7 @@ function epiDibujar(t) {
     for (let i = 0; i < 18; i++) ctx.fillRect(Math.round((i * 53 + t * 20) % W), G + 36 + (i * 7) % 30, 10, 1);
     ctx.globalAlpha = 1;
   }
-  // horizonte de tinta (el blanco)
+
   if (k < 1) {
     ctx.globalAlpha = 1 - k;
     ctx.fillStyle = '#141418';
@@ -17592,7 +17151,7 @@ function epiDibujar(t) {
     ctx.fillRect(0, G, W, 1);
     ctx.globalAlpha = 1;
   }
-  // Smara
+
   const x0 = p.x, y0 = p.y, cam0 = cam, vx0 = p.vx, on0 = p.on, f0 = p.face, at0 = p.atk;
   cam = 0; p.x = EPI.sx; p.y = G; p.on = true; p.atk = null;
   p.vx = EPI.fase == 'amanece' && EPI.k > 1.5 ? 60 : 0;
@@ -17600,7 +17159,7 @@ function epiDibujar(t) {
   drawPShadow();
   drawPlayer();
   p.x = x0; p.y = y0; cam = cam0; p.vx = vx0; p.on = on0; p.face = f0; p.atk = at0;
-  // el Cadejo
+
   if (img.cdj) {
     const camina = EPI.fase == 'llega' && EPI.cx > 470;
     const habla = EPI.fase == 'charla' && EPI_FRASES[EPI.i][0] == 'c' && EPI.vis < EPI_FRASES[EPI.i][1].length;
@@ -17611,11 +17170,11 @@ function epiDibujar(t) {
     const sc = 2, x = Math.round(EPI.cx);
     ctx.save();
     ctx.translate(x, G);
-    if (anda && EPI.k > 1.5) ctx.scale(-1, 1); // al irse mira hacia adelante, como Smara
+    if (anda && EPI.k > 1.5) ctx.scale(-1, 1);
     ctx.drawImage(img.cdj, fr * 48, 0, 48, 43, -24 * sc, -43 * sc + (camina || anda ? 0 : Math.round(Math.sin(t * 3))), 48 * sc, 43 * sc);
     ctx.restore();
   }
-  // globos de texto
+
   if (EPI.fase == 'charla' && EPI.i >= 0) {
     const [q, L] = EPI_FRASES[EPI.i];
     if (q == 'c') globo(EPI.cx - 26, G - 66, 'EL CADEJO', L, Math.floor(EPI.vis), false);
@@ -17635,7 +17194,7 @@ function epiDibujar(t) {
     ctx.textAlign = 'left';
     ctx.globalAlpha = 1;
   }
-  // cartel final
+
   if (EPI.fase == 'fin') {
     ctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, EPI.k / 1.2) + ')';
     ctx.fillRect(0, 0, W, H);
@@ -17688,21 +17247,11 @@ draw = function () {
   drawEPI();
 };
 
-/* ---------- 41-llano-en-desarrollo.js ---------- */
-/* =====================================================================
-   EL LLANO DE LOS SUSURROS: EN DESARROLLO
-   La zona que sigue al Bosque de la Niebla (después del pilar) queda
-   solo con el paisaje: sin Espantos, sin bestias, sin murciélagos ni
-   fantasmas, y sin el Cadejo. Al entrar sale un anuncio de que la zona
-   está en desarrollo; después queda una etiqueta chiquita en la esquina,
-   y al llegar al final del camino se vuelve a avisar.
-   Para volver a activar todo: poner LLANO_EN_DESARROLLO en false.
-   ===================================================================== */
 const LLANO_EN_DESARROLLO = true;
 const LDEV = { t: 0, fin: 0 };
 function llanoVaciar() {
-  LL.ola = 99; // no aparece ningún Espanto
-  CD.ola = 99; // ni bestias
+  LL.ola = 99;
+  CD.ola = 99;
   CD.mons = [];
   LL.esp = [];
   LL.lanzas = [];
@@ -17710,8 +17259,8 @@ function llanoVaciar() {
   CD.perro = null;
 }
 if (LLANO_EN_DESARROLLO) {
-  CD_X.susto = 1e9; // el Cadejo no aparece
-  OLAS_EXTRA[9] = []; // ni murciélagos ni fantasmas
+  CD_X.susto = 1e9;
+  OLAS_EXTRA[9] = [];
   const loadAreaLDEV = loadArea;
   loadArea = function (n) {
     loadAreaLDEV(n);
@@ -17733,7 +17282,7 @@ if (LLANO_EN_DESARROLLO) {
     if (p.x > LEVEL - 260) LDEV.fin += dt; else LDEV.fin = 0;
     ctx.save();
     ctx.setTransform(2, 0, 0, 2, 0, 0);
-    // anuncio grande: al entrar (después del cartel de la zona) y al llegar al final del camino
+
     const tg = LDEV.t - 3, a = tg > 0 && tg < 6.5 ? Math.min(1, tg / 0.5, (6.5 - tg) / 0.6) : LDEV.fin > 0.3 ? Math.min(1, (LDEV.fin - 0.3) / 0.5) : 0;
     if (a > 0) {
       const w = 420, h = 74, x = W / 2 - w / 2, y = 150;
@@ -17742,7 +17291,7 @@ if (LLANO_EN_DESARROLLO) {
       ctx.fillRect(x - 3, y - 3, w + 6, h + 6);
       ctx.fillStyle = '#14101e';
       ctx.fillRect(x, y, w, h);
-      // franjas de "obra" arriba y abajo
+
       for (let i = 0; i < w - 8; i += 16) { ctx.fillStyle = (i / 16) % 2 ? '#14101e' : '#ffd25a'; ctx.fillRect(x + i, y, 8, 4); ctx.fillRect(x + i + 8, y + h - 4, 8, 4); }
       ctx.textAlign = 'center';
       ctx.font = '12px ' + PS;
@@ -17754,7 +17303,7 @@ if (LLANO_EN_DESARROLLO) {
       ctx.fillText(LDEV.fin > 0.3 ? 'Volvé pronto: aquí sigue la historia.' : 'Por ahora podés recorrer el paisaje.', W / 2, y + 60);
       ctx.textAlign = 'left';
     }
-    // etiqueta chiquita en la esquina
+
     ctx.globalAlpha = 0.85;
     ctx.font = '7px ' + PS;
     const tx = 'EN DESARROLLO', tw = ctx.measureText(tx).width + 14;
@@ -17766,16 +17315,6 @@ if (LLANO_EN_DESARROLLO) {
   };
 }
 
-/* ---------- 42-flamerita.js ---------- */
-/* =====================================================================
-   FLAMERITA (easter egg en el Llano, la zona en desarrollo)
-   Un gatito sentado en el pasto, homenaje a Flamera, streamer nica de
-   Jinotepe que hace directos jugando (TikTok y Twitch) y cuya comunidad
-   se llama "Flamera Army".
-   · Al acercarte: "E para interactuar con Flamerita".
-   · Con E: "¡Miau! ¡Qué nota, mae!" (corazones y maullido) y después
-     aparece una CARTA ESPECIAL con el gatito. E / ESPACIO la cierra.
-   ===================================================================== */
 const FLAM = { x: 980, t: 0, habla: 0, carta: 0, tiene: false };
 const FLAM_IMG = new Image();
 FLAM_IMG.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAD10lEQVR4nI2UfWjVZRTHP+f5/e7u3WbbvHfOq5MSg9jb7U4hKOyPtPpHTVzNlrI2KSTBfyJ68SV7AQ0CqUQkUDNLpVSskEiCClYIrb/CNUULMpgzX6bu6u7d7u/3PKc/du9VY74ceOBwnsP3fJ9zvs9BVVFVnCpLW+pU7SjZQkxVC35AW7pOwxvitzslZ2kqobk9b2tnc6WqBjckBSxvqdSL+9br0lRC7wbUULCoy3PhTJyt6zbQkUqqAg7l2XStvv/ma/gSY8u6VSxLxTXk9uYXnZzvqF/wILs2ruDJxiq6WioV4LM1a7FBhIuDFcRnmFsjTQQasTF2bnyRRStfIXH2Cs8tASvgrGFS68NMShsyfT0IIXIH0FJpUXhqSReJwQxDyTqsQFYsWbEM9v2COndXLAHMKAAB1jh8DRmeOoVksoFcfBqeWgIPDAEj/T0YHIrPnZpgYjiWpybrlrWrqevaRu30JowaklNn8vh7vaXELBbPwe43VtORrtHbgo4LwIBYGptbUVEQRz4SpdyOYQVC8alAQCyBibB9zas831KlIQEKPDOnXNtnV6otthKMnjuyk2t91yhzyowFTQz0/8qMhkdQv4x/vvsDz0H9wmYunzmOGx5m9abN7D82IBClfU65HvrkRyBCx4rH+PL3a+KrWhERPff9FhLTHuL0iR5mNs7l9Mle7muay9TFKWL5gDP/nuSvr44yf8cBwjAjQrTAy4H64GX4/IsjdLQmVFTH2yN+hV789gOqp7fgS4jDYHA44Oetu/A0YOYTDdSFo8Q6P0I1JwB5oDsd1R2vb6A8/SjlqXnXdaphVkREKati6PBbxKfP5vzgnwA8MP9+jDoqrLD38B62ddxLRETzquIB4iLkEzXYY72E3CD+EvhvX+MkCmrHlUDAeQkIL11gRCwLl6ykXMt4ef86RMenApCNOLza+Pj0S2CF+8ETRznX/0NBGgoaIbw0hKhB1ACOg9/s4OP2WYhXrWOAoBhXRtTl0P8zdU6lvbVWD+47BKUPZDDxKTB0gXucx1XjWNjWXZDYbmokqsN71xIEY1QvfgdVlevftCQw+PTdbiBPzosCluS0FKd++htrQoqLbUwtbU+/QCiWgCiRK+fB5W9+ftEO9mVYsHIN2ze9RFRHChXHG5cxtpRXqR6eQnuqCmeUis7NOJuRCUGLAKsODHB54BTgWL5sEa3zZpGsrwVxqDiuiuBrQMyOMblrPerGRMSDiaZfGpwRrIA1EBoYjddTWd2A5o5TF7NkB84yqetDbHBFdmvkZl5F8d9MVm65MAQwYlABa+2Eq/U/xqfyjveZjNwAAAAASUVORK5CYII=';
@@ -17806,7 +17345,7 @@ function flamTick(dt) {
   FLAM.t += dt;
   if (FLAM.habla) {
     FLAM.habla += dt;
-    // después de decir la frase, aparece la carta (la primera vez)
+
     if (FLAM.habla > 2.4 && !FLAM.tiene) { FLAM.tiene = true; FLAM.carta = 0.001; state = 'flcarta'; sfx('pick'); }
     if (FLAM.habla > 3.2) FLAM.habla = 0;
   }
@@ -17815,12 +17354,12 @@ function flamDibujar(t) {
   if (area != 9 || !FLAM_IMG.complete) return;
   const x = Math.round(FLAM.x - cam), e = 2, w = FLAM_IMG.width * e, h = FLAM_IMG.height * e;
   if (x < -60 || x > W + 60) return;
-  const resp = Math.floor(t * 1.6) % 2; // respira
+  const resp = Math.floor(t * 1.6) % 2;
   const salto = FLAM.habla && FLAM.habla < 0.4 ? Math.round(Math.sin((FLAM.habla / 0.4) * Math.PI) * 8) : 0;
   ctx.fillStyle = 'rgba(10,4,16,.4)';
   ctx.fillRect(x - 14, GROUND - 1, 30, 3);
   ctx.drawImage(FLAM_IMG, x - w / 2, GROUND - h + resp - salto, w, h - resp);
-  // aviso para interactuar
+
   if (flamCerca() && !FLAM.habla) {
     const b = Math.round(Math.sin(t * 6) * 1.5), txt = 'E para interactuar con Flamerita';
     ctx.font = '7px ' + PS;
@@ -17834,7 +17373,7 @@ function flamDibujar(t) {
     ctx.fillText(txt, x, ty);
     ctx.textAlign = 'left';
   }
-  // lo que dice
+
   if (FLAM.habla) globo(x, GROUND - h - 6, 'FLAMERITA', FLAM_FRASE, Math.floor(FLAM.habla * 30), false);
 }
 function flamCarta(t) {
@@ -17847,7 +17386,7 @@ function flamCarta(t) {
   ctx.scale(s, s);
   ctx.rotate((1 - k) * 0.3);
   const cw = 220, ch = 300, x = -cw / 2, y = -ch / 2;
-  // la carta: borde dorado, fondo rosado y brillo
+
   ctx.fillStyle = '#d9a43a'; ctx.fillRect(x - 4, y - 4, cw + 8, ch + 8);
   ctx.fillStyle = '#fff4e0'; ctx.fillRect(x - 2, y - 2, cw + 4, ch + 4);
   const g = ctx.createLinearGradient(0, y, 0, y + ch);
@@ -17855,7 +17394,7 @@ function flamCarta(t) {
   ctx.fillStyle = g; ctx.fillRect(x, y, cw, ch);
   ctx.fillStyle = '#fff4e0'; ctx.fillRect(x + 14, y + 40, cw - 28, 130);
   ctx.fillStyle = '#ffe3ee'; ctx.fillRect(x + 16, y + 42, cw - 32, 126);
-  // brillito que pasa
+
   const bx = ((t * 120) % (cw + 120)) - 60;
   ctx.globalAlpha = 0.25; ctx.fillStyle = '#ffffff';
   ctx.beginPath(); ctx.moveTo(x + bx, y); ctx.lineTo(x + bx + 30, y); ctx.lineTo(x + bx - 30, y + ch); ctx.lineTo(x + bx - 60, y + ch); ctx.fill();
@@ -17865,7 +17404,7 @@ function flamCarta(t) {
   ctx.fillText('CARTA ESPECIAL', 0, y + 18);
   ctx.font = '14px ' + PS; ctx.fillStyle = '#ffffff';
   ctx.fillText('FLAMERA', 1, y + 35); ctx.fillStyle = '#7a1f45'; ctx.fillText('FLAMERA', 0, y + 34);
-  // el gatito grande
+
   if (FLAM_IMG.complete) ctx.drawImage(FLAM_IMG, -FLAM_IMG.width * 2.8, y + 52 + Math.round(Math.sin(t * 3) * 2), FLAM_IMG.width * 5.6, FLAM_IMG.height * 5.6);
   ctx.font = '7px ' + PS; ctx.fillStyle = '#4a1230';
   ['Streamer nica de Jinotepe.', 'Hace directos jugando', 'en TikTok y Twitch.', '', '¡Saludos a la Flamera Army!'].forEach((l, i) => ctx.fillText(l, 0, y + 196 + i * 14));
@@ -17915,12 +17454,591 @@ draw = function () {
   flamUlt = now;
   if (area == 9 && state == 'play') flamTick(dt);
   if (state == 'flcarta') {
-    // el juego queda quieto detrás de la carta
+
     state = 'play'; drawFLAM(); state = 'flcarta';
     ctx.setTransform(2, 0, 0, 2, 0, 0);
     flamCarta(now / 1000);
     return;
   }
   drawFLAM();
+};
+
+const ARL = { fx: [], ojos: [], cd2: 6, ult: '', ayudaDash: false, autoguardar: 0 };
+const arlDif = () => (typeof DIF != 'undefined' ? DIF.n : 1);
+const arlRapido = () => [0.8, 1, 1.15, 1.3][arlDif()];
+function arlLimpiar() {
+  ARL.fx = [];
+  ARL.ojos = [];
+  ARL.cd2 = 6;
+}
+function arlPegar(d) {
+  if (p.inv > 0 || p.dash > 0 || state != 'play') return false;
+  hurt(d);
+  return true;
+}
+
+const restartMJ = restart;
+restart = function () {
+  const tomadas = new Set((pick || []).filter(k => k.got).map(k => Math.round(k.x) + '|' + k.id));
+  restartMJ();
+  for (const k of pick || []) if (tomadas.has(Math.round(k.x) + '|' + k.id)) k.got = true;
+  arlLimpiar();
+};
+
+addEventListener(
+  'keydown',
+  e => {
+    if (e.code == 'KeyR' && state != 'play' && state != 'dead') e.stopImmediatePropagation();
+  },
+  true,
+);
+
+const menuPickMJ = menuPick;
+menuPick = function (i) {
+  menuPickMJ(i);
+  if (i == 1 && p && isFinite(LEVEL)) {
+    p.x = Math.max(30, Math.min(LEVEL - 30, isFinite(p.x) ? p.x : 120));
+    cam = Math.max(0, Math.min(LEVEL - W, p.x - W / 2));
+  }
+};
+
+const loadAreaMJ = loadArea;
+loadArea = function (n) {
+  loadAreaMJ(n);
+  arlLimpiar();
+  if (n == 6 || n == 7 || n == 9) ARL.autoguardar = 1;
+};
+const initMJ = init;
+init = function () {
+  initMJ();
+  arlLimpiar();
+  ARL.autoguardar = 0;
+};
+
+const ARL_F1 = ['xpil', 'xola', 'xojos'];
+const ARL_F2 = ['xrel', 'xesp'];
+function arlElegir(lista) {
+  const op = lista.filter(k => k != ARL.ult);
+  const k = op[Math.floor(Math.random() * op.length)];
+  ARL.ult = k;
+  return k;
+}
+function arlEmpezar(k) {
+  B.st = k;
+  B.t = 0;
+  B.open = false;
+  B.fired = 0;
+  B.k = { n: 0, hecho: 0 };
+  B.bc = Math.max(B.bc, 3);
+  if (B.beam == 1) B.beam = 0;
+  cdTonoSeguro(320, 640, 0.25);
+}
+function cdTonoSeguro(a, b, d) {
+  try { cdTono(a, b, d, 'sawtooth', 0.035); } catch (e) {}
+}
+function arlFin() {
+  B.st = B.ph2 ? 'girl' : 'hover';
+  B.t = 0;
+  B.k = null;
+  if (B.ph2) {
+    B.o = 0.3; B.rg = 1.2; B.rn = 2.5;
+    ARL.cd2 = [9, 7.5, 6.5, 5.2][arlDif()];
+  }
+}
+
+function arlPilares(dt) {
+  const D = arlDif(), K = B.k, n = [3, 4, 5, 6][D], gap = [0.7, 0.58, 0.5, 0.42][D], tel = [0.75, 0.62, 0.55, 0.46][D];
+  B.x += (W / 2 - B.x) * Math.min(1, 3 * dt);
+  B.y += (GROUND - 175 + Math.sin(B.t * 4) * 6 - B.y) * Math.min(1, 3 * dt);
+  B.face = p.x < B.x ? -1 : 1;
+  B.open = B.t > 0.3;
+  while (K.n < n && B.t > 0.45 + K.n * gap) {
+    const pred = D >= 2 ? p.vx * 0.22 : 0;
+    ARL.fx.push({ k: 'pil', x: Math.max(16, Math.min(W - 16, p.x + pred)), t: 0, tel, vida: tel + 0.4, hd: 0 });
+    K.n++;
+  }
+  if (K.n >= n && B.t > 0.45 + n * gap + tel + 0.5) arlFin();
+}
+function arlOla(dt) {
+  const D = arlDif(), K = B.k, veces = D == 3 ? 2 : 1, ciclo = 1.25;
+  const c = Math.floor(B.t / ciclo), u = B.t - c * ciclo;
+  if (c >= veces) {
+    B.y += (GROUND - 110 - B.y) * Math.min(1, 4 * dt);
+    if (u > 0.5) arlFin();
+    return;
+  }
+  if (u < 0.55) {
+    if (u < dt * 1.5) K.tx = Math.max(90, Math.min(W - 90, p.x));
+    B.x += (K.tx - B.x) * Math.min(1, 6 * dt);
+    B.y += (GROUND - 210 - B.y) * Math.min(1, 5 * dt);
+    B.open = true;
+    K.cayo = 0;
+  } else if (u < 0.75) {
+    B.y += (GROUND - 42 - B.y) * Math.min(1, 22 * dt);
+    B.open = false;
+  } else if (!K.cayo) {
+    K.cayo = 1;
+    SHK = Math.max(SHK, 9);
+    flashW = Math.max(flashW, 0.25);
+    sfx('boom');
+    const v = [240, 300, 340, 390][D];
+    for (const dir of [-1, 1]) ARL.fx.push({ k: 'ola', x: B.x + dir * 30, dir, v, t: 0, vida: 3, hd: 0 });
+    for (let i = 0; i < 26; i++) pfx(B.x + rnd(-40, 40), GROUND - 2, rnd(-260, 260), rnd(-200, -40), rnd(0.3, 0.7), i % 3 ? '#9b2fd6' : '#efe2ff', 2, 520);
+  }
+}
+function arlOjos(dt) {
+  const D = arlDif(), K = B.k, n = [2, 3, 4, 5][D];
+  B.x += (cam + W * 0.68 - B.x) * Math.min(1, 3 * dt);
+  B.y += (GROUND - 120 + Math.sin(B.t * 3) * 10 - B.y) * Math.min(1, 3 * dt);
+  B.face = p.x < B.x ? -1 : 1;
+  B.open = B.t > 0.2 && B.t < 1.2;
+  if (!K.hecho && B.t > 0.3) {
+    K.hecho = 1;
+    for (let i = 0; i < n; i++) ARL.ojos.push({ a: (i / n) * Math.PI * 2, x: B.x, y: B.y, vx: 0, vy: 0, t: 0, suelto: 0, r: 0, vida: 6.5 });
+    sfx('portal');
+  }
+  if (B.t > 1.6) arlFin();
+}
+function arlOjosTick(dt) {
+  const D = arlDif(), giro = [1.6, 2.1, 2.5, 3][D], vel = [150, 175, 195, 220][D];
+  for (const o of ARL.ojos) {
+    o.t += dt;
+    o.vida -= dt;
+    if (!o.suelto) {
+
+      o.a += dt * 3;
+      o.x = B.x + Math.cos(o.a) * 48;
+      o.y = B.y + Math.sin(o.a) * 30;
+      if (o.t > 0.9 + ARL.ojos.indexOf(o) * 0.22) {
+        o.suelto = 1;
+        const an = Math.atan2(pcy() - o.y, p.x - o.x);
+        o.vx = Math.cos(an) * vel;
+        o.vy = Math.sin(an) * vel;
+        cdTonoSeguro(900, 500, 0.12);
+      }
+      continue;
+    }
+    if (!o.r && o.t < 3.6) {
+
+      const quiere = Math.atan2(pcy() - o.y, p.x - o.x), va = Math.atan2(o.vy, o.vx);
+      let d = quiere - va;
+      while (d > Math.PI) d -= Math.PI * 2;
+      while (d < -Math.PI) d += Math.PI * 2;
+      const na = va + Math.max(-giro * dt, Math.min(giro * dt, d)), s = Math.hypot(o.vx, o.vy);
+      o.vx = Math.cos(na) * s;
+      o.vy = Math.sin(na) * s;
+    }
+    o.x += o.vx * dt;
+    o.y += o.vy * dt;
+    if (Math.random() < 0.5) pfx(o.x, o.y, rnd(-20, 20), rnd(-20, 20), 0.3, o.r ? '#ffe9a8' : '#c43cff', 2, 0);
+    const cerca = Math.abs(o.x - p.x) < 26 && Math.abs(o.y - pcy()) < 30;
+    if (o.r) {
+
+      if (B.on && !B.aus && Math.hypot(o.x - B.x, o.y - B.y) < 44) {
+        hitBoss(16);
+        o.vida = 0;
+        flashW = Math.max(flashW, 0.15);
+        for (let i = 0; i < 12; i++) pfx(o.x, o.y, rnd(-160, 160), rnd(-160, 160), 0.4, '#ffe9a8', 2, 0);
+      }
+    } else if (cerca && p.parry > 0) {
+      const an = Math.atan2(B.y - o.y, B.x - o.x);
+      o.vx = Math.cos(an) * 420;
+      o.vy = Math.sin(an) * 420;
+      o.r = 1;
+      p.sta = Math.min(100, p.sta + 10);
+      say('¡PARRY! El ojo vuelve a su dueño');
+      sfx('parry');
+    } else if (cerca && p.dash > 0) {
+      o.vida = 0;
+      for (let i = 0; i < 10; i++) pfx(o.x, o.y, rnd(-140, 140), rnd(-140, 140), 0.35, '#c43cff', 2, 0);
+      sfx('hit');
+    } else if (cerca && arlPegar(12)) o.vida = 0;
+    if (o.x < -40 || o.x > W + 40 || o.y < -60 || o.y > GROUND + 40) o.vida = 0;
+  }
+  ARL.ojos = ARL.ojos.filter(o => o.vida > 0);
+}
+
+function arlReloj(dt) {
+  const D = arlDif(), K = B.k, w = (Math.PI * 2) / [3.6, 3, 2.6, 2.2][D], tel = 1.0;
+  B.x += (W / 2 - B.x) * Math.min(1, 4 * dt);
+  B.y += (GROUND - 125 - B.y) * Math.min(1, 4 * dt);
+  if (!K.hecho) {
+    K.hecho = 1;
+    K.a0 = Math.atan2(pcy() - (GROUND - 125), p.x - W / 2) + Math.PI * 0.9;
+    K.dos = D == 3;
+    if (!ARL.ayudaDash) { ARL.ayudaDash = true; say('¡Atravesá el rayo con DASH (ESPACIO x2)!'); }
+  }
+  K.ang = K.a0 + (B.t > tel ? (B.t - tel) * w : 0);
+  K.activo = B.t > tel;
+  if (K.activo) {
+    const pivX = B.x, pivY = B.y, px = p.x, py = pcy();
+    for (const extra of K.dos ? [0, Math.PI] : [0]) {
+      const a = K.ang + extra, cx = Math.cos(a), cy = Math.sin(a);
+      const proy = (px - pivX) * cx + (py - pivY) * cy, perp = Math.abs(-(px - pivX) * cy + (py - pivY) * cx);
+      if (proy > 20 && proy < 560 && perp < 15 && arlPegar(18)) flashW = Math.max(flashW, 0.2);
+    }
+    if (Math.random() < 0.7) {
+      const r = rnd(40, 520);
+      pfx(B.x + Math.cos(K.ang) * r, B.y + Math.sin(K.ang) * r, rnd(-30, 30), rnd(-30, 30), 0.3, '#ffd0ff', 2, 0);
+    }
+  }
+  if (B.t > tel + (Math.PI * 2) / w + 0.3) arlFin();
+}
+function arlEspejos(dt) {
+  const D = arlDif(), K = B.k, n = [2, 3, 4, 5][D], gap = [0.95, 0.8, 0.65, 0.52][D], tel = [0.75, 0.62, 0.52, 0.44][D];
+  B.x += (W / 2 - B.x) * Math.min(1, 2 * dt);
+  B.y += (GROUND - 160 - B.y) * Math.min(1, 2 * dt);
+  while (K.n < n && B.t > 0.3 + K.n * gap) {
+
+    const lado = K.n % 2 ? 1 : -1, x = lado < 0 ? rnd(20, 120) : rnd(W - 120, W - 20), y = rnd(GROUND - 230, GROUND - 120);
+    const tx = p.x, ty = pcy(), L = Math.hypot(tx - x, ty - y) + 160;
+    ARL.fx.push({ k: 'esp', x0: x, y0: y, ux: (tx - x) / Math.hypot(tx - x, ty - y), uy: (ty - y) / Math.hypot(tx - x, ty - y), L, t: 0, tel, vida: tel + L / 900 + 0.3, hd: 0, cara: tx < x ? -1 : 1 });
+    K.n++;
+    cdTonoSeguro(500, 1000, 0.15);
+  }
+  if (K.n >= n && B.t > 0.3 + n * gap + tel + 1) arlFin();
+}
+
+function arlFxTick(dt) {
+  for (const f of ARL.fx) {
+    f.t += dt;
+    if (f.k == 'pil') {
+      if (f.t > f.tel && !f.boom) {
+        f.boom = 1;
+        SHK = Math.max(SHK, 4);
+        sfx('boom');
+        for (let i = 0; i < 14; i++) pfx(f.x + rnd(-10, 10), GROUND - rnd(0, 200), rnd(-60, 60), rnd(-200, -60), rnd(0.3, 0.6), i % 2 ? '#e9c8ff' : '#ffffff', 2, 0);
+      }
+      if (f.t > f.tel && f.t < f.tel + 0.3 && !f.hd && Math.abs(p.x - f.x) < 20) f.hd = arlPegar(16) ? 1 : 0;
+    } else if (f.k == 'ola') {
+      f.x += f.dir * f.v * dt;
+      if (!f.hd && Math.abs(p.x - f.x) < 16 && p.y > GROUND - 24) f.hd = arlPegar(14) ? 1 : 0;
+      if (f.x < -30 || f.x > W + 30) f.vida = 0;
+    } else if (f.k == 'esp') {
+      if (f.t > f.tel) {
+        const d = Math.min(f.L, (f.t - f.tel) * 900);
+        f.x = f.x0 + f.ux * d;
+        f.y = f.y0 + f.uy * d;
+        if (!f.hd && Math.abs(f.x - p.x) < 24 && Math.abs(f.y - pcy()) < 30) f.hd = arlPegar(15) ? 1 : 0;
+        if (Math.random() < 0.8) pfx(f.x, f.y, rnd(-30, 30), rnd(-30, 30), 0.35, '#b066ff', 3, 0);
+      }
+    }
+  }
+  ARL.fx = ARL.fx.filter(f => f.t < f.vida);
+}
+
+const bossAIMJ = bossAI;
+bossAI = function (dt) {
+  if (!B.on) return bossAIMJ(dt);
+  const x = typeof B.st == 'string' && B.st[0] == 'x';
+  if (B.ph2 && x && !B.aus) {
+
+    B.t += dt;
+    if (B.pt > 0) B.pt = Math.max(0, B.pt - dt);
+    if (B.st == 'xrel') arlReloj(dt);
+    else arlEspejos(dt);
+    if (p.dash > 0 && B.hitCd <= 0 && Math.abs(B.x - p.x) < 36 && Math.abs(B.y - pcy()) < 60) {
+      hitBoss(30);
+      B.hitCd = 0.5;
+    }
+  } else if (x && !B.aus) {
+    bossAIMJ(dt);
+    if (B.aus) { B.k = null; ARL.fx = ARL.fx.filter(f => f.k == 'ola'); }
+    else {
+      B.bc = Math.max(B.bc, 1.5);
+      if (B.st == 'xpil') arlPilares(dt);
+      else if (B.st == 'xola') arlOla(dt);
+      else if (B.st == 'xojos') arlOjos(dt);
+    }
+  } else {
+    const antes = B.st;
+    bossAIMJ(dt);
+
+    const prob = [0.3, 0.4, 0.48, 0.55][arlDif()];
+    if (!B.ph2 && !B.aus && antes == 'hover' && (B.st == 'tele' || B.st == 'mouth') && Math.random() < prob) arlEmpezar(arlElegir(ARL_F1));
+
+    if (B.ph2 && !B.aus && B.st == 'girl') {
+      ARL.cd2 -= dt;
+      if (ARL.cd2 <= 0) arlEmpezar(arlElegir(ARL_F2));
+    }
+  }
+  arlFxTick(dt);
+  arlOjosTick(dt);
+};
+
+const hitBossMJ = hitBoss;
+hitBoss = function (d) {
+  hitBossMJ(d);
+  if (B.st == 'morph' || B.done) { arlLimpiar(); B.k = null; }
+};
+
+function arlDibujar(t) {
+  if (area != 3) return;
+  for (const f of ARL.fx) {
+    if (f.k == 'pil') {
+      const x = Math.round(f.x - cam);
+      if (f.t < f.tel) {
+
+        const k = f.t / f.tel, a = 0.35 + 0.35 * Math.sin(t * 30);
+        ctx.fillStyle = 'rgba(196,60,255,' + a + ')';
+        ctx.fillRect(x - 1, 0, 2, GROUND);
+        ctx.fillStyle = 'rgba(240,210,255,' + (0.4 + k * 0.5) + ')';
+        ctx.fillRect(x - 18 * k, GROUND - 2, 36 * k, 3);
+      } else {
+        const u = (f.t - f.tel) / 0.4, w = 30 * (1 - u * 0.7);
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = Math.max(0, 1 - u);
+        ctx.fillStyle = '#7a2ad0';
+        ctx.fillRect(x - w / 2 - 4, 0, w + 8, GROUND);
+        ctx.fillStyle = '#e9c8ff';
+        ctx.fillRect(x - w / 2, 0, w, GROUND);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x - w / 5, 0, (w * 2) / 5, GROUND);
+        ctx.restore();
+      }
+    } else if (f.k == 'ola') {
+      const x = Math.round(f.x - cam), h = 22 + Math.sin(f.t * 30) * 2;
+      ctx.save();
+      ctx.translate(x, GROUND);
+      ctx.scale(f.dir, 1);
+      ctx.fillStyle = '#3a0f5c';
+      ctx.beginPath();
+      ctx.moveTo(-26, 0);
+      ctx.quadraticCurveTo(-4, -h * 1.1, 10, 0);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = '#c070ff';
+      ctx.beginPath();
+      ctx.moveTo(-6, 0);
+      ctx.quadraticCurveTo(2, -h, 10, 0);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(6, -h * 0.55, 3, h * 0.55);
+      ctx.restore();
+    } else if (f.k == 'esp') {
+      if (f.t < f.tel) {
+        ctx.save();
+        ctx.globalAlpha = 0.3 + 0.4 * (f.t / f.tel);
+        ctx.strokeStyle = Math.floor(t * 20) % 2 ? '#ff5aa0' : '#b066ff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.moveTo(f.x0 - cam, f.y0);
+        ctx.lineTo(f.x0 - cam + f.ux * f.L, f.y0 + f.uy * f.L);
+        ctx.stroke();
+        ctx.restore();
+      }
+      const x = f.t < f.tel ? f.x0 : f.x, y = f.t < f.tel ? f.y0 : f.y;
+      ctx.save();
+      ctx.globalAlpha = f.t < f.tel ? 0.35 + 0.3 * (f.t / f.tel) : 0.75;
+      ctx.translate(Math.round(x - cam), Math.round(y));
+      ctx.scale(f.cara * 0.8, 0.8);
+      try { drawMon(); } catch (e) {}
+      ctx.restore();
+    }
+  }
+
+  if (B.on && B.st == 'xrel' && B.k && B.k.ang != null) {
+    ctx.save();
+    for (const extra of B.k.dos ? [0, Math.PI] : [0]) {
+      const a = B.k.ang + extra, x0 = B.x - cam, y0 = B.y, x1 = x0 + Math.cos(a) * 600, y1 = y0 + Math.sin(a) * 600;
+      if (!B.k.activo) {
+        ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 25);
+        ctx.strokeStyle = '#ff7ad8';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+        ctx.setLineDash([]);
+      } else {
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = 1;
+        for (const [w, c] of [[16, '#5a0f7a'], [9, '#d04aff'], [3, '#ffffff']]) {
+          ctx.strokeStyle = c;
+          ctx.lineWidth = w;
+          ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  for (const o of ARL.ojos) {
+    const x = Math.round(o.x - cam), y = Math.round(o.y), an = o.suelto ? Math.atan2(o.vy, o.vx) : Math.atan2(pcy() - o.y, p.x - o.x);
+    ctx.fillStyle = o.r ? '#ffe9a8' : '#2a0838';
+    ctx.beginPath(); ctx.arc(x, y, 8, 0, 7); ctx.fill();
+    ctx.fillStyle = o.r ? '#fff7dc' : '#f4ecff';
+    ctx.beginPath(); ctx.ellipse(x, y, 6, 4.5, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = o.r ? '#d08a1a' : '#e0164a';
+    ctx.beginPath(); ctx.arc(x + Math.cos(an) * 2.5, y + Math.sin(an) * 2, 2.6, 0, 7); ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + Math.round(Math.cos(an) * 3) - 1, y + Math.round(Math.sin(an) * 2) - 1, 2, 2);
+  }
+}
+const drawSlashesMJ = drawSlashes;
+drawSlashes = function () {
+  drawSlashesMJ();
+  try { arlDibujar(performance.now() / 1000); } catch (e) {}
+};
+
+const LUCES_SPR = {};
+function luzSprite(col) {
+  if (LUCES_SPR[col]) return LUCES_SPR[col];
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(' + col + ',0.9)');
+  gr.addColorStop(0.25, 'rgba(' + col + ',0.45)');
+  gr.addColorStop(1, 'rgba(' + col + ',0)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 64, 64);
+  return (LUCES_SPR[col] = c);
+}
+const LUZ_ORBE = { g: '255,170,40', i: '60,180,255', f: '255,90,30', b: '230,225,210', p: '170,80,255', v: '90,230,100' };
+function lucesJuntar(t) {
+  const L = [], fl = 0.85 + 0.15 * Math.sin(t * 11) * Math.sin(t * 7.3);
+  const ver = x => x > cam - 120 && x < cam + W + 120;
+  if (area == 1 || area == 5) {
+    for (const c of CPS || []) if (ver(c.x)) L.push([c.x, GROUND - 26, c.on ? 60 * fl : 22, '255,170,80', c.on ? 0.8 : 0.35]);
+  }
+  if (area == 1) for (const c of CAMPS || []) if (ver(c.x)) L.push([c.x, GROUND - 12, 95 * fl, '255,150,60', 0.75]);
+  let n = 0;
+  for (const o of orbs || []) {
+    if (n++ > 70) break;
+    if (ver(o.x)) L.push([o.x, o.y, 26, LUZ_ORBE[o.c || 'g'] || LUZ_ORBE.g, 0.55]);
+  }
+  for (const s of shots || []) L.push([s.x, s.y, 34, '255,100,60', 0.7]);
+  if (B.on && area == 3) L.push([B.x, B.y, 120, B.ph2 ? '200,80,255' : '150,90,255', 0.35 * (B.a == null ? 1 : B.a)]);
+  for (const f of ARL.fx) {
+    if (f.k == 'pil' && f.t > f.tel) for (let y = GROUND - 20; y > 0; y -= 70) L.push([f.x, y, 90, '200,140,255', Math.max(0, 1 - (f.t - f.tel) / 0.4)]);
+    else if (f.k == 'pil') L.push([f.x, GROUND, 40, '196,60,255', 0.5]);
+    else if (f.k == 'ola') L.push([f.x, GROUND - 10, 55, '190,110,255', 0.8]);
+    else if (f.k == 'esp' && f.t > f.tel) L.push([f.x, f.y, 70, '176,102,255', 0.7]);
+  }
+  for (const o of ARL.ojos) L.push([o.x, o.y, 36, o.r ? '255,220,140' : '220,40,90', 0.7]);
+  if (typeof DM_CORTES != 'undefined') for (const c of DM_CORTES) if (c.e) L.push([c.e.x, c.e.y - 30, 60, '255,60,90', 0.5 * (1 - c.t / c.vida)]);
+  if (p && p.atk) L.push([p.x + p.face * 22, pcy(), 46, '210,235,255', 0.45]);
+  if (p && p.dash > 0) L.push([p.x, pcy(), 60, '190,240,255', 0.5]);
+  return L;
+}
+function lucesDibujar(t) {
+  const q = GFX.n;
+  if (q == 0) return;
+  const fuerza = [0, 0.55, 0.8, 1][q];
+  const L = lucesJuntar(t);
+  if (!L.length) return;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (const [x, y, r, col, a] of L) {
+    ctx.globalAlpha = Math.min(1, a * fuerza);
+    const R = r * (q == 3 ? 1.25 : 1);
+    ctx.drawImage(luzSprite(col), Math.round(x - cam - R), Math.round(y - R), R * 2, R * 2);
+  }
+
+  if (q == 3) {
+    ctx.globalAlpha = 0.35;
+    for (const [x, y, r, col] of L) {
+      if (GROUND - y > 70) continue;
+      ctx.drawImage(luzSprite(col), Math.round(x - cam - r * 1.6), GROUND - r * 0.18, r * 3.2, r * 0.36);
+    }
+  }
+  ctx.restore();
+}
+
+const GRADO = {};
+function gradoCapa(a) {
+  if (GRADO[a] !== undefined) return GRADO[a];
+  const P = {
+    1: ['255,214,150', '40,120,110', 0.22],
+    5: ['70,90,200', '120,40,140', 0.28],
+    3: ['80,0,20', '0,0,0', 0.18],
+    6: ['60,170,200', '20,40,90', 0.24],
+    9: ['60,90,190', '30,20,70', 0.26],
+  }[a];
+  if (!P) return (GRADO[a] = null);
+  const c = document.createElement('canvas');
+  c.width = W;
+  c.height = H;
+  const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, 'rgba(' + P[0] + ',1)');
+  gr.addColorStop(1, 'rgba(' + P[1] + ',1)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, W, H);
+  const v = g.createRadialGradient(W / 2, H * 0.45, H * 0.35, W / 2, H * 0.45, W * 0.62);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(0,0,0,.55)');
+  return (GRADO[a] = { c, a: P[2], v });
+}
+const GRADO_VIN = {};
+function vinetaSuave() {
+  if (GRADO_VIN.c) return GRADO_VIN.c;
+  const c = document.createElement('canvas');
+  c.width = W;
+  c.height = H;
+  const g = c.getContext('2d'), v = g.createRadialGradient(W / 2, H * 0.45, H * 0.4, W / 2, H * 0.45, W * 0.62);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(0,0,10,.38)');
+  g.fillStyle = v;
+  g.fillRect(0, 0, W, H);
+  return (GRADO_VIN.c = c);
+}
+function gradoDibujar() {
+  const q = GFX.n;
+  if (q == 0 || q == 3) return;
+  ctx.save();
+  ctx.setTransform(2, 0, 0, 2, 0, 0);
+  if (q == 2) {
+    const G = gradoCapa(area);
+    if (G) {
+      ctx.globalCompositeOperation = 'soft-light';
+      ctx.globalAlpha = G.a;
+      ctx.drawImage(G.c, 0, 0);
+    }
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = q == 2 ? 1 : 0.6;
+  ctx.drawImage(vinetaSuave(), 0, 0);
+  ctx.restore();
+}
+
+let MJ_CUADRO = -1;
+const barMJ = bar;
+bar = function (x, y, w, h, v, col, label) {
+  if (typeof label == 'string' && label.indexOf('HP') == 0 && MJ_CUADRO != ARL.cuadro && area != 0) {
+    MJ_CUADRO = ARL.cuadro;
+    try {
+      const t = performance.now() / 1000;
+      ctx.save();
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
+      lucesDibujar(t);
+      ctx.restore();
+      gradoDibujar();
+    } catch (e) {}
+  }
+  barMJ(x, y, w, h, v, col, label);
+};
+ARL.cuadro = 0;
+const drawMJ = draw;
+draw = function () {
+  ARL.cuadro++;
+  drawMJ();
+};
+
+const loopMJ = loop;
+loop = function (now) {
+  if (typeof TIEMPO != 'undefined' && TIEMPO.parado) {
+    const s = performance.now() / 1000;
+    if (state != 'play' || s - TIEMPO.t0 >= TIEMPO.dura + 0.05) tiempoReanudar();
+  }
+  loopMJ(now);
+};
+
+const updateMJ = update;
+update = function (dt, now) {
+  updateMJ(dt, now);
+  if (ARL.autoguardar && state == 'play') {
+    ARL.autoguardar = 0;
+    try { save(); } catch (e) {}
+  }
 };
 })();
