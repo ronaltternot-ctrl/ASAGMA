@@ -18550,4 +18550,692 @@ draw = function () {
   if (ocultar) B.a = 0;
   try { drawMJ_B(); } finally { if (ocultar) B.a = a0; }
 };
+
+const LOGROS = [
+  { id: 'nombre', n: 'Me llamo Samara Emily', d: 'Hablá con la Anciana del Fuego.' },
+  { id: 'katana', n: 'Alba de Mulukukú', d: 'Conseguí la katana de la sukia.' },
+  { id: 'fogata', n: 'El fuego guarda tu camino', d: 'Encendé un punto de descanso.' },
+  { id: 'comer', n: 'Buen diente', d: 'Comé 10 comidas típicas.', meta: 10 },
+  { id: 'parry', n: '¡PARRY!', d: 'Hacé 15 parrys.', meta: 15 },
+  { id: 'cofres', n: 'Buscadora de tesoros', d: 'Abrí 5 cofres.', meta: 5 },
+  { id: 'niebla', n: 'Lana de niebla', d: 'Transformate en Samara Espíritu.' },
+  { id: 'arlos', n: 'El cruce que ya no existe', d: 'Derrotá a Arlos.' },
+  { id: 'fin', n: 'Amanece en Mulukukú', d: 'Terminá la historia.' },
+  { id: 'sisakna', n: 'Dimalah Win', d: 'El aire tiene dueño, y ahora te cuida.', secreto: true },
+];
+const LGR = { u: {}, c: { comer: 0, parry: 0, cofres: 0, sisa: 0 }, aura: false, aviso: [], sel: 0 };
+try {
+  const g = JSON.parse(localStorage.getItem('asagmba_logros'));
+  if (g) {
+    LGR.u = g.u || {};
+    for (const k in LGR.c) LGR.c[k] = +(g.c && g.c[k]) || 0;
+    LGR.aura = !!g.aura;
+  }
+} catch (e) {}
+function logrosGuardar() {
+  try { localStorage.setItem('asagmba_logros', JSON.stringify({ u: LGR.u, c: LGR.c, aura: LGR.aura })); } catch (e) {}
+}
+function logro(id) {
+  if (LGR.u[id]) return;
+  const L = LOGROS.find(l => l.id == id);
+  if (!L) return;
+  LGR.u[id] = Date.now();
+  logrosGuardar();
+  LGR.aviso.push({ L, t: 0 });
+  try {
+    [784, 988, 1175, 1568].forEach((f, i) => setTimeout(() => blip(f), i * 90));
+  } catch (e) {}
+}
+function logroSumar(k, n) {
+  LGR.c[k] = (LGR.c[k] || 0) + (n || 1);
+  logrosGuardar();
+  const L = LOGROS.find(l => l.id == k);
+  if (L && L.meta && LGR.c[k] >= L.meta) logro(k);
+}
+
+const startTalkLG = startTalk;
+startTalk = function (n) {
+  startTalkLG(n);
+  if (n && n.k == 'elder') logro('nombre');
+};
+const sayLG = say;
+say = function (s) {
+  sayLG(s);
+  if (typeof s == 'string' && s.indexOf('PARRY') >= 0) logroSumar('parry');
+};
+const usarComidaLG = usarComida;
+usarComida = function (id) {
+  const r = usarComidaLG(id);
+  if (r) logroSumar('comer');
+  return r;
+};
+const openChestLG = openChest;
+openChest = function (c) {
+  openChestLG(c);
+  logroSumar('cofres');
+};
+const abrirCofreLG = abrirCofre;
+abrirCofre = function (c) {
+  const r = abrirCofreLG(c);
+  logroSumar('cofres');
+  return r;
+};
+let lgRev = 0;
+function logrosRevisar(dt) {
+  lgRev -= dt;
+  if (lgRev > 0) return;
+  lgRev = 0.5;
+  try {
+    if (hasSword && state == 'play') logro('katana');
+    if ((area == 1 || area == 5) && (CPS || []).some(c => c.on) && state == 'play' && p.x > 200) logro('fogata');
+    if (B && B.done) logro('arlos');
+    if (typeof FORMA != 'undefined' && FORMA.on) logro('niebla');
+    if (state == 'epilogo') logro('fin');
+  } catch (e) {}
+}
+function logrosAviso(dt) {
+  const A = LGR.aviso[0];
+  if (!A) return;
+  A.t += dt;
+  if (A.t > 4) { LGR.aviso.shift(); return; }
+  const k = Math.min(1, A.t / 0.35, (4 - A.t) / 0.35), w = 230, h = 38, x = W - w - 8, y = 8 - (1 - k) * 50;
+  ctx.save();
+  ctx.setTransform(2, 0, 0, 2, 0, 0);
+  ctx.globalAlpha = Math.max(0, k);
+  ctx.fillStyle = '#ffd25a';
+  ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
+  ctx.fillStyle = '#16121f';
+  ctx.fillRect(x, y, w, h);
+  logroIcono(x + 8, y + 7, true, A.L.secreto);
+  ctx.textAlign = 'left';
+  ctx.font = '7px ' + PS;
+  ctx.fillStyle = '#ffd25a';
+  ctx.fillText('LOGRO DESBLOQUEADO', x + 36, y + 15);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(A.L.n, x + 36, y + 29);
+  ctx.restore();
+}
+function logroIcono(x, y, ok, sec) {
+  ctx.fillStyle = ok ? (sec ? '#5fffd0' : '#ffd25a') : '#3a3550';
+  ctx.fillRect(x + 4, y, 16, 24);
+  ctx.fillRect(x, y + 4, 24, 16);
+  ctx.fillStyle = ok ? '#16121f' : '#22202e';
+  ctx.fillRect(x + 6, y + 4, 12, 16);
+  ctx.fillRect(x + 4, y + 6, 16, 12);
+  ctx.fillStyle = ok ? (sec ? '#bfffe9' : '#fff1b8') : '#55506a';
+  if (ok) {
+    ctx.fillRect(x + 7, y + 12, 3, 3);
+    ctx.fillRect(x + 10, y + 14, 3, 3);
+    ctx.fillRect(x + 13, y + 9, 3, 6);
+    ctx.fillRect(x + 15, y + 7, 2, 3);
+  } else {
+    ctx.fillRect(x + 9, y + 11, 6, 6);
+    ctx.fillRect(x + 10, y + 7, 4, 5);
+    ctx.fillStyle = '#22202e';
+    ctx.fillRect(x + 11, y + 9, 2, 3);
+  }
+}
+
+MI.splice(3, 0, 'LOGROS');
+const menuPickLG = menuPick;
+menuPick = function (i) {
+  if (state == 'menu' && MI[i] == 'LOGROS') {
+    state = 'logros';
+    LGR.sel = 0;
+    sfx('page');
+    return;
+  }
+  menuPickLG(state == 'menu' && i > 3 ? i - 1 : i);
+};
+function logrosPantalla(t) {
+  ctx.setTransform(2, 0, 0, 2, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  fondoMenu();
+  ctx.fillStyle = 'rgba(8,4,20,.72)';
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = 'center';
+  ctx.font = '16px ' + PS;
+  ctx.fillStyle = '#f6efff';
+  ctx.fillText('LOGROS', W / 2, 38);
+  const hechos = LOGROS.filter(l => LGR.u[l.id]).length;
+  ctx.font = '7px ' + PS;
+  ctx.fillStyle = '#b4a6d6';
+  ctx.fillText(hechos + ' / ' + LOGROS.length, W / 2, 54);
+  ctx.textAlign = 'left';
+  LOGROS.forEach((L, i) => {
+    const col = i % 2, fila = Math.floor(i / 2), x = 26 + col * 330, y = 68 + fila * 62, ok = !!LGR.u[L.id], oculto = L.secreto && !ok;
+    ctx.fillStyle = ok ? 'rgba(255,210,90,.12)' : 'rgba(255,255,255,.05)';
+    ctx.fillRect(x, y, 318, 54);
+    ctx.fillStyle = ok ? (L.secreto ? '#5fffd0' : '#ffd25a') : '#3a3550';
+    ctx.fillRect(x, y, 2, 54);
+    logroIcono(x + 10, y + 15, ok, L.secreto);
+    ctx.font = '8px ' + PS;
+    ctx.fillStyle = ok ? '#ffffff' : '#8a84a3';
+    ctx.fillText(oculto ? '???' : L.n, x + 44, y + 22);
+    ctx.font = '7px ' + PS;
+    ctx.fillStyle = ok ? '#d3c6ec' : '#6a6484';
+    ctx.fillText(oculto ? 'Logro secreto.' : L.d, x + 44, y + 38);
+    if (L.meta && !ok) {
+      const v = Math.min(L.meta, LGR.c[L.id] || 0);
+      ctx.fillStyle = '#2a2638';
+      ctx.fillRect(x + 44, y + 45, 160, 3);
+      ctx.fillStyle = '#b4a6d6';
+      ctx.fillRect(x + 44, y + 45, Math.round((160 * v) / L.meta), 3);
+      ctx.fillText(v + '/' + L.meta, x + 212, y + 49);
+    }
+  });
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#b4a6d6';
+  ctx.fillText('ESC / ENTER: volver', W / 2, H - 10);
+  ctx.textAlign = 'left';
+}
+
+const EGG = { buf: '', on: false, t: 0, fase: '', x: 0, linea: 0, c: 0 };
+const EGG_CLAVE = 'UULR2026';
+const EGG_LINEAS = [
+  '...Hace siglos que nadie decía esa clave. ¿Fuiste vos la que me despertó?',
+  'Soy Sisakna, dueño del aire. Los Dimalah caminan conmigo por encima de la selva.',
+  'Tomá esto. Cuando el monte se ponga feo, apretá O y voy a soplar por vos.',
+];
+function eggTecla(e) {
+  const m = { ArrowUp: 'U', ArrowDown: 'D', ArrowLeft: 'L', ArrowRight: 'R', Digit2: '2', Numpad2: '2', Digit0: '0', Numpad0: '0', Digit6: '6', Numpad6: '6' }[e.code];
+  if (!m) { EGG.buf = ''; return; }
+  EGG.buf = (EGG.buf + m).slice(-EGG_CLAVE.length);
+  if (EGG.buf == EGG_CLAVE) { EGG.buf = ''; eggEmpezar(); }
+}
+function eggEmpezar() {
+  EGG.on = true;
+  EGG.t = 0;
+  EGG.fase = 'entra';
+  EGG.x = W + 40;
+  EGG.linea = 0;
+  EGG.c = 0;
+  try { sfx('portal'); } catch (e) {}
+}
+function eggSiguiente() {
+  if (EGG.fase == 'habla') {
+    const L = EGG_LINEAS[EGG.linea];
+    if (EGG.c < L.length) { EGG.c = L.length; return; }
+    EGG.linea++;
+    EGG.c = 0;
+    if (EGG.linea >= EGG_LINEAS.length) {
+      EGG.fase = 'objeto';
+      EGG.t = 0;
+      LGR.aura = true;
+      logrosGuardar();
+      logro('sisakna');
+      flashW = Math.max(flashW, 0.4);
+      try { sfx('boom'); } catch (e) {}
+    }
+  } else if (EGG.fase == 'objeto' && EGG.t > 0.6) {
+    EGG.fase = 'sale';
+    EGG.t = 0;
+  }
+}
+function eggTick(dt) {
+  if (!EGG.on) return;
+  EGG.t += dt;
+  if (EGG.fase == 'entra') {
+    EGG.x -= 70 * dt;
+    if (EGG.x <= W * 0.7) { EGG.x = W * 0.7; EGG.fase = 'arma'; EGG.t = 0; }
+  } else if (EGG.fase == 'arma') {
+    if (EGG.t > 0.9) { EGG.fase = 'habla'; EGG.t = 0; }
+  } else if (EGG.fase == 'habla') {
+    EGG.c += dt * 34;
+  } else if (EGG.fase == 'sale') {
+    EGG.x += 80 * dt;
+    if (EGG.x > W + 50) EGG.on = false;
+  }
+}
+function eggDibujar(t) {
+  if (!EGG.on) return;
+  const andando = EGG.fase == 'entra' || EGG.fase == 'sale', armaK = EGG.fase == 'arma' ? Math.min(1, EGG.t / 0.6) : EGG.fase == 'habla' || EGG.fase == 'objeto' ? 1 : 0;
+  sisaDibujar(EGG.x, H - 40, t, andando, 2, 1, armaK, EGG.fase == 'sale' ? 1 : -1);
+  if (EGG.fase == 'habla') {
+    const L = EGG_LINEAS[EGG.linea];
+    bubble2(EGG.x, H - 132, L, Math.floor(EGG.c));
+    ctx.font = '7px ' + PS;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#5fffd0';
+    ctx.fillText('SISAKNA', Math.round(EGG.x), H - 22);
+    ctx.textAlign = 'left';
+  }
+  if (EGG.fase == 'objeto') {
+    const k = Math.min(1, EGG.t / 0.4), w = 330, h = 126, x = W / 2 - w / 2, y = H / 2 - h / 2;
+    ctx.save();
+    ctx.globalAlpha = k;
+    ctx.fillStyle = 'rgba(4,10,12,.65)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#5fffd0';
+    ctx.fillRect(x - 3, y - 3, w + 6, h + 6);
+    ctx.fillStyle = '#0d1a1c';
+    ctx.fillRect(x, y, w, h);
+    const v = img.vien;
+    if (v && v.width) {
+      ctx.globalAlpha = k * (0.85 + 0.15 * Math.sin(t * 6));
+      ctx.drawImage(v, x + 14, y + 34, 88, 48);
+      ctx.globalAlpha = k;
+    }
+    ctx.textAlign = 'left';
+    ctx.font = '7px ' + PS;
+    ctx.fillStyle = '#9fffe0';
+    ctx.fillText('OBJETO ÚNICO', x + 116, y + 24);
+    ctx.font = '12px ' + PS;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('DIMALAH WIN', x + 116, y + 44);
+    ctx.font = '7px ' + PS;
+    ctx.fillStyle = '#5fffd0';
+    ctx.fillText('«Aura fantasmática»', x + 116, y + 58);
+    ctx.fillStyle = '#d6fff3';
+    wrapT('Apretá O: Sisakna aparece y levanta un viento que te protege y empuja a los enemigos.', 196).forEach((l, i) => ctx.fillText(l, x + 116, y + 76 + i * 11));
+    if (EGG.t > 0.6) {
+      ctx.textAlign = 'center';
+      ctx.globalAlpha = k * (0.5 + 0.5 * Math.sin(t * 5));
+      ctx.fillText('[ENTER]', W / 2, y + h - 8);
+    }
+    ctx.restore();
+    ctx.textAlign = 'left';
+  }
+}
+
+const SISA_AURA = {};
+function sisaSilueta() {
+  if (SISA_AURA.c || !img.sisk || !img.sisk.width) return SISA_AURA.c;
+  const s = img.sisk, c = document.createElement('canvas');
+  c.width = s.width;
+  c.height = s.height;
+  const x = c.getContext('2d');
+  x.drawImage(s, 0, 0);
+  x.globalCompositeOperation = 'source-in';
+  x.fillStyle = '#7dffd8';
+  x.fillRect(0, 0, c.width, c.height);
+  return (SISA_AURA.c = c);
+}
+function sisaDibujar(x, y, t, andando, S, alfa, armaK, cara) {
+  const s = img.sisk;
+  if (!s || !s.width) return;
+  const w = s.width, h = s.height, ph = t * 9;
+  const bob = andando ? -Math.abs(Math.sin(ph)) * 2 : Math.sin(t * 2.4) * 1.2;
+  const pieI = andando ? -Math.max(0, Math.sin(ph)) * 2 : 0, pieD = andando ? -Math.max(0, -Math.sin(ph)) * 2 : 0;
+  const ladeo = andando ? Math.sin(ph) * 0.04 : 0, llama = Math.round(Math.sin(t * 7) * 1);
+  ctx.save();
+  ctx.globalAlpha = alfa;
+  ctx.translate(Math.round(x), Math.round(y));
+  ctx.scale(S * cara, S);
+  ctx.rotate(ladeo);
+  const aura = sisaSilueta();
+  if (aura) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = alfa * (0.28 + 0.14 * Math.sin(t * 4));
+    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1]]) ctx.drawImage(aura, -w / 2 + dx, -h + bob + dy);
+    ctx.restore();
+  }
+  ctx.drawImage(s, 0, 0, w, 13, -w / 2 + llama, -h + bob, w, 13);
+  ctx.drawImage(s, 0, 13, w, h - 19, -w / 2, -h + 13 + bob * 0.8, w, h - 19);
+  ctx.drawImage(s, 0, h - 6, w / 2, 6, -w / 2, -6 + pieI, w / 2, 6);
+  ctx.drawImage(s, w / 2, h - 6, w / 2, 6, 0, -6 + pieD, w / 2, 6);
+  if (armaK > 0) {
+    ctx.save();
+    ctx.translate(-w / 2 + 3, -h * 0.42 + bob);
+    ctx.rotate(-2.2 + armaK * 1.5);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = alfa * (0.25 + 0.1 * Math.sin(t * 10));
+    ctx.fillStyle = '#5fffd0';
+    ctx.fillRect(-2, -26, 5, 25);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = alfa;
+    ctx.fillStyle = '#1f5f58';
+    ctx.fillRect(-1, -2, 3, 5);
+    ctx.fillStyle = '#7dffd8';
+    ctx.fillRect(-3, -3, 7, 2);
+    ctx.fillStyle = '#bfffe9';
+    ctx.fillRect(-1, -24, 3, 21);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, -24, 1, 19);
+    ctx.fillRect(-1, -26, 2, 2);
+    ctx.restore();
+  }
+  ctx.restore();
+  if (Math.random() < 0.35) pfxPantalla(x + (Math.random() - 0.5) * w * S, y - Math.random() * h * S);
+}
+const SISA_MOTAS = [];
+function pfxPantalla(x, y) {
+  if (SISA_MOTAS.length < 60) SISA_MOTAS.push({ x, y, t: 0, v: 10 + Math.random() * 20 });
+}
+function motasDibujar(dt, enMundo) {
+  for (let i = SISA_MOTAS.length - 1; i >= 0; i--) {
+    const m = SISA_MOTAS[i];
+    m.t += dt;
+    m.y -= m.v * dt;
+    if (m.t > 1) { SISA_MOTAS.splice(i, 1); continue; }
+    ctx.globalAlpha = 1 - m.t;
+    ctx.fillStyle = m.t < 0.3 ? '#ffffff' : '#7dffd8';
+    ctx.fillRect(Math.round(m.x - (enMundo ? cam : 0)), Math.round(m.y), 1, 1);
+  }
+  ctx.globalAlpha = 1;
+}
+
+const SISA = { on: false, t: 0, cd: 0, x: 0, cara: 1, n: 0 };
+const SISA_FRASE = 'Los muertos no olvidan a quien los despertó. ¡Soplá, Win!';
+function sisaInvocar() {
+  if (!LGR.aura || SISA.on || state != 'play' || (typeof INV != 'undefined' && INV.open)) return;
+  if (SISA.cd > 0) { say('El viento todavía no vuelve (' + Math.ceil(SISA.cd) + ' s)'); return; }
+  if ((LGR.c.sisa || 0) > 0 && Math.random() >= 1 / 20) {
+    SISA.cd = 3;
+    say('...Sisakna no respondió esta vez.');
+    for (let i = 0; i < 14; i++) pfx(p.x - p.face * 30 + rnd(-10, 10), p.y - rnd(10, 50), rnd(-30, 30), rnd(-60, -10), rnd(0.4, 0.8), i % 2 ? '#7dffd8' : '#2a6f66', 2, -10);
+    try { cdTono(500, 180, 0.4, 'triangle', 0.04); } catch (e) {}
+    return;
+  }
+  LGR.c.sisa = (LGR.c.sisa || 0) + 1;
+  logrosGuardar();
+  SISA.on = true;
+  SISA.t = 0;
+  SISA.cara = p.face;
+  SISA.x = p.x - p.face * 34;
+  sfx('portal');
+}
+function sisaTick(dt) {
+  if (SISA.cd > 0 && !SISA.on) SISA.cd -= dt;
+  if (!SISA.on) return;
+  SISA.t += dt;
+  const u = SISA.t;
+  SISA.x += (p.x - SISA.cara * 34 - SISA.x) * Math.min(1, 4 * dt);
+  if (u > 1.0 && u < 5.0) {
+    if (!SISA.sopla) { SISA.sopla = 1; SHK = Math.max(SHK, 5); flashW = Math.max(flashW, 0.2); sfx('dash'); try { cdRuido(1.2, 600, 0.25, 0.6); } catch (e) {} }
+    sisaEmpujar(dt);
+  }
+  if (u > 5.6) {
+    SISA.on = false;
+    SISA.sopla = 0;
+    SISA.cd = 30;
+  }
+}
+function sisaEmpujar(dt) {
+  const R = 170, F = 420;
+  const cerca = (x, y) => Math.abs(x - p.x) < R && Math.abs((y == null ? pcy() : y) - pcy()) < 130;
+  const lado = x => (x < p.x ? -1 : 1);
+  for (const e of enemies || []) if (!e.dying && cerca(e.x, e.y)) { e.x += lado(e.x) * F * dt; if (e.vx != null) e.vx = lado(e.x) * 60; }
+  if (typeof CD != 'undefined') for (const m of CD.mons || []) if (cerca(m.x)) m.x += lado(m.x) * F * 0.6 * dt;
+  if (typeof LL != 'undefined') {
+    for (const e of LL.esp || []) if (cerca(e.x)) e.x += lado(e.x) * F * 0.6 * dt;
+    for (const l of LL.lanzas || []) if (cerca(l.x, l.y)) l.fin = 1;
+  }
+  for (const c of CALA.L) if (c.st != 'explota' && cerca(c.x, c.y)) { c.x += lado(c.x) * F * dt; c.vx = lado(c.x) * 120; }
+  orbs = (orbs || []).filter(o => !cerca(o.x, o.y));
+  shots = (shots || []).filter(s => !cerca(s.x, s.y));
+  ARL.ojos = ARL.ojos.filter(o => !cerca(o.x, o.y));
+  ARL.fx = ARL.fx.filter(f => !(f.k == 'ola' && cerca(f.x, GROUND - 10)));
+  if (B && B.on && area == 3 && cerca(B.x, B.y)) B.x = Math.max(cam + 40, Math.min(cam + W - 40, B.x + lado(B.x) * F * 0.5 * dt));
+  if (typeof JF != 'undefined' && JF.orbes) for (const o of JF.orbes) if (o.vivo && cerca(o.x, o.y)) o.vivo = false;
+}
+function sisaMundo(t) {
+  if (!SISA.on) return;
+  const u = SISA.t, a = Math.min(1, u / 0.5, (5.6 - u) / 0.5), armaK = u < 0.5 ? 0 : Math.min(1, (u - 0.5) / 0.4);
+  sisaDibujar(SISA.x - cam, GROUND, t, false, 1.5, Math.max(0, a), armaK, SISA.cara);
+}
+function vientoMundo(t) {
+  if (!SISA.on) return;
+  const u = SISA.t, v = img.vien;
+  if (u > 0.5 && u < 3.2) {
+    const L = SISA_FRASE;
+    bubble2(SISA.x - cam, GROUND - 74, L, Math.floor((u - 0.5) * 60));
+  }
+  if (u < 1.0 || u > 5.3 || !v || !v.width) return;
+  const k = Math.min(1, (u - 1) / 0.25, (5.3 - u) / 0.3), x = Math.round(p.x - cam), y = Math.round(p.y - 34);
+  ctx.save();
+  for (let i = 0; i < 2; i++) {
+    const fl = Math.floor(t * 12 + i) % 2 ? 1 : -1, e = (1.45 + i * 0.25) * (0.92 + 0.08 * Math.sin(t * 9 + i)) * k;
+    ctx.save();
+    ctx.globalAlpha = (i ? 0.32 : 0.62) * k;
+    ctx.translate(x + Math.sin(t * 7 + i) * 2, y);
+    ctx.scale(fl * e, e);
+    ctx.drawImage(v, -v.width / 2, -v.height / 2);
+    ctx.restore();
+  }
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = '#cfefff';
+  for (let i = 0; i < 18; i++) {
+    const an = t * (4 + (i % 3)) + i * 0.35, rx = 70 + (i % 4) * 10, ry = 26 + (i % 3) * 6;
+    ctx.globalAlpha = 0.5 * k;
+    ctx.fillRect(Math.round(x + Math.cos(an) * rx), Math.round(y + Math.sin(an) * ry), 6, 1);
+  }
+  ctx.restore();
+}
+function sisaHUD(t) {
+  if (!LGR.aura || state != 'play') return;
+  const x = 436, y = 6, v = img.vien;
+  ctx.fillStyle = '#3a3d52';
+  ctx.fillRect(x - 1, y, 24, 24);
+  ctx.fillStyle = '#0e0f17cc';
+  ctx.fillRect(x, y + 1, 22, 22);
+  if (v && v.width) ctx.drawImage(v, x + 1, y + 6, 20, 11);
+  if (SISA.cd > 0 && !SISA.on) {
+    ctx.fillStyle = 'rgba(0,0,0,.6)';
+    ctx.fillRect(x, y + 1, 22, Math.round((22 * SISA.cd) / 30));
+  }
+  ctx.font = '7px monospace';
+  ctx.fillStyle = SISA.cd > 0 ? '#888' : '#7dffd8';
+  ctx.fillText('O', x + 1, y + 8);
+}
+
+addEventListener(
+  'keydown',
+  e => {
+    if (state == 'logros') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (['Escape', 'Enter', 'Space', 'Backspace'].includes(e.code)) { state = 'menu'; sfx('page'); }
+      return;
+    }
+    if (state == 'menu' && EGG.on) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (!e.repeat && ['Enter', 'Space', 'KeyE'].includes(e.code)) eggSiguiente();
+      return;
+    }
+    if (state == 'menu' && !e.repeat) eggTecla(e);
+    if (e.code == 'KeyO' && state == 'play' && !e.repeat) sisaInvocar();
+  },
+  true,
+);
+addEventListener(
+  'mousedown',
+  e => {
+    if (state == 'logros') { e.stopImmediatePropagation(); state = 'menu'; sfx('page'); return; }
+    if (state == 'menu' && EGG.on) { e.stopImmediatePropagation(); eggSiguiente(); }
+  },
+  true,
+);
+
+const drawMenuLG = drawMenu;
+drawMenu = function () {
+  drawMenuLG();
+  if (state != 'menu') return;
+  const t = performance.now() / 1000;
+  try { eggDibujar(t); } catch (e) {}
+};
+const drawEnemiesLG = drawEnemies;
+drawEnemies = function (t) {
+  drawEnemiesLG(t);
+  try { sisaMundo(performance.now() / 1000); } catch (e) {}
+};
+const hurtLG = hurt;
+hurt = function (d) {
+  if (SISA.on && SISA.t > 1 && SISA.t < 5) {
+    if (Math.random() < 0.5) for (let i = 0; i < 6; i++) pfx(p.x + rnd(-30, 30), pcy() + rnd(-20, 20), rnd(-120, 120), rnd(-80, 20), 0.3, '#cfefff', 2, 0);
+    return;
+  }
+  hurtLG(d);
+};
+const drawSlashesLG = drawSlashes;
+drawSlashes = function () {
+  drawSlashesLG();
+  try { vientoMundo(performance.now() / 1000); } catch (e) {}
+};
+const drawHotbarLG = drawHotbar;
+drawHotbar = function () {
+  drawHotbarLG();
+  try { sisaHUD(performance.now() / 1000); } catch (e) {}
+};
+const lucesJuntarLG = lucesJuntar;
+lucesJuntar = function (t) {
+  const L = lucesJuntarLG(t);
+  if (SISA.on) {
+    L.push([SISA.x, GROUND - 30, 70, '120,255,215', 0.6]);
+    if (SISA.t > 1 && SISA.t < 5.3) L.push([p.x, p.y - 34, 130, '170,220,255', 0.45]);
+  }
+  return L;
+};
+const initLG = init;
+init = function () {
+  initLG();
+  SISA.on = false;
+  SISA.cd = 0;
+};
+const updateLG = update;
+update = function (dt, now) {
+  updateLG(dt, now);
+  sisaTick(dt);
+};
+let lgUlt = performance.now();
+const drawLG = draw;
+draw = function () {
+  const now = performance.now(), dt = Math.min(0.05, (now - lgUlt) / 1000), t = now / 1000;
+  lgUlt = now;
+  if (state == 'logros') {
+    logrosPantalla(t);
+  } else {
+    if (state == 'menu') eggTick(dt);
+    drawLG();
+    if (state == 'menu' && EGG.on) {
+      ctx.save();
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
+      motasDibujar(dt, false);
+      ctx.restore();
+    } else if (SISA.on && state == 'play') {
+      ctx.save();
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
+      motasDibujar(dt, false);
+      ctx.restore();
+    }
+  }
+  logrosRevisar(dt);
+  logrosAviso(dt);
+};
+
+const BG = { hecho: false, espera: 0, x: 0, vidaBase: 0, pelea: false };
+function bgVida() {
+  return [5, 8, 9, 13][arlDif()] * 20;
+}
+function bgActiva() {
+  return area == 5 && CD && CD.mons && CD.mons.some(m => m.st != 'muere');
+}
+function bgRestringe() {
+  return arlDif() == 3 && bgActiva();
+}
+function bgTick(dt) {
+  if (area != 5) return;
+  CD.mons = CD.mons || [];
+  if (!BG.hecho) {
+    const g = (enemies || []).find(e => e.t == 'wboss' && !e.special && e.dying);
+    if (g) {
+      BG.hecho = true;
+      BG.espera = 1.6;
+      BG.x = Math.min(LEVEL - 120, g.x + 170);
+    }
+  }
+  if (BG.espera > 0) {
+    BG.espera -= dt;
+    if (BG.espera <= 0) {
+      MON.vida = bgVida();
+      const on0 = CD.on;
+      CD.on = true;
+      CD.ola = 99;
+      monNuevo(BG.x);
+      CD.on = on0;
+      const m = CD.mons[CD.mons.length - 1];
+      m.noq = 1;
+      m.hp = MON.vida;
+      say(arlDif() == 3 ? '¡La bestia roja despierta! (aquí no sirven el giro ni el quesillo)' : '¡La bestia roja despierta del pantano!');
+    }
+  }
+  if (!CD.mons.length) return;
+  for (const m of CD.mons) m.noq = 1;
+  const on0 = CD.on, ola0 = CD.ola, vel = arlDif() == 3 ? 1.3 : 1;
+  CD.on = true;
+  CD.ola = 99;
+  try {
+    monTick(dt * vel);
+    if (arlDif() >= 2 && typeof LL != 'undefined') {
+      const esp0 = LL.esp, lz0 = LL.lanzas;
+      LL.esp = [];
+      LL.lanzas = [];
+      try { difAtaquesNuevos(dt * vel); } finally { LL.esp = esp0; LL.lanzas = lz0; }
+    }
+  } finally {
+    CD.on = on0;
+    CD.ola = ola0;
+  }
+  if (bgRestringe() && p.shield > 0) {
+    p.shield = 0;
+    say('El quesillo se deshizo: esta bestia no respeta escudos.');
+  }
+}
+const loadAreaBG = loadArea;
+loadArea = function (n) {
+  loadAreaBG(n);
+  if (n == 5) {
+    BG.hecho = false;
+    BG.espera = 0;
+    CD.mons = [];
+  }
+};
+const updEnemiesBG = updEnemies;
+updEnemies = function (dt) {
+  updEnemiesBG(dt);
+  if (!(typeof TIEMPO != 'undefined' && TIEMPO.parado)) bgTick(dt);
+};
+const drawEnemiesBG = drawEnemies;
+drawEnemies = function (t) {
+  drawEnemiesBG(t);
+  if (area != 5 || !CD.mons || !CD.mons.length) return;
+  const on0 = CD.on;
+  CD.on = true;
+  try { monDibujar(t); } finally { CD.on = on0; }
+};
+const drawPFXBG = drawPFX;
+drawPFX = function () {
+  drawPFXBG();
+  if (area != 5 || !CD.mons || !CD.mons.length) return;
+  const on0 = CD.on;
+  CD.on = true;
+  try { monBrillos(performance.now() / 1000); } finally { CD.on = on0; }
+};
+const nearestFoeXBG = nearestFoeX;
+nearestFoeX = function () {
+  if (area == 5 && CD && CD.golpe != null) { const g = CD.golpe; CD.golpe = null; return g; }
+  return nearestFoeXBG();
+};
+const ataqueElegirBG = ataqueElegir;
+ataqueElegir = function () {
+  const a = ataqueElegirBG();
+  return a == 3 && bgRestringe() ? 4 : a;
+};
+const usarComidaBG = usarComida;
+usarComida = function (id) {
+  const f = comida(id);
+  if (f && f.id == 'que' && bgRestringe()) {
+    say('El quesillo no sirve contra la bestia roja.');
+    return false;
+  }
+  return usarComidaBG(id);
+};
+const lucesJuntarBG = lucesJuntar;
+lucesJuntar = function (t) {
+  const L = lucesJuntarBG(t);
+  if (area == 5 && CD.mons) for (const m of CD.mons) if (m.st != 'muere') L.push([m.x + m.face * 36, GROUND - 56, 60, '90,240,180', 0.5]);
+  return L;
+};
 })();
