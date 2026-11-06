@@ -18731,17 +18731,17 @@ function logrosPantalla(t) {
 }
 
 const EGG = { buf: '', on: false, t: 0, fase: '', x: 0, linea: 0, c: 0 };
-const EGG_CLAVE = 'UUDLRDD';
+const EGG_H = '15jwarc-1ofz5u5';
 const EGG_LINEAS = [
   '...Hace siglos que nadie decía esa clave. ¿Fuiste vos la que me despertó?',
   'Soy Sisakna, dueño del aire. Los Dimalah caminan conmigo por encima de la selva.',
   'Tomá esto. Cuando el monte se ponga feo, apretá O y voy a soplar por vos.',
 ];
 function eggTecla(e) {
-  const m = { ArrowUp: 'U', ArrowDown: 'D', ArrowLeft: 'L', ArrowRight: 'R', Digit2: '2', Numpad2: '2', Digit0: '0', Numpad0: '0', Digit6: '6', Numpad6: '6' }[e.code];
+  const m = { ArrowUp: 'U', ArrowDown: 'D', ArrowLeft: 'L', ArrowRight: 'R' }[e.code];
   if (!m) { EGG.buf = ''; return; }
-  EGG.buf = (EGG.buf + m).slice(-EGG_CLAVE.length);
-  if (EGG.buf == EGG_CLAVE) { EGG.buf = ''; eggEmpezar(); }
+  EGG.buf = (EGG.buf + m).slice(-7);
+  if (huella('asagmba·' + EGG.buf) === EGG_H) { EGG.buf = ''; eggEmpezar(); }
 }
 function eggEmpezar() {
   EGG.on = true;
