@@ -425,8 +425,8 @@ function init() {
   };
   B = {
     on: false,
-    hp: 300,
-    max: 300,
+    hp: 480,
+    max: 480,
     st: '',
     t: 0,
     x: 0,
@@ -914,7 +914,7 @@ function hitBoss(d) {
       B.ph2 = true;
       B.st = 'morph';
       B.t = 0;
-      B.hp = B.max = 220;
+      B.hp = B.max = 380;
       B.open = false;
       B.beam = 0;
       B.bc = 999;
@@ -11108,10 +11108,10 @@ draw = function () {
   if (state == 'cdtp') pilarCineTick(dt);
   if (state == 'cdcine' && area == 9) cdCineTick(dt);
 
-  const s0 = state;
-  if (s0 == 'cdcine' || s0 == 'cdtp') state = 'play';
+  const s0 = state, cambia = s0 == 'cdcine' || s0 == 'cdtp';
+  if (cambia) state = 'play';
   drawCD();
-  state = s0;
+  if (cambia && state == 'play') state = s0;
 };
 
 const MON = {
@@ -12867,7 +12867,7 @@ draw = function () {
   if (state == 'cjcine') {
     cjnTick(dt);
 
-    if (state == 'cjcine') { state = 'play'; drawCJN(); state = 'cjcine'; return; }
+    if (state == 'cjcine') { state = 'play'; drawCJN(); if (state == 'play') state = 'cjcine'; return; }
   }
   drawCJN();
 };
@@ -13869,7 +13869,7 @@ const LIM = Object.freeze({
   escudo: 3,
   invul: 2,
   porItem: 9,
-  jefe: Object.freeze([300, 220]),
+  jefe: Object.freeze([480, 380]),
 });
 
 function congelar(o) {
@@ -17458,7 +17458,7 @@ draw = function () {
   if (area == 9 && state == 'play') flamTick(dt);
   if (state == 'flcarta') {
 
-    state = 'play'; drawFLAM(); state = 'flcarta';
+    state = 'play'; drawFLAM(); if (state == 'play') state = 'flcarta';
     ctx.setTransform(2, 0, 0, 2, 0, 0);
     flamCarta(now / 1000);
     return;
@@ -18045,7 +18045,6 @@ update = function (dt, now) {
   }
 };
 
-ARL_F1.push('xbola');
 ARL_F2.push('xbola', 'xrayo');
 const RAYO = { aviso: {} };
 function rayoBoca() {
@@ -18111,7 +18110,13 @@ function arlRayo(dt) {
     K.i++;
     K.ti = 0.2;
     K.son = 0;
-    if (K.i >= K.tiros.length) { B.bc = [7, 6, 5.5, 4.5][D]; arlFin(); }
+    if (K.i >= K.tiros.length) {
+      B.bc = [7, 6, 5.5, 4.5][D];
+      if (!B.ph2) {
+        arlEmpezar('xbola');
+        B.k.horiz = 1;
+      } else arlFin();
+    }
   }
 }
 function rayoDibujar(t) {
@@ -18205,8 +18210,10 @@ function arlBola(dt) {
   K.u += dt;
   B.bc = Math.max(B.bc, 2);
   if (K.fase == 'brilla') {
-    B.x += (W / 2 - B.x) * Math.min(1, 3 * dt);
-    B.y += (GROUND - 130 - B.y) * Math.min(1, 3 * dt);
+    if (!K.horiz) {
+      B.x += (W / 2 - B.x) * Math.min(1, 3 * dt);
+      B.y += (GROUND - 130 - B.y) * Math.min(1, 3 * dt);
+    }
     if (Math.random() < 0.8) pfx(B.x + rnd(-40, 40), B.y + rnd(-40, 40), rnd(-80, 80), rnd(-80, 80), 0.4, 'hsl(' + Math.floor(Math.random() * 360) + ',100%,70%)', 2, 0);
     if (K.u > 1.0) {
       K.fase = 'apunta';
@@ -18216,14 +18223,26 @@ function arlBola(dt) {
       for (let i = 0; i < 24; i++) { const a = (i / 24) * 6.283; pfx(B.x, B.y, Math.cos(a) * 220, Math.sin(a) * 220, 0.4, i % 2 ? '#e070ff' : '#ffffff', 2, 0); }
     }
   } else if (K.fase == 'apunta') {
-    if (K.u < dt * 1.5) {
-      const tx = p.x, ty = pcy(), d = Math.hypot(tx - B.x, ty - B.y) || 1;
-      K.ux = (tx - B.x) / d;
-      K.uy = (ty - B.y) / d;
-      cdTonoSeguro(600, 1200, 0.2);
+    if (K.horiz) {
+      B.y += (GROUND - 30 - B.y) * Math.min(1, 10 * dt);
+      B.x += ((p.x > W / 2 ? cam + 40 : cam + W - 40) - B.x) * Math.min(1, 8 * dt);
+    }
+    if (K.u < dt * 1.5 || (K.horiz && K.u < 0.25)) {
+      if (K.horiz) {
+        K.ux = p.x > B.x ? 1 : -1;
+        K.uy = 0;
+      } else {
+        const tx = p.x, ty = pcy(), d = Math.hypot(tx - B.x, ty - B.y) || 1;
+        K.ux = (tx - B.x) / d;
+        K.uy = (ty - B.y) / d;
+      }
+      if (K.u < dt * 1.5) cdTonoSeguro(600, 1200, 0.2);
     }
     B.x += (Math.random() - 0.5) * 3;
-    if (K.u > [0.6, 0.5, 0.42, 0.34][D]) { K.fase = 'embiste'; K.u = 0; K.hd = 0; K.par = 0; K.rastro = []; }
+    if (K.u > [0.6, 0.5, 0.42, 0.34][D] + (K.horiz ? 0.25 : 0)) {
+      K.fase = 'embiste'; K.u = 0; K.hd = 0; K.par = 0; K.rastro = [];
+      if (K.horiz && !RAYO.aviso.bola) { RAYO.aviso.bola = 1; say('¡Saltala o hacele PARRY (L)!'); }
+    }
   } else if (K.fase == 'embiste') {
     B.x += K.ux * vel * dt;
     B.y += K.uy * vel * dt;
@@ -18377,9 +18396,25 @@ function calaExplota(c, dana) {
   sfx('boom');
   try { cdRuido(0.45, 300, 0.3, 1.5); } catch (e) {}
 }
+function calaArena(dt) {
+  if (area != 3) return;
+  if (!B.on || !B.ph2 || B.done) { CALA.L = []; CALA.sp = 4; return; }
+  CALA.sp = (CALA.sp == null ? 4 : CALA.sp) - dt;
+  const vivas = CALA.L.filter(c => c.st != 'explota').length, max = [1, 2, 2, 3][arlDif()];
+  if (CALA.sp <= 0 && vivas < max) {
+    CALA.sp = [10, 8, 7, 5.5][arlDif()];
+    const lado = Math.random() < 0.5 ? 1 : -1, c = calaCrear(lado > 0 ? cam + W - 30 : cam + 30);
+    c.y = c.by = GROUND - 140 - Math.random() * 60;
+    c.st = 'persigue';
+    CALA.L.push(c);
+    for (let i = 0; i < 16; i++) pfx(c.x, c.y, rnd(-120, 120), rnd(-120, 120), 0.4, i % 2 ? '#7dffc0' : '#ffffff', 2, 0);
+    sfx('portal');
+  }
+}
 function calaTick(dt) {
-  if (area != 1 && area != 5) return;
-  const vel = [0, 0, 80, 105][arlDif()], mecha = [0, 0, 0.75, 0.55][arlDif()];
+  calaArena(dt);
+  if (area != 1 && area != 5 && area != 3) return;
+  const vel = [60, 70, 80, 105][arlDif()], mecha = [0.95, 0.85, 0.75, 0.55][arlDif()];
   for (const c of CALA.L) {
     c.t += dt;
     if (c.hit > 0) c.hit -= dt;
@@ -18399,7 +18434,7 @@ function calaTick(dt) {
     if (c.st == 'flota') {
       c.y = c.by + Math.sin(c.t * 2.2) * 6;
       c.x += Math.sin(c.t * 0.8) * 10 * dt;
-      if (d < 280 && state == 'play') { c.st = 'persigue'; cdTonoSeguro(300, 700, 0.25); }
+      if ((d < 280 || area == 3) && state == 'play') { c.st = 'persigue'; cdTonoSeguro(300, 700, 0.25); }
     } else if (c.st == 'persigue') {
       const k = vel / (d || 1);
       c.vx += (dx * k - c.vx) * Math.min(1, 3 * dt);
@@ -18408,7 +18443,7 @@ function calaTick(dt) {
       c.y += (c.vy * dt) + Math.sin(c.t * 9) * 0.4;
       c.y = Math.min(GROUND - 16, c.y);
       if (d < 46) { c.st = 'mecha'; c.mecha = 0; }
-      if (d > 520) c.st = 'flota', c.by = c.y;
+      if (d > 520 && area != 3) c.st = 'flota', c.by = c.y;
     } else if (c.st == 'mecha') {
       c.mecha += dt;
       c.x += dx * 0.8 * dt;
@@ -18440,7 +18475,7 @@ function calaTick(dt) {
   CALA.L = CALA.L.filter(c => !(c.st == 'explota' && c.ex > 0.75));
 }
 function calaDibujar(t) {
-  if (area != 1 && area != 5) return;
+  if (area != 1 && area != 5 && area != 3) return;
   const S = img.cala, E = img.expl;
   if (!S || !S.width) return;
   for (const c of CALA.L) {
