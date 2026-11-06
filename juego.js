@@ -18731,7 +18731,7 @@ function logrosPantalla(t) {
 }
 
 const EGG = { buf: '', on: false, t: 0, fase: '', x: 0, linea: 0, c: 0 };
-const EGG_CLAVE = 'UULR2026';
+const EGG_CLAVE = 'UUDLRDD';
 const EGG_LINEAS = [
   '...Hace siglos que nadie decía esa clave. ¿Fuiste vos la que me despertó?',
   'Soy Sisakna, dueño del aire. Los Dimalah caminan conmigo por encima de la selva.',
