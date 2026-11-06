@@ -690,7 +690,7 @@ function update(dt, now) {
     atk1 = false;
     if (!hasSword)
       say(
-        'Smara: "¿Pelear con las manos? Mejor le pido algo a la Anciana del Fuego." (E para hablar)',
+        'Samara: "¿Pelear con las manos? Mejor le pido algo a la Anciana del Fuego." (E para hablar)',
       );
     else if (p.atkCd <= 0 && p.sta >= 8 && p.parry <= 0 && (!p.atk || p.atk.t > ATK[p.atk.c].e * 0.72)) {
       p.sta -= stc(8);
@@ -807,7 +807,7 @@ function update(dt, now) {
         say(
           b
             ? 'El Guardián de la Gema cierra el camino.'
-            : 'Algo enorme despierta adelante. Smara: "...eso no es un árbol."',
+            : 'Algo enorme despierta adelante. Samara: "...eso no es un árbol."',
         );
       }
     while (ENCI < ENC.length && ENC[ENCI].x < p.x + 560) spawnEnc(ENC[ENCI++]);
@@ -4519,8 +4519,9 @@ const NPCD = {
       {
         g: ['sword', 'nac'],
         L: [
-          '¡Ay, santo! ¿Y vos de dónde saliste? Sos rarísima, criatura: esa ropa, ese pelo, esa cara de recién caída del cielo. ¿De dónde sos, pues?',
-          '¿Smara, te llamás? ¿Y no sabés de dónde venís? Mmm... Bueno, aquí estás a salvo junto al fuego. Soy la Anciana del Fuego, la sukia de esta ribera: curo lo que los espíritus enferman y regaño lo que la gente rompe.',
+          '¡Ay, santo! ¿Y vos de dónde saliste? Sos rarísima, criatura: esa ropa, ese pelo, esa cara de recién caída del cielo. ¿Quién sos vos, pues?',
+          'S:Mi nombre es Samara Emily.',
+          '¿Samara Emily, te llamás? ¿Y no sabés de dónde venís? Mmm... Bueno, aquí estás a salvo junto al fuego. Soy la Anciana del Fuego, la sukia de esta ribera: curo lo que los espíritus enferman y regaño lo que la gente rompe.',
           'No, no estás muerta: ya revisé, y el más allá tiene peor servicio. Estás en Mulukukú, pero en el de antes. En miskito su nombre quiere decir «ribera de sahinos»: la orilla del Tuma donde los chanchos de monte bajaban a beber.',
           'Aquí todo tiene dueño, hija. El agua es de Liwa Mairin, el monte es de los Duhindu que cuidan a los venados, las ceibas viejas tienen espíritu, y allá arriba Prahaku manda sobre el viento, el trueno y el tiempo.',
           'Ellos viven de que la gente los nombre. Cuando dejamos de contar sus historias en la orilla, se fueron apagando, y por las grietas empezó a entrar lo que no tiene nombre. Por eso el eco te llamó: necesitamos a alguien que todavía crea.',
@@ -4670,14 +4671,16 @@ function drawTalk() {
     v = npcData(n),
     d = NPCD[n.k],
     x = n.x - cam;
-  bubble2(x, GROUND - (n.k == 'stele' ? 96 : 92), v.L[talk.i], Math.floor(talk.s * 32));
+  const linea = v.L[talk.i], habla = linea.indexOf('S:') == 0, lx = habla ? p.x - cam : x;
+  if (habla) bubble2(lx, GROUND - 92, linea.slice(2), Math.floor(talk.s * 32));
+  else bubble2(x, GROUND - (n.k == 'stele' ? 96 : 92), linea, Math.floor(talk.s * 32));
   ctx.font = '8px ' + PS;
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffd77a';
-  ctx.fillText(d.nm, Math.max(90, Math.min(W - 90, Math.round(x))), GROUND + 14);
+  ctx.fillStyle = habla ? '#bfe8ff' : '#ffd77a';
+  ctx.fillText(habla ? 'Samara Emily' : d.nm, Math.max(90, Math.min(W - 90, Math.round(lx))), GROUND + 14);
   ctx.fillStyle = '#fff';
   ctx.globalAlpha = 0.5 + 0.5 * Math.sin(performance.now() / 250);
-  ctx.fillText('[E]', Math.max(90, Math.min(W - 90, Math.round(x))), GROUND + 27);
+  ctx.fillText('[E]', Math.max(90, Math.min(W - 90, Math.round(lx))), GROUND + 27);
   ctx.globalAlpha = 1;
   ctx.textAlign = 'left';
 }
@@ -6540,7 +6543,7 @@ function dibujarEquipo(cas, esSel, X, Y, now) {
     ctx.fillStyle = IC.suave;
     ctx.fillText('Nada aquí', dx + 12, dy + 26);
     ctx.font = '8px ' + PS;
-    textoPartido('Los tesoros que encontrás en los cofres se guardan aquí. Solo funcionan los que Smara lleva puestos.', dx + 12, dy + 46, 214, 11);
+    textoPartido('Los tesoros que encontrás en los cofres se guardan aquí. Solo funcionan los que Samara lleva puestos.', dx + 12, dy + 46, 214, 11);
   }
 
   if (typeof RELIQ != 'undefined' && RELIQ.size) {
@@ -9908,7 +9911,7 @@ function drawCharla() {
   const C = CHARLA;
   if (!C) return;
   const [q, txt] = C.L[C.i];
-  if (q == 's') globo(p.x - cam, p.y - 92, 'Smara', txt, Math.floor(C.c), true);
+  if (q == 's') globo(p.x - cam, p.y - 92, 'Samara', txt, Math.floor(C.c), true);
   else {
     const n = C.n;
     globo(n.x - cam, GROUND - n.h * ESC_E - (n.flota ? 18 : 0), n.nm, txt, Math.floor(C.c), false);
@@ -12826,7 +12829,7 @@ function cjnOverlay(t) {
   if (C.i >= 0 && !C.sale) {
     const [q, L] = CJN_FRASES[C.i];
     if (q == 'c') globo(C.x - cam - 26, GROUND - 66, 'EL CADEJO NEGRO', L, Math.floor(C.vis), false);
-    else globo(p.x - cam, p.y - 76, 'SMARA', L, Math.floor(C.vis), true);
+    else globo(p.x - cam, p.y - 76, 'SAMARA', L, Math.floor(C.vis), true);
     ctx.font = '6px ' + PS;
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(255,255,255,.6)';
@@ -13127,7 +13130,7 @@ function drawMeet() {
     ctx.fillRect(bx + 10, by - 12, sp ? 62 : 96, 12);
     ctx.fillStyle = paper;
     ctx.font = '7px ' + PS;
-    ctx.fillText(sp ? 'SMARA' : 'EL ERRANTE', bx + 15, by - 3);
+    ctx.fillText(sp ? 'SAMARA' : 'EL ERRANTE', bx + 15, by - 3);
     ctx.fillStyle = ink;
     ctx.font = '8px ' + PS;
     const L = wrapT(txt.slice(0, typed), bw - 28);
@@ -15048,20 +15051,20 @@ const CU_SUELO = 330,
   CU_VIDA = 1000,
   CU_ALTO = 68;
 const CU_CHARLA = [
-  ['CUENTERO', 'Bienvenida, Smara. Pasá adelante, que el cuento ya empezó.'],
-  ['SMARA', '¿Esto es... el blanco? El Cadejo me dijo que aquí estaba el malo.'],
+  ['CUENTERO', 'Bienvenida, Samara. Pasá adelante, que el cuento ya empezó.'],
+  ['SAMARA', '¿Esto es... el blanco? El Cadejo me dijo que aquí estaba el malo.'],
   ['CUENTERO', '¿El perro? También es parte del cuento. Lo pintaron de negro para que le tuvieras miedo.'],
-  ['SMARA', '¿Quién sos vos?'],
+  ['SAMARA', '¿Quién sos vos?'],
   ['CUENTERO', 'El que cuenta. Este Mulukukú no está en ningún mapa: lo armaste vos, aquí adentro.'],
-  ['SMARA', 'No... yo conozco Mulukukú.'],
+  ['SAMARA', 'No... yo conozco Mulukukú.'],
   ['CUENTERO', '¿Lo conocés? ¿O conocés los chistes? "Más lejos que Mulukukú." Los videos graciosos que te pasaban por el teléfono.'],
-  ['SMARA', '...'],
+  ['SAMARA', '...'],
   ['CUENTERO', 'El viejo del bastón te habló bonito, ¿verdad? En el blanco todos hablamos bonito.'],
   ['CUENTERO', 'Tranquila. De risas también se hacen mundos. Vamos a ver cuánto aguanta el tuyo.'],
 ];
 
 const CU_SOL = [
-  'Mirá, Smara: este es el lugar de donde sacaste tu Mulukukú.',
+  'Mirá, Samara: este es el lugar de donde sacaste tu Mulukukú.',
   'Cada pantalla es un video que te hizo reír. Ninguno lo grabó alguien de allá.',
   '"Más lejos que Mulukukú." Un millón de veces lo escuchaste, y nunca preguntaste qué hay allá.',
   'Tu río, tus monstruos, tu cielo: recortes de videos graciosos, pegados con cariño.',
@@ -15817,7 +15820,7 @@ function jfCineTick(dt) {
     if (L) {
       C.s += dt;
       const n = Math.min(L[1].length, Math.floor(C.s * 32));
-      if (n > C.n) { if (n % 2 == 0 && L[1][n] != ' ') (L[0] == 'SMARA' ? jfSnd.letraS : jfSnd.letra)(); C.n = n; }
+      if (n > C.n) { if (n % 2 == 0 && L[1][n] != ' ') (L[0] == 'SAMARA' ? jfSnd.letraS : jfSnd.letra)(); C.n = n; }
       if (C.n >= L[1].length && C.s > L[1].length / 32 + 2.2) { C.i++; C.s = 0; C.n = 0; }
     } else if (C.i >= CU_CHARLA.length) {
 
@@ -16658,7 +16661,7 @@ function jfDibujarFrente(t) {
 
   const L = cuCharlaLinea();
   if (L) {
-    if (L[0] == 'SMARA') globo(p.x - cam, p.y - 70, 'SMARA', L[1], JF.cine.n, true);
+    if (L[0] == 'SAMARA') globo(p.x - cam, p.y - 70, 'SAMARA', L[1], JF.cine.n, true);
     else cuGlobo(L[1], JF.cine.n, 1);
   } else if (JF.habla && (JF.vis > 0.3 || JF.solK > 0)) cuGlobo(JF.habla.txt, JF.habla.n, jfC(Math.min(JF.habla.t * 6, (JF.habla.dur - JF.habla.t) * 4), 0, 1));
 }
@@ -17178,7 +17181,7 @@ function epiDibujar(t) {
   if (EPI.fase == 'charla' && EPI.i >= 0) {
     const [q, L] = EPI_FRASES[EPI.i];
     if (q == 'c') globo(EPI.cx - 26, G - 66, 'EL CADEJO', L, Math.floor(EPI.vis), false);
-    else globo(EPI.sx, G - 76, 'SMARA', L, Math.floor(EPI.vis), true);
+    else globo(EPI.sx, G - 76, 'SAMARA', L, Math.floor(EPI.vis), true);
     ctx.font = '6px ' + PS;
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(20,20,24,.55)';
@@ -18040,5 +18043,476 @@ update = function (dt, now) {
     ARL.autoguardar = 0;
     try { save(); } catch (e) {}
   }
+};
+
+ARL_F1.push('xbola');
+ARL_F2.push('xbola', 'xrayo');
+const RAYO = { aviso: {} };
+function rayoBoca() {
+  return { x: B.x + B.face * 40, y: B.y - 10 };
+}
+function arlRayo(dt) {
+  const D = arlDif(), K = B.k;
+  if (!K.tiros) {
+    const tipos = D == 3 ? ['alto', 'bajo'] : [Math.random() < 0.5 ? 'alto' : 'bajo'];
+    K.tiros = tipos;
+    K.i = 0;
+    K.ti = 0;
+    K.lado = p.x < W / 2 ? 1 : -1;
+  }
+  const tipo = K.tiros[K.i], carga = [1.5, 1.3, 1.15, 1][D], dura = tipo == 'alto' ? 1.05 : 0.55, fin = 0.45;
+  K.ti += dt;
+  const by = tipo == 'alto' ? GROUND - 48 : GROUND - 20;
+  const tx = K.lado > 0 ? cam + W - 70 : cam + 70;
+  B.face = -K.lado;
+  B.x += (tx - B.x) * Math.min(1, 5 * dt);
+  B.y += (by + 10 - B.y) * Math.min(1, 5 * dt);
+  B.bc = Math.max(B.bc, 2);
+  const u = K.ti;
+  K.tipo = tipo;
+  K.by = by;
+  K.carga = carga;
+  if (u < 0.35) {
+    K.fase = 'mueve';
+    B.open = false;
+  } else if (u < 0.35 + carga) {
+    K.fase = 'carga';
+    B.open = true;
+    const k = (u - 0.35) / carga, m = rayoBoca();
+    if (Math.random() < 0.5 + k) {
+      const an = Math.random() * 6.283, r = 60 + Math.random() * 70;
+      pfx(m.x + Math.cos(an) * r, m.y + Math.sin(an) * r, -Math.cos(an) * r * 2.6, -Math.sin(an) * r * 2.6, 0.38, Math.random() < 0.5 ? '#ffd27a' : '#ff8a2a', 2, 0);
+    }
+    SHK = Math.max(SHK, k * 2.2);
+    if (!K.son && k > 0.05) { K.son = 1; cdTonoSeguro(140, 900, carga); }
+    if (k > 0.55 && !RAYO.aviso[tipo]) {
+      RAYO.aviso[tipo] = 1;
+      say(tipo == 'alto' ? '¡Rayo alto: agachate (S)!' : '¡Rayo bajo: saltalo!');
+    }
+  } else if (u < 0.35 + carga + dura) {
+    if (K.fase != 'fuego') {
+      K.fase = 'fuego';
+      K.hd = 0;
+      flashW = Math.max(flashW, 0.45);
+      sfx('boom');
+      try { cdRuido(0.8, 900, 0.35, 1.5); } catch (e) {}
+    }
+    B.open = true;
+    SHK = Math.max(SHK, 5);
+    const m = rayoBoca(), T = tipo == 'alto' ? 26 : 24, x0 = Math.min(m.x, m.x + B.face * 900), x1 = Math.max(m.x, m.x + B.face * 900);
+    const arriba = p.y - (p.crouch ? 32 : 58), abajo = p.y - 3;
+    if (!K.hd && p.x > x0 && p.x < x1 && abajo > by - T / 2 && arriba < by + T / 2 && arlPegar(22)) K.hd = 1;
+    for (let i = 0; i < 3; i++) pfx(m.x + B.face * rnd(10, 40), by + rnd(-20, 20), B.face * rnd(-60, 220), rnd(-260, 260), rnd(0.2, 0.45), Math.random() < 0.5 ? '#ffb347' : '#fff1c0', 2, 300);
+    if (Math.random() < 0.7) pfx(m.x + B.face * rnd(40, 600), by + rnd(-T / 2, T / 2), B.face * rnd(300, 600), 0, 0.15, '#fffbe8', 2, 0);
+  } else if (u < 0.35 + carga + dura + fin) {
+    K.fase = 'apaga';
+    B.open = u < 0.35 + carga + dura + fin * 0.5;
+  } else {
+    K.i++;
+    K.ti = 0.2;
+    K.son = 0;
+    if (K.i >= K.tiros.length) { B.bc = [7, 6, 5.5, 4.5][D]; arlFin(); }
+  }
+}
+function rayoDibujar(t) {
+  if (!B.on || B.st != 'xrayo' || !B.k || !B.k.fase) return;
+  const K = B.k, m = rayoBoca(), mx = Math.round(m.x - cam), my = Math.round(K.by != null ? (K.fase == 'mueve' ? m.y : K.by) : m.y), f = B.face;
+  const u = K.ti - 0.35;
+  ctx.save();
+  if (K.fase == 'carga') {
+    const k = Math.min(1, u / K.carga);
+    ctx.globalAlpha = 0.25 + 0.5 * k * (0.6 + 0.4 * Math.sin(t * 40));
+    ctx.fillStyle = '#ff9a3c';
+    for (let x = 0; x < 900; x += 14) ctx.fillRect(mx + f * x, Math.round(K.by) - 1, 8 * f, 2);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 3; i++) {
+      const r = (1 - ((t * 1.6 + i / 3) % 1)) * 46 * (1 - k * 0.4);
+      ctx.strokeStyle = 'rgba(255,190,90,' + 0.5 * k + ')';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(mx, my, Math.max(1, r), 0, 7);
+      ctx.stroke();
+    }
+    const R = 3 + k * 13 + Math.sin(t * 50) * 1.5;
+    ctx.fillStyle = '#ff7a1a';
+    ctx.beginPath(); ctx.arc(mx, my, R + 3, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ffd36a';
+    ctx.beginPath(); ctx.arc(mx, my, R, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(mx, my, R * 0.55, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,240,200,' + k + ')';
+    for (let i = 0; i < 6; i++) {
+      const a = t * 3 + i * 1.047, L = 8 + k * 26;
+      ctx.fillRect(Math.round(mx + Math.cos(a) * (R + 4)), Math.round(my + Math.sin(a) * (R + 4)), 2, 2);
+      ctx.fillRect(Math.round(mx + Math.cos(a) * (R + L)), Math.round(my + Math.sin(a) * (R + L)), 1, 1);
+    }
+  } else if (K.fase == 'fuego' || K.fase == 'apaga') {
+    const dura = K.tipo == 'alto' ? 1.05 : 0.55, v = u - K.carga;
+    let g = 1;
+    if (K.fase == 'apaga') g = Math.max(0, 1 - (v - dura) / 0.45);
+    const abre = Math.min(1, v / 0.08), T = (K.tipo == 'alto' ? 26 : 24) * abre * (0.85 + 0.15 * Math.sin(t * 60)) * g;
+    const L = 900, x0 = mx, x1 = mx + f * L;
+    const capa = (h, c) => {
+      ctx.fillStyle = c;
+      ctx.fillRect(Math.min(x0, x1), Math.round(my - h / 2), L, Math.max(1, Math.round(h)));
+    };
+    ctx.globalCompositeOperation = 'lighter';
+    capa(T * 1.6, 'rgba(255,110,20,.35)');
+    ctx.globalCompositeOperation = 'source-over';
+    capa(T, '#ff8a1e');
+    capa(T * 0.78, '#ffc247');
+    capa(T * 0.55, '#ffe9a0');
+    capa(T * 0.3, '#ffffff');
+    ctx.fillStyle = '#fffbe8';
+    for (let i = 0; i < 26; i++) {
+      const s = ((i * 137.5 + t * 1400) % L), yy = my + (((i * 53) % 11) - 5) / 11 * T * 0.8, ln = 20 + (i % 5) * 14;
+      ctx.globalAlpha = 0.7 * g;
+      ctx.fillRect(Math.round(x0 + f * s), Math.round(yy), Math.round(f * ln), 1);
+    }
+    ctx.globalAlpha = g;
+    ctx.fillStyle = '#ff8a1e';
+    for (let x = 0; x < L; x += 6) {
+      const j = Math.sin(x * 0.3 + t * 70) * 2 + Math.sin(x * 0.07 - t * 20) * 1.5;
+      ctx.fillRect(Math.round(x0 + f * x), Math.round(my - T / 2 - 2 + j), 6 * f, 2);
+      ctx.fillRect(Math.round(x0 + f * x), Math.round(my + T / 2 + j), 6 * f, 2);
+    }
+    const S = (18 + T * 1.1) * (0.9 + 0.1 * Math.sin(t * 45));
+    ctx.translate(mx + f * 6, my);
+    ctx.scale(f, 1);
+    ctx.beginPath();
+    const N = 14;
+    for (let i = 0; i <= N; i++) {
+      const a = -1.45 + (2.9 * i) / N, r = i % 2 ? S * 0.6 : S * (1 + 0.35 * Math.sin(t * 30 + i * 2));
+      ctx.lineTo(Math.cos(a) * r * 0.55, Math.sin(a) * r);
+    }
+    ctx.closePath();
+    ctx.fillStyle = '#ff7a1a';
+    ctx.fill();
+    ctx.scale(0.72, 0.72);
+    ctx.fillStyle = '#ffd36a';
+    ctx.fill();
+    ctx.scale(0.62, 0.62);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function arlBola(dt) {
+  const D = arlDif(), K = B.k, vel = [540, 620, 700, 800][D];
+  if (!K.fase) { K.fase = 'brilla'; K.u = 0; K.n = 0; B.aBola = 1; }
+  K.u += dt;
+  B.bc = Math.max(B.bc, 2);
+  if (K.fase == 'brilla') {
+    B.x += (W / 2 - B.x) * Math.min(1, 3 * dt);
+    B.y += (GROUND - 130 - B.y) * Math.min(1, 3 * dt);
+    if (Math.random() < 0.8) pfx(B.x + rnd(-40, 40), B.y + rnd(-40, 40), rnd(-80, 80), rnd(-80, 80), 0.4, 'hsl(' + Math.floor(Math.random() * 360) + ',100%,70%)', 2, 0);
+    if (K.u > 1.0) {
+      K.fase = 'apunta';
+      K.u = 0;
+      flashW = Math.max(flashW, 0.3);
+      sfx('portal');
+      for (let i = 0; i < 24; i++) { const a = (i / 24) * 6.283; pfx(B.x, B.y, Math.cos(a) * 220, Math.sin(a) * 220, 0.4, i % 2 ? '#e070ff' : '#ffffff', 2, 0); }
+    }
+  } else if (K.fase == 'apunta') {
+    if (K.u < dt * 1.5) {
+      const tx = p.x, ty = pcy(), d = Math.hypot(tx - B.x, ty - B.y) || 1;
+      K.ux = (tx - B.x) / d;
+      K.uy = (ty - B.y) / d;
+      cdTonoSeguro(600, 1200, 0.2);
+    }
+    B.x += (Math.random() - 0.5) * 3;
+    if (K.u > [0.6, 0.5, 0.42, 0.34][D]) { K.fase = 'embiste'; K.u = 0; K.hd = 0; K.par = 0; K.rastro = []; }
+  } else if (K.fase == 'embiste') {
+    B.x += K.ux * vel * dt;
+    B.y += K.uy * vel * dt;
+    K.rastro.push({ x: B.x, y: B.y, a: 0.6 });
+    if (K.rastro.length > 10) K.rastro.shift();
+    if (Math.random() < 0.9) pfx(B.x - K.ux * 30 + rnd(-8, 8), B.y - K.uy * 30 + rnd(-8, 8), -K.ux * rnd(40, 140), -K.uy * rnd(40, 140) + rnd(-30, 30), 0.35, Math.random() < 0.5 ? '#c43cff' : '#ff6af0', 2, 0);
+    const cerca = Math.abs(B.x - p.x) < 34 && Math.abs(B.y - pcy()) < 36;
+    if (cerca && !K.hd) {
+      if (p.parry > 0) {
+        K.hd = 1;
+        K.par = 1;
+        flashW = Math.max(flashW, 0.5);
+        SHK = Math.max(SHK, 8);
+        sfx('parry');
+        say('¡PARRY! Arlos sale rebotado');
+        p.sta = Math.min(100, p.sta + 25);
+        K.fase = 'aturdido';
+        K.u = 0;
+        hitBoss(22);
+        for (let i = 0; i < 30; i++) { const a = Math.random() * 6.283; pfx(B.x, B.y, Math.cos(a) * rnd(80, 260), Math.sin(a) * rnd(80, 260), 0.5, i % 3 ? '#ff6af0' : '#ffffff', 2, 0); }
+        K.vx = -K.ux * 320;
+        K.vy = -K.uy * 320;
+      } else if (p.dash > 0) {
+        K.hd = 1;
+      } else if (arlPegar(18)) K.hd = 1;
+    }
+    const fuera = B.x < cam + 20 || B.x > cam + W - 20 || B.y < 30 || B.y > GROUND - 14;
+    if (fuera || K.u > 1.6) {
+      B.x = Math.max(cam + 24, Math.min(cam + W - 24, B.x));
+      B.y = Math.max(34, Math.min(GROUND - 18, B.y));
+      SHK = Math.max(SHK, 6);
+      sfx('boom');
+      for (let i = 0; i < 14; i++) pfx(B.x, B.y, rnd(-180, 180), rnd(-180, 180), 0.4, '#c43cff', 2, 0);
+      K.n++;
+      K.u = 0;
+      K.fase = K.n >= 2 ? 'vuelve' : 'apunta';
+    }
+  } else if (K.fase == 'aturdido') {
+    B.x += K.vx * dt;
+    B.y += K.vy * dt;
+    K.vx *= 1 - 3 * dt;
+    K.vy *= 1 - 3 * dt;
+    B.x = Math.max(cam + 30, Math.min(cam + W - 30, B.x));
+    B.y = Math.max(40, Math.min(GROUND - 30, B.y));
+    if (K.u > 1.1) { K.fase = 'vuelve'; K.u = 0; }
+  } else if (K.fase == 'vuelve') {
+    B.y += (GROUND - 120 - B.y) * Math.min(1, 3 * dt);
+    if (K.u > 0.5) { B.aBola = 0; arlFin(); }
+  }
+}
+function bolaDibujar(t) {
+  if (!B.on || B.st != 'xbola' || !B.k || !B.k.fase) return;
+  const K = B.k, x = Math.round(B.x - cam), y = Math.round(B.y);
+  ctx.save();
+  if (K.fase == 'brilla' || K.fase == 'vuelve') {
+    const k = K.fase == 'brilla' ? Math.min(1, K.u / 1.0) : 1 - Math.min(1, K.u / 0.5);
+    const esc = 1 - k * 0.55 + Math.sin(t * 30) * 0.04 * k;
+    ctx.globalAlpha = 1 - Math.max(0, k - 0.8) / 0.2 * 0.85;
+    ctx.translate(x, y);
+    ctx.scale(B.face * esc, esc);
+    try { ctx.filter = 'hue-rotate(' + Math.floor(t * 900) % 360 + 'deg) saturate(2.2) brightness(' + (1 + k * 0.6) + ')'; } catch (e) {}
+    if (B.ph2) drawMon();
+    else {
+      const F = B.open ? OF : CF, sh = B.open ? img.bo : img.bc, fi = Math.floor(t * 6) % F[2];
+      ctx.drawImage(sh, fi * F[0], 0, F[0], F[1], -F[0] / 2, -F[1] / 2, F[0], F[1]);
+    }
+    ctx.filter = 'none';
+    ctx.setTransform(2, 0, 0, 2, 0, 0);
+    if (k > 0.55) {
+      const b = img.bolam, s = 0.6 * (k - 0.55) / 0.45;
+      ctx.globalAlpha = Math.min(1, (k - 0.55) / 0.3);
+      ctx.translate(x, y);
+      ctx.scale(s, s);
+      ctx.drawImage(b, -b.width * 0.68, -b.height / 2);
+    }
+  } else {
+    const b = img.bolam, an = K.fase == 'embiste' || K.fase == 'apunta' ? Math.atan2(K.uy || 0, K.ux || 1) : Math.atan2(-(K.vy || 0), -(K.vx || 1));
+    if (K.fase == 'apunta' && K.ux != null) {
+      ctx.globalAlpha = 0.35 + 0.35 * Math.sin(t * 40);
+      ctx.strokeStyle = '#ff6af0';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 6]);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + K.ux * 900, y + K.uy * 900);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    if (K.rastro) for (const r of K.rastro) {
+      r.a *= 0.85;
+      ctx.globalAlpha = r.a * 0.5;
+      ctx.save();
+      ctx.translate(Math.round(r.x - cam), Math.round(r.y));
+      ctx.rotate(an);
+      ctx.scale(0.55, 0.55);
+      ctx.drawImage(b, -b.width * 0.68, -b.height / 2);
+      ctx.restore();
+    }
+    ctx.globalAlpha = K.fase == 'aturdido' ? 0.6 + 0.4 * Math.sin(t * 40) : 1;
+    ctx.translate(x, y);
+    ctx.rotate(an);
+    const pul = 0.6 + Math.sin(t * 24) * 0.03;
+    ctx.scale(pul, pul * (K.fase == 'embiste' ? 0.92 : 1));
+    ctx.drawImage(b, -b.width * 0.68, -b.height / 2);
+  }
+  ctx.restore();
+}
+
+const bossAIRB = bossAI;
+bossAI = function (dt) {
+  if (B.on && !B.aus && (B.st == 'xrayo' || B.st == 'xbola')) {
+    B.t += dt;
+    if (B.pt > 0) B.pt = Math.max(0, B.pt - dt);
+    if (B.st == 'xrayo') arlRayo(dt);
+    else arlBola(dt);
+    arlFxTick(dt);
+    arlOjosTick(dt);
+    return;
+  }
+  bossAIRB(dt);
+  if (B.on && B.beam) {
+    B.beam = 0;
+    if (!B.ph2 && !B.aus && (B.st == 'hover' || B.st == 'mouth')) arlEmpezar('xrayo');
+    else B.bc = 2;
+  }
+  if (B.st != 'xbola') B.aBola = 0;
+};
+const hitBossRB = hitBoss;
+hitBoss = function (d) {
+  if (B.st == 'xbola' && B.k && B.k.fase != 'aturdido' && B.k.fase != 'brilla') return;
+  hitBossRB(d);
+};
+
+const CALA = { L: [], ultAtk: null };
+function calaCrear(x) {
+  return { x, y: GROUND - 46, by: GROUND - 46, st: 'flota', t: Math.random() * 6, hp: 40, mecha: 0, ex: 0, hit: 0, vx: 0, vy: 0, hd: 0 };
+}
+function calaPoblar(n) {
+  CALA.L = [];
+  if (arlDif() < 2 || (n != 1 && n != 5)) return;
+  const cuantas = n == 1 ? [0, 0, 3, 5][arlDif()] : [0, 0, 6, 10][arlDif()];
+  const x0 = n == 1 ? 1100 : 1400, x1 = LEVEL - 500;
+  for (let i = 0; i < cuantas; i++) CALA.L.push(calaCrear(Math.round(x0 + ((x1 - x0) * (i + 0.5)) / cuantas + rnd(-120, 120))));
+}
+function calaExplota(c, dana) {
+  c.st = 'explota';
+  c.ex = 0;
+  c.dana = dana;
+  c.hd = 0;
+  SHK = Math.max(SHK, dana ? 7 : 3);
+  sfx('boom');
+  try { cdRuido(0.45, 300, 0.3, 1.5); } catch (e) {}
+}
+function calaTick(dt) {
+  if (area != 1 && area != 5) return;
+  const vel = [0, 0, 80, 105][arlDif()], mecha = [0, 0, 0.75, 0.55][arlDif()];
+  for (const c of CALA.L) {
+    c.t += dt;
+    if (c.hit > 0) c.hit -= dt;
+    if (c.st == 'explota') {
+      c.ex += dt;
+      if (c.dana && !c.hd && c.ex > 0.08 && c.ex < 0.3) {
+        const d = Math.hypot(p.x - c.x, pcy() - c.y);
+        if (d < 62) {
+          c.hd = 1;
+          if (typeof CD != 'undefined') CD.golpe = c.x;
+          arlPegar(24);
+        }
+      }
+      continue;
+    }
+    const dx = p.x - c.x, dy = pcy() - c.y, d = Math.hypot(dx, dy);
+    if (c.st == 'flota') {
+      c.y = c.by + Math.sin(c.t * 2.2) * 6;
+      c.x += Math.sin(c.t * 0.8) * 10 * dt;
+      if (d < 280 && state == 'play') { c.st = 'persigue'; cdTonoSeguro(300, 700, 0.25); }
+    } else if (c.st == 'persigue') {
+      const k = vel / (d || 1);
+      c.vx += (dx * k - c.vx) * Math.min(1, 3 * dt);
+      c.vy += (dy * k - c.vy) * Math.min(1, 3 * dt);
+      c.x += c.vx * dt;
+      c.y += (c.vy * dt) + Math.sin(c.t * 9) * 0.4;
+      c.y = Math.min(GROUND - 16, c.y);
+      if (d < 46) { c.st = 'mecha'; c.mecha = 0; }
+      if (d > 520) c.st = 'flota', c.by = c.y;
+    } else if (c.st == 'mecha') {
+      c.mecha += dt;
+      c.x += dx * 0.8 * dt;
+      c.y += dy * 0.8 * dt;
+      if (Math.random() < 0.8) pfx(c.x + rnd(-8, 8), c.y + rnd(-14, 4), rnd(-30, 30), rnd(-90, -30), 0.3, Math.random() < 0.5 ? '#9cffd8' : '#ffffff', 2, 0);
+      if (Math.floor(c.mecha * 14) != Math.floor((c.mecha - dt) * 14)) blip(900 + c.mecha * 900);
+      if (c.mecha > mecha) calaExplota(c, true);
+    }
+    if (c.st != 'explota' && Math.random() < 0.25) pfx(c.x + rnd(-6, 6), c.y - 16 + rnd(-4, 4), rnd(-10, 10), rnd(-50, -20), 0.35, Math.random() < 0.5 ? '#7dffc0' : '#4ad8ff', 2, -20);
+  }
+  const a = p.atk;
+  if (a && a.hit && CALA.ultAtk !== a) {
+    CALA.ultAtk = a;
+    for (const c of CALA.L) {
+      if (c.st == 'explota') continue;
+      if (golpeToca(a, c.x - 14, c.y - 24, c.x + 14, c.y + 20)) {
+        c.hp -= sdmg(a);
+        c.hit = 0.15;
+        c.vx = a.f * 160;
+        c.vy = -40;
+        if (c.st == 'flota') c.st = 'persigue';
+        sfx('hit');
+        if (c.hp <= 0) calaExplota(c, false);
+      }
+    }
+  }
+  if (p.dash > 0)
+    for (const c of CALA.L) if (c.st != 'explota' && Math.abs(c.x - p.x) < 20 && Math.abs(c.y - pcy()) < 30 && !(c.hit > 0)) { c.hp -= 20; c.hit = 0.3; if (c.hp <= 0) calaExplota(c, false); }
+  CALA.L = CALA.L.filter(c => !(c.st == 'explota' && c.ex > 0.75));
+}
+function calaDibujar(t) {
+  if (area != 1 && area != 5) return;
+  const S = img.cala, E = img.expl;
+  if (!S || !S.width) return;
+  for (const c of CALA.L) {
+    const x = Math.round(c.x - cam), y = Math.round(c.y);
+    if (x < -80 || x > W + 80) continue;
+    if (c.st == 'explota') {
+      const fi = Math.min(18, Math.floor(c.ex * 26)), e = c.dana ? 1.6 : 1.1;
+      ctx.drawImage(E, fi * 64, 0, 64, 48, Math.round(x - 32 * e), Math.round(y - 26 * e), Math.round(64 * e), Math.round(48 * e));
+      continue;
+    }
+    const fps = c.st == 'mecha' ? 22 : c.st == 'persigue' ? 13 : 9, fi = Math.floor(c.t * fps) % 5;
+    const e = c.st == 'mecha' ? 1.6 + Math.sin(c.mecha * 40) * 0.12 + c.mecha * 0.4 : 1.6;
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x - 8, Math.min(GROUND - 1, y + 40), 16, 2);
+    ctx.globalAlpha = 1;
+    ctx.translate(x, y);
+    ctx.scale(e * (p.x < c.x ? -1 : 1), e);
+    if (c.hit > 0 || (c.st == 'mecha' && Math.floor(c.mecha * 14) % 2)) {
+      try { ctx.filter = 'brightness(2.2) saturate(.4)'; } catch (er) {}
+    }
+    ctx.drawImage(S, fi * 16, 0, 16, 30, -8, -20, 16, 30);
+    ctx.restore();
+  }
+}
+const loadAreaRB = loadArea;
+loadArea = function (n) {
+  loadAreaRB(n);
+  calaPoblar(n);
+};
+const initRB = init;
+init = function () {
+  initRB();
+  CALA.L = [];
+};
+const updEnemiesRB = updEnemies;
+updEnemies = function (dt) {
+  updEnemiesRB(dt);
+  if (!(typeof TIEMPO != 'undefined' && TIEMPO.parado)) calaTick(dt);
+};
+const drawEnemiesRB = drawEnemies;
+drawEnemies = function (t) {
+  drawEnemiesRB(t);
+  try { calaDibujar(t); } catch (e) {}
+};
+const drawSlashesRB = drawSlashes;
+drawSlashes = function () {
+  drawSlashesRB();
+  const t = performance.now() / 1000;
+  try { rayoDibujar(t); bolaDibujar(t); } catch (e) {}
+};
+const lucesJuntarRB = lucesJuntar;
+lucesJuntar = function (t) {
+  const L = lucesJuntarRB(t);
+  for (const c of CALA.L) {
+    if (c.st == 'explota') L.push([c.x, c.y, 120, '255,120,80', Math.max(0, 1 - c.ex / 0.6)]);
+    else L.push([c.x, c.y - 6, c.st == 'mecha' ? 60 : 42, '90,255,200', c.st == 'mecha' ? 0.9 : 0.55]);
+  }
+  if (B.on && area == 3 && B.st == 'xrayo' && B.k) {
+    const m = rayoBoca();
+    if (B.k.fase == 'carga') L.push([m.x, m.y, 40 + 60 * Math.min(1, (B.k.ti - 0.35) / B.k.carga), '255,170,60', 0.9]);
+    if (B.k.fase == 'fuego') for (let x = 0; x < 900; x += 90) L.push([m.x + B.face * x, B.k.by, 110, '255,190,90', 0.6]);
+  }
+  if (B.on && area == 3 && B.st == 'xbola' && B.k && B.k.fase != 'brilla') L.push([B.x, B.y, 110, '210,80,255', 0.9]);
+  return L;
+};
+const drawMJ_B = draw;
+draw = function () {
+  const ocultar = B.on && B.st == 'xbola' && B.k && B.k.fase;
+  const a0 = B.a;
+  if (ocultar) B.a = 0;
+  try { drawMJ_B(); } finally { if (ocultar) B.a = a0; }
 };
 })();
